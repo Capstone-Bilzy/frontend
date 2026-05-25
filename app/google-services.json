@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "935282059535",
+    "project_id": "bilzy-8819b",
+    "storage_bucket": "bilzy-8819b.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:935282059535:android:6fd909c3d209b4e47ef67a",
+        "android_client_info": {
+          "package_name": "com.android.bilzy"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDBbaucLq2nE5qvpQPyvRvhMWBCtVbiJZo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

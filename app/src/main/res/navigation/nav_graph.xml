@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/homeFragment">
+
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.android.bilzy.ui.home.HomeFragment"
+        android:label="Home"
+        tools:layout="@layout/fragment_home">
+        <action android:id="@+id/action_home_to_scanPermission"
+            app:destination="@id/scanPermissionFragment" />
+        <action android:id="@+id/action_home_to_qrScan"
+            app:destination="@id/qrScanFragment" />
+        <action android:id="@+id/action_home_to_scanHub"
+            app:destination="@id/scanHubFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/scanHubFragment"
+        android:name="com.android.bilzy.ui.scan.ScanHubFragment"
+        android:label="ScanHub"
+        tools:layout="@layout/fragment_scan_hub">
+        <action android:id="@+id/action_scanHub_to_home"
+            app:destination="@id/homeFragment"
+            app:popUpTo="@id/homeFragment"
+            app:popUpToInclusive="false" />
+        <action android:id="@+id/action_scanHub_to_scanCameraModal"
+            app:destination="@id/scanCameraModalFragment" />
+        <action android:id="@+id/action_scanHub_to_enteringRoom"
+            app:destination="@id/enteringRoomFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/scanPermissionFragment"
+        android:name="com.android.bilzy.ui.scan.ScanPermissionFragment"
+        android:label="ScanPermission"
+        tools:layout="@layout/fragment_scan_permission">
+        <action android:id="@+id/action_scanPermission_to_scanCamera"
+            app:destination="@id/scanCameraFragment" />
+        <action android:id="@+id/action_scanPermission_to_manualInput"
+            app:destination="@id/manualInputFragment" />
+        <action android:id="@+id/action_scanPermission_to_home"
+            app:destination="@id/homeFragment"
+            app:popUpTo="@id/homeFragment"
+            app:popUpToInclusive="false" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/scanCameraFragment"
+        android:name="com.android.bilzy.ui.scan.ScanCameraFragment"
+        android:label="ScanCamera"
+        tools:layout="@layout/fragment_scan_camera">
+        <action android:id="@+id/action_scanCamera_to_back"
+            app:destination="@id/scanPermissionFragment"
+            app:popUpTo="@id/scanPermissionFragment"
+            app:popUpToInclusive="false" />
+        <action android:id="@+id/action_scanCamera_to_modal"
+            app:destination="@id/scanCameraModalFragment" />
+        <action android:id="@+id/action_scanCamera_to_qrScan"
+            app:destination="@id/qrScanFragment" />
+    </fragment>
+
+    <dialog
+        android:id="@+id/scanCameraModalFragment"
+        android:name="com.android.bilzy.ui.scan.ScanCameraModalFragment"
+        android:label="ScanCameraModal"
+        tools:layout="@layout/fragment_scan_camera_modal">
+        <action android:id="@+id/action_modal_to_recognizing"
+            app:destination="@id/recognizingFragment"
+            app:popUpTo="@id/scanCameraFragment"
+            app:popUpToInclusive="false" />
+        <action android:id="@+id/action_modal_dismiss"
+            app:popUpTo="@id/scanCameraFragment"
+            app:popUpToInclusive="false" />
+    </dialog>
+
+    <fragment
+        android:id="@+id/recognizingFragment"
+        android:name="com.android.bilzy.ui.scan.RecognizingFragment"
+        android:label="Recognizing"
+        tools:layout="@layout/fragment_recognizing">
+        <action android:id="@+id/action_recognizing_to_receiptSave"
+            app:destination="@id/receiptSaveFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/receiptSaveFragment"
+        android:name="com.android.bilzy.ui.scan.ReceiptSaveFragment"
+        android:label="ReceiptSave"
+        tools:layout="@layout/fragment_receipt_save">
+        <action android:id="@+id/action_receiptSave_to_scanCamera"
+            app:destination="@id/scanCameraFragment"
+            app:popUpTo="@id/scanCameraFragment"
+            app:popUpToInclusive="false" />
+        <action android:id="@+id/action_receiptSave_to_saved"
+            app:destination="@id/receiptSavedFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/receiptSavedFragment"
+        android:name="com.android.bilzy.ui.scan.ReceiptSavedFragment"
+        android:label="ReceiptSaved"
+        tools:layout="@layout/fragment_receipt_saved">
+        <action android:id="@+id/action_receiptSaved_to_ocrResult"
+            app:destination="@id/ocrResultFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/ocrResultFragment"
+        android:name="com.android.bilzy.ui.settlement.OcrResultFragment"
+        android:label="OcrResult"
+        tools:layout="@layout/fragment_ocr_result">
+        <action android:id="@+id/action_ocrResult_to_home"
+            app:destination="@id/homeFragment"
+            app:popUpTo="@id/homeFragment"
+            app:popUpToInclusive="false" />
+        <action android:id="@+id/action_ocrResult_to_addItem"
+            app:destination="@id/addItemFragment" />
+        <action android:id="@+id/action_ocrResult_to_peopleCount"
+            app:destination="@id/peopleCountFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/manualInputFragment"
+        android:name="com.android.bilzy.ui.settlement.ManualInputFragment"
+        android:label="ManualInput"
+        tools:layout="@layout/fragment_manual_input">
+        <action android:id="@+id/action_manualInput_to_back"
+            app:destination="@id/scanPermissionFragment"
+            app:popUpTo="@id/scanPermissionFragment"
+            app:popUpToInclusive="false" />
+        <action android:id="@+id/action_manualInput_to_addItem"
+            app:destination="@id/addItemFragment" />
+        <action android:id="@+id/action_manualInput_to_peopleCount"
+            app:destination="@id/peopleCountFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/addItemFragment"
+        android:name="com.android.bilzy.ui.settlement.AddItemFragment"
+        android:label="AddItem"
+        tools:layout="@layout/fragment_add_item">
+        <action android:id="@+id/action_addItem_to_back"
+            app:popUpTo="@id/ocrResultFragment"
+            app:popUpToInclusive="false" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/peopleCountFragment"
+        android:name="com.android.bilzy.ui.settlement.PeopleCountFragment"
+        android:label="PeopleCount"
+        tools:layout="@layout/fragment_people_count">
+        <action android:id="@+id/action_peopleCount_to_back"
+            app:popUpTo="@id/ocrResultFragment"
+            app:popUpToInclusive="false" />
+        <action android:id="@+id/action_peopleCount_to_participantInput"
+            app:destination="@id/participantInputFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/participantInputFragment"
+        android:name="com.android.bilzy.ui.settlement.ParticipantInputFragment"
+        android:label="ParticipantInput"
+        tools:layout="@layout/fragment_participant_input">
+        <action android:id="@+id/action_participantInput_to_back"
+            app:destination="@id/peopleCountFragment"
+            app:popUpTo="@id/peopleCountFragment"
+            app:popUpToInclusive="false" />
+        <action android:id="@+id/action_participantInput_to_qrInvite"
+            app:destination="@id/qrInviteFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/qrInviteFragment"
+        android:name="com.android.bilzy.ui.settlement.QrInviteFragment"
+        android:label="QrInvite"
+        tools:layout="@layout/fragment_qr_invite">
+        <action android:id="@+id/action_qrInvite_to_back"
+            app:destination="@id/participantInputFragment"
+            app:popUpTo="@id/participantInputFragment"
+            app:popUpToInclusive="false" />
+        <action android:id="@+id/action_qrInvite_to_enteringRoom"
+            app:destination="@id/enteringRoomFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/qrScanFragment"
+        android:name="com.android.bilzy.ui.scan.QrScanFragment"
+        android:label="QrScan"
+        tools:layout="@layout/fragment_qr_scan">
+        <action android:id="@+id/action_qrScan_to_home"
+            app:destination="@id/homeFragment"
+            app:popUpTo="@id/homeFragment"
+            app:popUpToInclusive="false" />
+        <action android:id="@+id/action_qrScan_to_enteringRoom"
+            app:destination="@id/enteringRoomFragment" />
+        <action android:id="@+id/action_qrScan_to_scanCamera"
+            app:destination="@id/scanCameraFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/enteringRoomFragment"
+        android:name="com.android.bilzy.ui.room.EnteringRoomFragment"
+        android:label="EnteringRoom"
+        tools:layout="@layout/fragment_entering_room">
+        <action android:id="@+id/action_enteringRoom_to_memberWaiting"
+            app:destination="@id/memberWaitingFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/memberWaitingFragment"
+        android:name="com.android.bilzy.ui.room.MemberWaitingFragment"
+        android:label="MemberWaiting"
+        tools:layout="@layout/fragment_member_waiting">
+        <action android:id="@+id/action_memberWaiting_to_amountAdjust"
+            app:destination="@id/amountAdjustFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/amountAdjustFragment"
+        android:name="com.android.bilzy.ui.room.AmountAdjustFragment"
+        android:label="AmountAdjust"
+        tools:layout="@layout/fragment_amount_adjust">
+        <action android:id="@+id/action_amountAdjust_to_back"
+            app:destination="@id/memberWaitingFragment"
+            app:popUpTo="@id/memberWaitingFragment"
+            app:popUpToInclusive="false" />
+        <action android:id="@+id/action_amountAdjust_to_calculating"
+            app:destination="@id/calculatingFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/calculatingFragment"
+        android:name="com.android.bilzy.ui.room.CalculatingFragment"
+        android:label="Calculating"
+        tools:layout="@layout/fragment_calculating">
+        <action android:id="@+id/action_calculating_to_settlementResult"
+            app:destination="@id/settlementResultFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/settlementResultFragment"
+        android:name="com.android.bilzy.ui.room.SettlementResultFragment"
+        android:label="SettlementResult"
+        tools:layout="@layout/fragment_settlement_result">
+        <action android:id="@+id/action_settlementResult_to_back"
+            app:destination="@id/calculatingFragment"
+            app:popUpTo="@id/calculatingFragment"
+            app:popUpToInclusive="false" />
+        <action android:id="@+id/action_settlementResult_to_complete"
+            app:destination="@id/settlementCompleteFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/settlementCompleteFragment"
+        android:name="com.android.bilzy.ui.room.SettlementCompleteFragment"
+        android:label="SettlementComplete"
+        tools:layout="@layout/fragment_settlement_complete">
+        <action android:id="@+id/action_settlementComplete_to_home"
+            app:destination="@id/homeFragment"
+            app:popUpTo="@id/homeFragment"
+            app:popUpToInclusive="false" />
+    </fragment>
+
+</navigation>

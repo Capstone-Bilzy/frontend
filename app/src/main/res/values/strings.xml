@@ -1,0 +1,108 @@
+<resources>
+    <string name="app_name">Bilzy</string>
+
+    <!-- Home -->
+    <string name="home_greeting">지금 정산을\n시작해 볼까요?</string>
+    <string name="home_scan_receipt">영수증 스캔</string>
+    <string name="home_scan_qr">QR 스캔</string>
+    <string name="home_recent_title">최근 정산 내역</string>
+    <string name="home_recent_empty">최근 정산 내역이 없습니다.</string>
+    <string name="home_recent_cta">정산을 바로 시작해보세요!</string>
+
+    <!-- Scan Permission -->
+    <string name="scan_permission_title">영수증을 스캔해\n정산을 시작해요</string>
+    <string name="scan_permission_desc">카메라로 영수증을 촬영하거나\n갤러리에서 사진을 선택하세요</string>
+    <string name="scan_permission_camera">카메라로 스캔하기</string>
+    <string name="scan_permission_manual">직접 입력하기</string>
+
+    <!-- Scan Camera -->
+    <string name="scan_camera_guide">영수증을 네모 안에\n맞춰주세요</string>
+    <string name="scan_camera_tab_receipt">영수증 스캔</string>
+    <string name="scan_camera_tab_qr">QR 스캔</string>
+
+    <!-- Camera Modal -->
+    <string name="modal_photo_library">사진 보관함에서 선택</string>
+    <string name="modal_file">파일에서 선택</string>
+    <string name="modal_cancel">취소</string>
+
+    <!-- Recognizing -->
+    <string name="recognizing_step1">영수증 인식 중…</string>
+    <string name="recognizing_step2">정보 추출 중…</string>
+    <string name="recognizing_step3">내역 확인 중…</string>
+
+    <!-- Receipt Save -->
+    <string name="receipt_save_title">영수증을 저장할까요?</string>
+    <string name="receipt_save_rescan">다시 스캔</string>
+    <string name="receipt_save_save">저장하기</string>
+
+    <!-- Receipt Saved -->
+    <string name="receipt_saved_title">영수증이\n저장되었어요!</string>
+    <string name="receipt_saved_cta">정산 시작하기</string>
+
+    <!-- OCR Result -->
+    <string name="ocr_result_title">인식된 항목</string>
+    <string name="ocr_add_item">+ 항목 추가</string>
+    <string name="ocr_start_settlement">정산 시작하기</string>
+    <string name="ocr_total">합계</string>
+    <string name="ocr_empty_title">인식된 항목이 없어요</string>
+    <string name="ocr_empty_desc">항목을 직접 추가해주세요</string>
+
+    <!-- Manual Input -->
+    <string name="manual_input_title">항목을 직접 입력해요</string>
+    <string name="manual_item_name_hint">항목명</string>
+    <string name="manual_item_price_hint">가격</string>
+    <string name="manual_add_item">+ 항목 추가</string>
+    <string name="manual_start_settlement">정산 시작하기</string>
+
+    <!-- Add Item -->
+    <string name="add_item_title">항목 추가</string>
+    <string name="add_item_name_hint">항목명을 입력하세요</string>
+    <string name="add_item_price_hint">가격을 입력하세요</string>
+    <string name="add_item_done">추가 완료</string>
+
+    <!-- People Count -->
+    <string name="people_count_title">정산 인원을\n설정해주세요</string>
+    <string name="people_count_unit">명</string>
+    <string name="people_count_next">다음</string>
+
+    <!-- Participant Input -->
+    <string name="participant_title">참여자를\n입력해주세요</string>
+    <string name="participant_hint">이름 입력</string>
+    <string name="participant_add">추가</string>
+    <string name="participant_next">다음</string>
+
+    <!-- QR Invite -->
+    <string name="qr_invite_title">참여자를 초대해요</string>
+    <string name="qr_invite_desc">QR 코드를 스캔하거나\n링크를 공유하세요</string>
+    <string name="qr_invite_share_link">링크 복사</string>
+    <string name="qr_invite_enter">입장하기</string>
+
+    <!-- QR Scan -->
+    <string name="qr_scan_guide">QR 코드를\n카메라에 비춰주세요</string>
+
+    <!-- Entering Room -->
+    <string name="entering_room_message">정산방 입장 중…</string>
+
+    <!-- Member Waiting -->
+    <string name="member_waiting_title">참여자 대기 중</string>
+    <string name="member_waiting_desc">모든 참여자가 입장하면\n자동으로 시작됩니다</string>
+
+    <!-- Amount Adjust -->
+    <string name="amount_adjust_title">AI 특이사항 추천</string>
+    <string name="amount_adjust_desc">AI가 특이사항을 감지했어요\n해당 항목을 선택하면 자동 적용됩니다</string>
+    <string name="amount_adjust_settle">정산하기</string>
+
+    <!-- Calculating -->
+    <string name="calculating_message">정산 금액을 계산 중…</string>
+
+    <!-- Settlement Result -->
+    <string name="settlement_result_title">정산 결과</string>
+    <string name="settlement_result_confirm">완료하기</string>
+
+    <!-- Settlement Complete -->
+    <string name="settlement_complete_title">정산이\n완료되었어요!</string>
+    <string name="settlement_complete_copy_account">계좌번호 복사</string>
+    <string name="settlement_complete_home">홈으로 돌아가기</string>
+    <string name="settlement_account">신한 1101256784100 정민지</string>
+    <string name="account_copied">계좌번호가 복사되었어요!</string>
+</resources>
