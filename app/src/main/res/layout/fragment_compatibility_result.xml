@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black"
+    android:fillViewport="true">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="20dp">
+
+        <!-- 타이틀 -->
+        <TextView
+            android:id="@+id/tv_result_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:text="취향 궁합 결과"
+            android:textColor="@color/white"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- 프로필 + 하트 영역 -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layout_heart_center"
+            android:layout_width="320dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_result_title">
+
+            <!-- 내 프로필 이미지 -->
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/iv_profile_me"
+                android:layout_width="110dp"
+                android:layout_height="110dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/img_sample"
+                android:translationX="30dp"
+                app:shapeAppearanceOverlay="@style/CircleImage"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/tv_name_me" />
+
+            <!-- 상대방 프로필 이미지 -->
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/iv_profile_other"
+                android:layout_width="110dp"
+                android:layout_height="110dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/img_sample"
+                android:translationX="-30dp"
+                app:shapeAppearanceOverlay="@style/CircleImage"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/tv_name_other" />
+
+            <!-- 중앙 하트 아이콘 -->
+            <ImageView
+                android:id="@+id/iv_heart_icon"
+                android:layout_width="90dp"
+                android:layout_height="90dp"
+                android:elevation="10dp"
+                android:src="@drawable/ic_heart_filled"
+                app:tint="#BB3FBD"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/tv_name_me" />
+
+            <!-- 종합 퍼센트 -->
+            <TextView
+                android:id="@+id/tv_comp_percent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:elevation="11dp"
+                android:text="0%"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@id/iv_heart_icon"
+                app:layout_constraintEnd_toEndOf="@id/iv_heart_icon"
+                app:layout_constraintStart_toStartOf="@id/iv_heart_icon"
+                app:layout_constraintTop_toTopOf="@id/iv_heart_icon" />
+
+            <!-- 내 이름 -->
+            <TextView
+                android:id="@+id/tv_name_me"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text=""
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                app:layout_constraintStart_toStartOf="@id/iv_profile_me"
+                app:layout_constraintEnd_toEndOf="@id/iv_profile_me"
+                app:layout_constraintTop_toBottomOf="@id/iv_profile_me"
+                app:layout_constraintBottom_toBottomOf="parent" />
+
+            <!-- 상대방 이름 -->
+            <TextView
+                android:id="@+id/tv_name_other"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text=""
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                app:layout_constraintStart_toStartOf="@id/iv_profile_other"
+                app:layout_constraintEnd_toEndOf="@id/iv_profile_other"
+                app:layout_constraintTop_toBottomOf="@id/iv_profile_other"
+                app:layout_constraintBottom_toBottomOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- 공통 취향 확률 라벨 -->
+        <TextView
+            android:id="@+id/tv_comp_bar_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="36dp"
+            android:text="공통 취향 확률"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/layout_heart_center" />
+
+        <!-- 카테고리 바 리스트 -->
+        <LinearLayout
+            android:id="@+id/layout_comp_bars"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:orientation="vertical"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_comp_bar_label" />
+
+        <!-- 공통 취향 태그 라벨 -->
+        <TextView
+            android:id="@+id/tv_tag_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="36dp"
+            android:text="공통 취향 태그"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/layout_comp_bars" />
+
+        <!-- 공통 태그 FlexboxLayout -->
+        <com.google.android.flexbox.FlexboxLayout
+            android:id="@+id/flexbox_tags"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="40dp"
+            app:flexWrap="wrap"
+            app:flexDirection="row"
+            app:justifyContent="flex_start"
+            app:alignItems="center"
+            app:layout_constraintTop_toBottomOf="@id/tv_tag_label"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>
