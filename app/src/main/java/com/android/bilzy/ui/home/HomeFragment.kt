@@ -42,6 +42,14 @@ class HomeFragment : Fragment() {
         binding.navScan.setOnClickListener {
             findNavController().navigate(R.id.action_home_to_scanHub)
         }
+
+        binding.navHistory.setOnClickListener {
+            findNavController().navigate(R.id.action_home_to_historyList)
+        }
+
+        binding.navMyPage.setOnClickListener {
+            findNavController().navigate(R.id.action_home_to_myPage)
+        }
     }
 
     override fun onDestroyView() {

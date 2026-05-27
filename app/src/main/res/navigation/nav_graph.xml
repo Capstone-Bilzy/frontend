@@ -3,7 +3,105 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/homeFragment">
+    app:startDestination="@id/onboardingFragment">
+
+    <!-- ==================== AUTH ==================== -->
+
+    <fragment
+        android:id="@+id/onboardingFragment"
+        android:name="com.android.bilzy.ui.auth.OnboardingFragment"
+        android:label="Onboarding"
+        tools:layout="@layout/fragment_onboarding">
+        <action android:id="@+id/action_onboarding_to_login"
+            app:destination="@id/loginFragment" />
+        <action android:id="@+id/action_onboarding_to_signup"
+            app:destination="@id/signupFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.android.bilzy.ui.auth.LoginFragment"
+        android:label="Login"
+        tools:layout="@layout/fragment_login">
+        <action android:id="@+id/action_login_to_loginLoading"
+            app:destination="@id/loginLoadingFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/signupFragment"
+        android:name="com.android.bilzy.ui.auth.SignupFragment"
+        android:label="Signup"
+        tools:layout="@layout/fragment_signup">
+        <action android:id="@+id/action_signup_to_signupKakaoTerms"
+            app:destination="@id/signupKakaoTermsFragment" />
+        <action android:id="@+id/action_signup_to_signupNaverTerms"
+            app:destination="@id/signupNaverTermsFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/signupKakaoTermsFragment"
+        android:name="com.android.bilzy.ui.auth.SignupTermsFragment"
+        android:label="KakaoTerms"
+        tools:layout="@layout/fragment_signup_terms">
+        <argument
+            android:name="is_kakao"
+            app:argType="boolean"
+            android:defaultValue="true" />
+        <action android:id="@+id/action_signupKakaoTerms_to_signupKakaoInfo"
+            app:destination="@id/signupKakaoInfoFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/signupNaverTermsFragment"
+        android:name="com.android.bilzy.ui.auth.SignupTermsFragment"
+        android:label="NaverTerms"
+        tools:layout="@layout/fragment_signup_terms">
+        <argument
+            android:name="is_kakao"
+            app:argType="boolean"
+            android:defaultValue="false" />
+        <action android:id="@+id/action_signupNaverTerms_to_signupNaverInfo"
+            app:destination="@id/signupNaverInfoFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/signupKakaoInfoFragment"
+        android:name="com.android.bilzy.ui.auth.SignupInfoFragment"
+        android:label="KakaoInfo"
+        tools:layout="@layout/fragment_signup_info">
+        <argument
+            android:name="is_kakao"
+            app:argType="boolean"
+            android:defaultValue="true" />
+        <action android:id="@+id/action_signupKakaoInfo_to_loginLoading"
+            app:destination="@id/loginLoadingFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/signupNaverInfoFragment"
+        android:name="com.android.bilzy.ui.auth.SignupInfoFragment"
+        android:label="NaverInfo"
+        tools:layout="@layout/fragment_signup_info">
+        <argument
+            android:name="is_kakao"
+            app:argType="boolean"
+            android:defaultValue="false" />
+        <action android:id="@+id/action_signupNaverInfo_to_loginLoading"
+            app:destination="@id/loginLoadingFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/loginLoadingFragment"
+        android:name="com.android.bilzy.ui.auth.LoginLoadingFragment"
+        android:label="LoginLoading"
+        tools:layout="@layout/fragment_login_loading">
+        <action android:id="@+id/action_loginLoading_to_home"
+            app:destination="@id/homeFragment"
+            app:popUpTo="@id/onboardingFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <!-- ==================== MAIN ==================== -->
 
     <fragment
         android:id="@+id/homeFragment"
@@ -16,7 +114,80 @@
             app:destination="@id/qrScanFragment" />
         <action android:id="@+id/action_home_to_scanHub"
             app:destination="@id/scanHubFragment" />
+        <action android:id="@+id/action_home_to_historyList"
+            app:destination="@id/historyListFragment" />
+        <action android:id="@+id/action_home_to_myPage"
+            app:destination="@id/myPageFragment" />
     </fragment>
+
+    <!-- ==================== HISTORY ==================== -->
+
+    <fragment
+        android:id="@+id/historyListFragment"
+        android:name="com.android.bilzy.ui.history.HistoryListFragment"
+        android:label="HistoryList"
+        tools:layout="@layout/fragment_history_list">
+        <action android:id="@+id/action_historyList_to_home"
+            app:destination="@id/homeFragment"
+            app:popUpTo="@id/homeFragment"
+            app:popUpToInclusive="false" />
+        <action android:id="@+id/action_historyList_to_scanHub"
+            app:destination="@id/scanHubFragment" />
+        <action android:id="@+id/action_historyList_to_myPage"
+            app:destination="@id/myPageFragment" />
+        <action android:id="@+id/action_historyList_to_historyDetail"
+            app:destination="@id/historyDetailFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/historyDetailFragment"
+        android:name="com.android.bilzy.ui.history.HistoryDetailFragment"
+        android:label="HistoryDetail"
+        tools:layout="@layout/fragment_history_detail">
+        <action android:id="@+id/action_historyDetail_to_home"
+            app:destination="@id/homeFragment"
+            app:popUpTo="@id/homeFragment"
+            app:popUpToInclusive="false" />
+        <action android:id="@+id/action_historyDetail_to_scanHub"
+            app:destination="@id/scanHubFragment" />
+        <action android:id="@+id/action_historyDetail_to_historyList"
+            app:destination="@id/historyListFragment"
+            app:popUpTo="@id/historyListFragment"
+            app:popUpToInclusive="false" />
+        <action android:id="@+id/action_historyDetail_to_myPage"
+            app:destination="@id/myPageFragment" />
+    </fragment>
+
+    <!-- ==================== MY PAGE ==================== -->
+
+    <fragment
+        android:id="@+id/myPageFragment"
+        android:name="com.android.bilzy.ui.mypage.MyPageFragment"
+        android:label="MyPage"
+        tools:layout="@layout/fragment_my_page">
+        <action android:id="@+id/action_myPage_to_home"
+            app:destination="@id/homeFragment"
+            app:popUpTo="@id/homeFragment"
+            app:popUpToInclusive="false" />
+        <action android:id="@+id/action_myPage_to_scanHub"
+            app:destination="@id/scanHubFragment" />
+        <action android:id="@+id/action_myPage_to_historyList"
+            app:destination="@id/historyListFragment" />
+        <action android:id="@+id/action_myPage_to_myPageAccount"
+            app:destination="@id/myPageAccountFragment" />
+        <action android:id="@+id/action_myPage_to_onboarding"
+            app:destination="@id/onboardingFragment"
+            app:popUpTo="@id/onboardingFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/myPageAccountFragment"
+        android:name="com.android.bilzy.ui.mypage.MyPageAccountFragment"
+        android:label="MyPageAccount"
+        tools:layout="@layout/fragment_my_page_account" />
+
+    <!-- ==================== SCAN ==================== -->
 
     <fragment
         android:id="@+id/scanHubFragment"
@@ -200,6 +371,8 @@
         <action android:id="@+id/action_qrScan_to_scanCamera"
             app:destination="@id/scanCameraFragment" />
     </fragment>
+
+    <!-- ==================== ROOM ==================== -->
 
     <fragment
         android:id="@+id/enteringRoomFragment"
