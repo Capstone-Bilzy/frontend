@@ -60,6 +60,11 @@ class HistoryListFragment : Fragment() {
         binding.navMyPage.setOnClickListener {
             findNavController().navigate(R.id.action_historyList_to_myPage)
         }
+
+        binding.tvLogo.setOnLongClickListener {
+            findNavController().navigate(R.id.action_historyList_to_historyEmpty)
+            true
+        }
     }
 
     override fun onDestroyView() {

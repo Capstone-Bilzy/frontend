@@ -137,6 +137,25 @@
             app:destination="@id/myPageFragment" />
         <action android:id="@+id/action_historyList_to_historyDetail"
             app:destination="@id/historyDetailFragment" />
+        <action android:id="@+id/action_historyList_to_historyEmpty"
+            app:destination="@id/historyEmptyFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/historyEmptyFragment"
+        android:name="com.android.bilzy.ui.history.HistoryEmptyFragment"
+        android:label="HistoryEmpty"
+        tools:layout="@layout/fragment_history_empty">
+        <action android:id="@+id/action_historyEmpty_to_home"
+            app:destination="@id/homeFragment"
+            app:popUpTo="@id/homeFragment"
+            app:popUpToInclusive="false" />
+        <action android:id="@+id/action_historyEmpty_to_scanHub"
+            app:destination="@id/scanHubFragment" />
+        <action android:id="@+id/action_historyEmpty_to_myPage"
+            app:destination="@id/myPageFragment" />
+        <action android:id="@+id/action_historyEmpty_to_historyDetail"
+            app:destination="@id/historyDetailFragment" />
     </fragment>
 
     <fragment
@@ -156,6 +175,42 @@
             app:popUpToInclusive="false" />
         <action android:id="@+id/action_historyDetail_to_myPage"
             app:destination="@id/myPageFragment" />
+        <action android:id="@+id/action_historyDetail_to_receiptPicker"
+            app:destination="@id/receiptPickerFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/historyDetailWithReceiptFragment"
+        android:name="com.android.bilzy.ui.history.HistoryDetailWithReceiptFragment"
+        android:label="HistoryDetailWithReceipt"
+        tools:layout="@layout/fragment_history_detail_with_receipt">
+        <action android:id="@+id/action_historyDetailWithReceipt_to_home"
+            app:destination="@id/homeFragment"
+            app:popUpTo="@id/homeFragment"
+            app:popUpToInclusive="false" />
+        <action android:id="@+id/action_historyDetailWithReceipt_to_scanHub"
+            app:destination="@id/scanHubFragment" />
+        <action android:id="@+id/action_historyDetailWithReceipt_to_historyList"
+            app:destination="@id/historyListFragment"
+            app:popUpTo="@id/historyListFragment"
+            app:popUpToInclusive="false" />
+        <action android:id="@+id/action_historyDetailWithReceipt_to_myPage"
+            app:destination="@id/myPageFragment" />
+        <action android:id="@+id/action_historyDetailWithReceipt_to_receiptPicker"
+            app:destination="@id/receiptPickerFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/receiptPickerFragment"
+        android:name="com.android.bilzy.ui.history.ReceiptPickerFragment"
+        android:label="ReceiptPicker"
+        tools:layout="@layout/fragment_receipt_picker">
+        <action android:id="@+id/action_receiptPicker_to_historyDetailWithReceipt"
+            app:destination="@id/historyDetailWithReceiptFragment"
+            app:popUpTo="@id/historyDetailFragment"
+            app:popUpToInclusive="true" />
+        <action android:id="@+id/action_receiptPicker_to_scanHub"
+            app:destination="@id/scanHubFragment" />
     </fragment>
 
     <!-- ==================== MY PAGE ==================== -->
