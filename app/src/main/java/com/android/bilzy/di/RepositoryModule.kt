@@ -1,12 +1,14 @@
 package com.android.bilzy.di
 
 import com.android.bilzy.data.repository.AccountRepositoryImpl
+import com.android.bilzy.data.repository.AuthRepositoryImpl
 import com.android.bilzy.data.repository.NotificationRepositoryImpl
 import com.android.bilzy.data.repository.SettlementItemRepositoryImpl
 import com.android.bilzy.data.repository.SettlementMemberRepositoryImpl
 import com.android.bilzy.data.repository.SettlementRepositoryImpl
 import com.android.bilzy.data.repository.UserRepositoryImpl
 import com.android.bilzy.domain.repository.AccountRepository
+import com.android.bilzy.domain.repository.AuthRepository
 import com.android.bilzy.domain.repository.NotificationRepository
 import com.android.bilzy.domain.repository.SettlementItemRepository
 import com.android.bilzy.domain.repository.SettlementMemberRepository
@@ -21,6 +23,9 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class RepositoryModule {
+
+    @Binds @Singleton
+    abstract fun bindAuthRepository(impl: AuthRepositoryImpl): AuthRepository
 
     @Binds @Singleton
     abstract fun bindUserRepository(impl: UserRepositoryImpl): UserRepository

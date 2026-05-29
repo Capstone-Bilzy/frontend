@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <!-- 로컬 개발용: 에뮬레이터에서 호스트 FastAPI(10.0.2.2)로의 평문(http) 허용.
+         배포 백엔드는 https를 쓰므로 기본 설정(평문 차단)을 유지한다. -->
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">10.0.2.2</domain>
+        <domain includeSubdomains="true">localhost</domain>
+    </domain-config>
+</network-security-config>

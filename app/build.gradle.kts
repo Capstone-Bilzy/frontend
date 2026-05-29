@@ -1,10 +1,20 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.kapt)
+    alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.hilt)
     alias(libs.plugins.google.services)
 }
+
+// local.properties 에서 카카오 네이티브 앱키를 읽는다 (VCS에 커밋하지 않음).
+// 예) KAKAO_NATIVE_APP_KEY=xxxxxxxxxxxxxxxx
+val kakaoNativeAppKey: String = Properties().apply {
+    val f = rootProject.file("local.properties")
+    if (f.exists()) f.inputStream().use { load(it) }
+}.getProperty("KAKAO_NATIVE_APP_KEY", "")
 
 android {
     namespace = "com.android.bilzy"
@@ -17,15 +27,25 @@ android {
         versionCode = 1
         versionName = "1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        // 카카오 로그인: SDK 초기화용 키 + 리다이렉트 scheme(kakao{앱키})용 placeholder
+        buildConfigField("String", "KAKAO_NATIVE_APP_KEY", "\"$kakaoNativeAppKey\"")
+        manifestPlaceholders["kakaoNativeAppKey"] = kakaoNativeAppKey
     }
 
     buildTypes {
+        debug {
+            // 에뮬레이터에서 로컬 FastAPI(호스트의 localhost:8000)는 10.0.2.2로 접근
+            buildConfigField("String", "BASE_URL", "\"http://10.0.2.2:8000/\"")
+        }
         release {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            // TODO: 배포 백엔드 주소로 교체
+            buildConfigField("String", "BASE_URL", "\"https://api.bilzy.app/\"")
         }
     }
 
@@ -40,6 +60,7 @@ android {
 
     buildFeatures {
         viewBinding = true
+        buildConfig = true
     }
 }
 
@@ -76,6 +97,20 @@ dependencies {
 
     // Coil
     implementation(libs.coil)
+
+    // Networking (Retrofit + OkHttp + kotlinx.serialization)
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.kotlinx.serialization)
+    implementation(platform(libs.okhttp.bom))
+    implementation(libs.okhttp)
+    implementation(libs.okhttp.logging.interceptor)
+    implementation(libs.kotlinx.serialization.json)
+
+    // DataStore (토큰 저장)
+    implementation(libs.androidx.datastore.preferences)
+
+    // Kakao 로그인 SDK
+    implementation(libs.kakao.user)
 
     implementation("androidx.core:core-ktx:1.13.1")
     implementation("androidx.appcompat:appcompat:1.7.0")
