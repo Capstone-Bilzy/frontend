@@ -110,6 +110,8 @@
         tools:layout="@layout/fragment_home">
         <action android:id="@+id/action_home_to_scanPermission"
             app:destination="@id/scanPermissionFragment" />
+        <action android:id="@+id/action_home_to_settlementTitle"
+            app:destination="@id/settlementTitleFragment" />
         <action android:id="@+id/action_home_to_qrScan"
             app:destination="@id/qrScanFragment" />
         <action android:id="@+id/action_home_to_scanHub"
@@ -260,6 +262,15 @@
     </fragment>
 
     <fragment
+        android:id="@+id/settlementTitleFragment"
+        android:name="com.android.bilzy.ui.scan.SettlementTitleFragment"
+        android:label="SettlementTitle"
+        tools:layout="@layout/fragment_settlement_title">
+        <action android:id="@+id/action_settlementTitle_to_scanPermission"
+            app:destination="@id/scanPermissionFragment" />
+    </fragment>
+
+    <fragment
         android:id="@+id/scanPermissionFragment"
         android:name="com.android.bilzy.ui.scan.ScanPermissionFragment"
         android:label="ScanPermission"
@@ -310,6 +321,11 @@
         tools:layout="@layout/fragment_recognizing">
         <action android:id="@+id/action_recognizing_to_receiptSave"
             app:destination="@id/receiptSaveFragment" />
+        <!-- OCR 업로드 성공 → 결과 확인 화면 (뒤로가기 시 재업로드 방지 위해 recognizing 제거) -->
+        <action android:id="@+id/recognizing_to_ocrResult"
+            app:destination="@id/ocrResultFragment"
+            app:popUpTo="@id/recognizingFragment"
+            app:popUpToInclusive="true" />
     </fragment>
 
     <fragment

@@ -32,7 +32,7 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.cardPayer.setOnClickListener {
-            findNavController().navigate(R.id.action_home_to_scanPermission)
+            findNavController().navigate(R.id.action_home_to_settlementTitle)
         }
 
         binding.cardParticipant.setOnClickListener {

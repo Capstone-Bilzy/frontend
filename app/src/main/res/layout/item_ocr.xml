@@ -4,18 +4,35 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
+    android:gravity="center_vertical"
     android:padding="12dp"
     android:background="@drawable/bg_card_rounded"
     android:layout_marginBottom="8dp">
 
-    <TextView
-        android:id="@+id/tvName"
+    <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="항목명"
-        android:textColor="#FFFFFF"
-        android:textSize="14sp" />
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="항목명"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/tvQty"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="1,000원 × 1"
+            android:textColor="#99FFFFFF"
+            android:textSize="12sp" />
+
+    </LinearLayout>
 
     <TextView
         android:id="@+id/tvPrice"
@@ -25,5 +42,17 @@
         android:textColor="#A5A6F6"
         android:textSize="14sp"
         android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/btnDelete"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginStart="8dp"
+        android:text="✕"
+        android:gravity="center"
+        android:textColor="#80FFFFFF"
+        android:textSize="16sp"
+        android:clickable="true"
+        android:focusable="true" />
 
 </LinearLayout>

@@ -112,6 +112,15 @@ dependencies {
     // Kakao 로그인 SDK
     implementation(libs.kakao.user)
 
+    // Hilt Navigation (hiltNavGraphViewModels)
+    implementation(libs.androidx.hilt.navigation.fragment)
+
+    // CameraX (영수증 촬영)
+    implementation(libs.androidx.camera.core)
+    implementation(libs.androidx.camera.camera2)
+    implementation(libs.androidx.camera.lifecycle)
+    implementation(libs.androidx.camera.view)
+
     implementation("androidx.core:core-ktx:1.13.1")
     implementation("androidx.appcompat:appcompat:1.7.0")
     implementation("com.google.android.material:material:1.12.0")
