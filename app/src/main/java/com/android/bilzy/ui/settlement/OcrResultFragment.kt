@@ -46,13 +46,22 @@ class OcrResultFragment : Fragment() {
         binding.rvItems.layoutManager = LinearLayoutManager(requireContext())
         binding.rvItems.adapter = adapter
 
-        binding.etGroupName.setText(viewModel.settlementTitle)
+        if (viewModel.settlementTitle.isNotEmpty()) {
+            binding.etGroupName.setText(viewModel.settlementTitle)
+        }
 
         binding.btnBack.setOnClickListener {
             findNavController().navigate(R.id.action_ocrResult_to_home)
         }
         binding.btnAddItem.setOnClickListener { showAddItemDialog() }
-        binding.btnStart.setOnClickListener { viewModel.confirm() }
+        binding.btnStart.setOnClickListener {
+            val title = binding.etGroupName.text.toString().trim()
+            if (title.isEmpty()) {
+                Toast.makeText(requireContext(), "모임 이름을 입력해주세요", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            viewModel.confirm(title)
+        }
 
         observeItems()
         observeConfirm()

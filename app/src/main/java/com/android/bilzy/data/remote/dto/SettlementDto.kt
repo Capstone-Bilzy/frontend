@@ -12,7 +12,14 @@ import kotlinx.serialization.Serializable
 data class CreateSettlementRequest(val title: String)
 
 @Serializable
+data class UpdateSettlementRequest(val title: String)
+
+@Serializable
 data class UpdateStatusRequest(val status: String)
+
+/** POST /settlements/{id}/join, /members 요청 바디. */
+@Serializable
+data class AddMemberRequest(val nickname: String)
 
 // ── 응답 ─────────────────────────────────────────────
 /** GET/POST /settlements 응답. members/items는 GET 상세에서만 채워짐. */

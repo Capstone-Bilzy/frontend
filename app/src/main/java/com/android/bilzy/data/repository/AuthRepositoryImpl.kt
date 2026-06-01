@@ -18,6 +18,7 @@ class AuthRepositoryImpl @Inject constructor(
     override suspend fun socialLogin(provider: String, accessToken: String) {
         val res = api.socialLogin(SocialLoginRequest(provider, accessToken))
         tokenStore.saveTokens(res.accessToken, res.refreshToken)
+        res.user?.nickname?.takeIf { it.isNotBlank() }?.let { tokenStore.saveNickname(it) }
     }
 
     override suspend fun logout() {

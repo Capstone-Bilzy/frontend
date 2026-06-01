@@ -20,6 +20,7 @@ datastore = "1.1.1"
 kakaoSdk = "2.20.6"
 hiltNavigation = "1.2.0"
 camerax = "1.3.4"
+mlkitBarcode = "17.3.0"
 junit = "4.13.2"
 junitVersion = "1.3.0"
 espressoCore = "3.7.0"
@@ -80,6 +81,9 @@ androidx-camera-core = { group = "androidx.camera", name = "camera-core", versio
 androidx-camera-camera2 = { group = "androidx.camera", name = "camera-camera2", version.ref = "camerax" }
 androidx-camera-lifecycle = { group = "androidx.camera", name = "camera-lifecycle", version.ref = "camerax" }
 androidx-camera-view = { group = "androidx.camera", name = "camera-view", version.ref = "camerax" }
+
+# ML Kit (QR/바코드 인식)
+mlkit-barcode-scanning = { group = "com.google.mlkit", name = "barcode-scanning", version.ref = "mlkitBarcode" }
 
 # Test
 junit = { group = "junit", name = "junit", version.ref = "junit" }

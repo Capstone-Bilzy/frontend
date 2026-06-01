@@ -10,7 +10,13 @@ interface SettlementRepository {
     /** 정산방 상세(멤버·항목 포함) 조회. */
     suspend fun getSettlement(id: String): Settlement
 
+    /** 정산방 제목 수정. */
+    suspend fun updateTitle(id: String, title: String): Settlement
+
     suspend fun updateStatus(id: String, status: SettlementStatus): Settlement
 
     suspend fun deleteSettlement(id: String)
+
+    /** QR로 인식한 정산방에 내 닉네임으로 참여. */
+    suspend fun joinByQr(id: String, nickname: String)
 }

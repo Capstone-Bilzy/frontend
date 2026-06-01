@@ -110,8 +110,8 @@
         tools:layout="@layout/fragment_home">
         <action android:id="@+id/action_home_to_scanPermission"
             app:destination="@id/scanPermissionFragment" />
-        <action android:id="@+id/action_home_to_settlementTitle"
-            app:destination="@id/settlementTitleFragment" />
+        <action android:id="@+id/action_home_to_scanCamera"
+            app:destination="@id/scanCameraFragment" />
         <action android:id="@+id/action_home_to_qrScan"
             app:destination="@id/qrScanFragment" />
         <action android:id="@+id/action_home_to_scanHub"
@@ -259,15 +259,6 @@
             app:destination="@id/scanCameraModalFragment" />
         <action android:id="@+id/action_scanHub_to_enteringRoom"
             app:destination="@id/enteringRoomFragment" />
-    </fragment>
-
-    <fragment
-        android:id="@+id/settlementTitleFragment"
-        android:name="com.android.bilzy.ui.scan.SettlementTitleFragment"
-        android:label="SettlementTitle"
-        tools:layout="@layout/fragment_settlement_title">
-        <action android:id="@+id/action_settlementTitle_to_scanPermission"
-            app:destination="@id/scanPermissionFragment" />
     </fragment>
 
     <fragment

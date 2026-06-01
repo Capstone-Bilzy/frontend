@@ -1,11 +1,13 @@
 package com.android.bilzy.ui.auth
 
+import android.animation.ObjectAnimator
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.DecelerateInterpolator
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.android.bilzy.R
@@ -16,6 +18,7 @@ class LoginLoadingFragment : Fragment() {
     private var _binding: FragmentLoginLoadingBinding? = null
     private val binding get() = _binding!!
     private val handler = Handler(Looper.getMainLooper())
+    private var progressAnimator: ObjectAnimator? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -29,6 +32,14 @@ class LoginLoadingFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // 진행 바를 0 → 100 으로 채워 로딩이 진행 중임을 보여준다.
+        binding.progressBar.progress = 0
+        progressAnimator = ObjectAnimator.ofInt(binding.progressBar, "progress", 0, 100).apply {
+            duration = 2300
+            interpolator = DecelerateInterpolator()
+            start()
+        }
+
         handler.postDelayed({
             if (isAdded) {
                 findNavController().navigate(R.id.action_loginLoading_to_home)
@@ -38,6 +49,8 @@ class LoginLoadingFragment : Fragment() {
 
     override fun onDestroyView() {
         handler.removeCallbacksAndMessages(null)
+        progressAnimator?.cancel()
+        progressAnimator = null
         super.onDestroyView()
         _binding = null
     }

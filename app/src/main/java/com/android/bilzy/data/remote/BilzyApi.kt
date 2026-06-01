@@ -1,6 +1,7 @@
 package com.android.bilzy.data.remote
 
 import com.android.bilzy.data.remote.dto.AddItemRequest
+import com.android.bilzy.data.remote.dto.AddMemberRequest
 import com.android.bilzy.data.remote.dto.AuthResponse
 import com.android.bilzy.data.remote.dto.CreateSettlementRequest
 import com.android.bilzy.data.remote.dto.OcrConfirmRequest
@@ -9,7 +10,9 @@ import com.android.bilzy.data.remote.dto.OcrScanResponse
 import com.android.bilzy.data.remote.dto.ReceiptItemDto
 import com.android.bilzy.data.remote.dto.RefreshRequest
 import com.android.bilzy.data.remote.dto.SettlementDto
+import com.android.bilzy.data.remote.dto.SettlementMemberDto
 import com.android.bilzy.data.remote.dto.SocialLoginRequest
+import com.android.bilzy.data.remote.dto.UpdateSettlementRequest
 import com.android.bilzy.data.remote.dto.UpdateStatusRequest
 import okhttp3.MultipartBody
 import retrofit2.http.Body
@@ -46,6 +49,12 @@ interface BilzyApi {
     @GET("settlements/{id}")
     suspend fun getSettlement(@Path("id") id: String): SettlementDto
 
+    @PATCH("settlements/{id}")
+    suspend fun updateSettlement(
+        @Path("id") id: String,
+        @Body body: UpdateSettlementRequest
+    ): SettlementDto
+
     @PATCH("settlements/{id}/status")
     suspend fun updateSettlementStatus(
         @Path("id") id: String,
@@ -54,6 +63,13 @@ interface BilzyApi {
 
     @DELETE("settlements/{id}")
     suspend fun deleteSettlement(@Path("id") id: String)
+
+    /** QR로 정산방 참여. 본인 닉네임으로 멤버 추가. */
+    @POST("settlements/{id}/join")
+    suspend fun joinSettlement(
+        @Path("id") id: String,
+        @Body body: AddMemberRequest
+    ): SettlementMemberDto
 
     // ── OCR ──────────────────────────────────────────────
     /** 영수증 이미지 업로드 → 서버(Gemini)가 OCR. settlement_id는 쿼리 파라미터. */

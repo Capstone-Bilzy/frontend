@@ -22,9 +22,10 @@ class ScanFlowViewModel @Inject constructor(
     private val ocrRepository: OcrRepository
 ) : ViewModel() {
 
-    /** 현재 진행 중인 정산방 id (createSettlement 성공 후 채워짐) */
+    /** 현재 진행 중인 정산방 id (스캔/확정 시 지연 생성되어 채워짐) */
     var settlementId: String? = null
         private set
+    /** 사용자가 OCR 결과 화면에서 정한 모임 이름. 정해지기 전엔 비어 있음. */
     var settlementTitle: String = ""
         private set
 
@@ -32,33 +33,17 @@ class ScanFlowViewModel @Inject constructor(
     var scannedReceipt: ScannedReceipt? = null
         private set
 
-    // ── 정산방 생성 ───────────────────────────────────────
-    sealed interface CreateState {
-        data object Idle : CreateState
-        data object Loading : CreateState
-        data class Created(val id: String) : CreateState
-        data class Error(val message: String) : CreateState
-    }
-
-    private val _createState = MutableStateFlow<CreateState>(CreateState.Idle)
-    val createState = _createState.asStateFlow()
-
-    fun createSettlement(title: String) {
-        if (_createState.value == CreateState.Loading) return
-        viewModelScope.launch {
-            _createState.value = CreateState.Loading
-            runCatching { settlementRepository.createSettlement(title) }
-                .onSuccess {
-                    settlementId = it.id
-                    settlementTitle = it.title
-                    _createState.value = CreateState.Created(it.id)
-                }
-                .onFailure { _createState.value = CreateState.Error(it.message ?: "정산방 생성에 실패했습니다") }
-        }
-    }
-
-    fun consumeCreateState() {
-        _createState.value = CreateState.Idle
+    // ── 정산방 지연 생성 ──────────────────────────────────
+    /**
+     * 정산방이 아직 없으면 임시 제목으로 생성하고 id를 반환한다.
+     * 백엔드는 스캔/확정 전에 settlement_id를 요구하지만, 제목 입력 화면을 없애
+     * 모임 이름은 OCR 결과 화면에서 받으므로 우선 임시 제목으로 만들고 확정 시 갱신한다.
+     */
+    private suspend fun ensureSettlementId(): String {
+        settlementId?.let { return it }
+        val created = settlementRepository.createSettlement(PLACEHOLDER_TITLE)
+        settlementId = created.id
+        return created.id
     }
 
     // ── 영수증 스캔(OCR 업로드) ────────────────────────────
@@ -82,15 +67,17 @@ class ScanFlowViewModel @Inject constructor(
     /** 보관된 이미지를 /ocr/scan에 업로드한다. 성공 시 scannedReceipt가 채워진다. */
     fun runScan() {
         if (_scanState.value == ScanState.Loading) return
-        val sid = settlementId
         val image = pendingImage
-        if (sid == null || image == null) {
+        if (image == null) {
             _scanState.value = ScanState.Error("스캔할 이미지가 없습니다")
             return
         }
         viewModelScope.launch {
             _scanState.value = ScanState.Loading
-            runCatching { ocrRepository.scan(sid, image.first, image.second) }
+            runCatching {
+                val sid = ensureSettlementId()
+                ocrRepository.scan(sid, image.first, image.second)
+            }
                 .onSuccess {
                     scannedReceipt = it
                     _items.value = it.items
@@ -130,21 +117,27 @@ class ScanFlowViewModel @Inject constructor(
     private val _confirmState = MutableStateFlow<ConfirmState>(ConfirmState.Idle)
     val confirmState = _confirmState.asStateFlow()
 
-    /** 수정된 항목을 /ocr/confirm으로 확정한다(status=waiting). */
-    fun confirm() {
+    /**
+     * 수정된 항목을 /ocr/confirm으로 확정한다(status=waiting).
+     * title이 비어있지 않으면 정산방 제목으로 저장(PATCH)한다.
+     */
+    fun confirm(title: String = "") {
         if (_confirmState.value == ConfirmState.Loading) return
-        val sid = settlementId
-        if (sid == null) {
-            _confirmState.value = ConfirmState.Error("정산방 정보가 없습니다")
-            return
-        }
         if (_items.value.isEmpty()) {
             _confirmState.value = ConfirmState.Error("항목이 최소 1개는 필요해요")
             return
         }
         viewModelScope.launch {
             _confirmState.value = ConfirmState.Loading
-            runCatching { ocrRepository.confirm(sid, _items.value) }
+            runCatching {
+                val sid = ensureSettlementId()
+                val cleanTitle = title.trim()
+                if (cleanTitle.isNotEmpty() && cleanTitle != settlementTitle) {
+                    settlementRepository.updateTitle(sid, cleanTitle)
+                    settlementTitle = cleanTitle
+                }
+                ocrRepository.confirm(sid, _items.value)
+            }
                 .onSuccess { _confirmState.value = ConfirmState.Success }
                 .onFailure { _confirmState.value = ConfirmState.Error(it.message ?: "확정에 실패했습니다") }
         }
@@ -152,5 +145,10 @@ class ScanFlowViewModel @Inject constructor(
 
     fun consumeConfirmState() {
         _confirmState.value = ConfirmState.Idle
+    }
+
+    private companion object {
+        /** 모임 이름을 정하기 전 정산방 생성에 쓰는 임시 제목. 확정 시 사용자 입력으로 교체됨. */
+        const val PLACEHOLDER_TITLE = "정산"
     }
 }

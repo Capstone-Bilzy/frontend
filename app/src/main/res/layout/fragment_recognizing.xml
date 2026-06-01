@@ -111,6 +111,7 @@
                 android:background="@drawable/bg_role_chip">
 
                 <ImageView
+                    android:id="@+id/ivStep1"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:layout_gravity="center"
@@ -120,6 +121,7 @@
             </FrameLayout>
 
             <TextView
+                android:id="@+id/tvStep1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
@@ -153,6 +155,7 @@
                 android:background="@drawable/bg_avatar_circle">
 
                 <ImageView
+                    android:id="@+id/ivStep2"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:layout_gravity="center"
@@ -162,6 +165,7 @@
             </FrameLayout>
 
             <TextView
+                android:id="@+id/tvStep2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
@@ -195,6 +199,7 @@
                 android:background="@drawable/bg_avatar_circle">
 
                 <ImageView
+                    android:id="@+id/ivStep3"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:layout_gravity="center"
@@ -204,6 +209,7 @@
             </FrameLayout>
 
             <TextView
+                android:id="@+id/tvStep3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"

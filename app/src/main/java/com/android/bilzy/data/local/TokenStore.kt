@@ -23,8 +23,16 @@ class TokenStore @Inject constructor(
 ) {
     private val accessKey = stringPreferencesKey("access_token")
     private val refreshKey = stringPreferencesKey("refresh_token")
+    private val nicknameKey = stringPreferencesKey("nickname")
 
     val accessToken: Flow<String?> = context.authDataStore.data.map { it[accessKey] }
+
+    /** 로그인 시 저장한 내 닉네임(정산방 참여 시 사용). */
+    suspend fun currentNickname(): String? = context.authDataStore.data.map { it[nicknameKey] }.first()
+
+    suspend fun saveNickname(nickname: String) {
+        context.authDataStore.edit { it[nicknameKey] = nickname }
+    }
 
     /** 인터셉터가 매 요청에서 동기적으로 읽기 위한 헬퍼. */
     suspend fun currentAccessToken(): String? = accessToken.first()
