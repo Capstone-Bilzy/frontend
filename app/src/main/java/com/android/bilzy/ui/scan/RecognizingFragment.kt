@@ -102,7 +102,8 @@ class RecognizingFragment : Fragment() {
         pulseStep(2)
         handler.postDelayed({
             if (isAdded && _binding != null) {
-                findNavController().navigate(R.id.recognizing_to_ocrResult)
+                // 인식 완료 → 영수증 저장 확인(9) → 저장 완료(10) → OCR 결과 순으로 이동
+                findNavController().navigate(R.id.action_recognizing_to_receiptSave)
             }
         }, 700L)
     }

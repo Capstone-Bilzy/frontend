@@ -50,8 +50,13 @@ class ScanFlowViewModel @Inject constructor(
     /** ScanCamera에서 확보한 이미지. Recognizing 화면이 소비해 업로드한다. */
     private var pendingImage: Pair<ByteArray, String>? = null
 
+    /** 마지막으로 촬영/선택한 영수증 이미지(저장 확인 화면 미리보기용). 업로드 후에도 유지된다. */
+    var capturedImage: ByteArray? = null
+        private set
+
     fun setPendingImage(bytes: ByteArray, mimeType: String) {
         pendingImage = bytes to mimeType
+        capturedImage = bytes
     }
 
     sealed interface ScanState {

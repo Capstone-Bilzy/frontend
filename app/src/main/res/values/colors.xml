@@ -24,4 +24,7 @@
 
     <color name="success">#4CAF50</color>
     <color name="nav_selector">#85ADFF</color>
+
+    <!-- 스플래시 배경(로고 본체 네이비와 동일) -->
+    <color name="splash_navy">#020A2F</color>
 </resources>

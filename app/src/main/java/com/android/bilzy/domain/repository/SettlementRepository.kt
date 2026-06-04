@@ -19,4 +19,10 @@ interface SettlementRepository {
 
     /** QR로 인식한 정산방에 내 닉네임으로 참여. */
     suspend fun joinByQr(id: String, nickname: String)
+
+    /** 정산 완료 처리(status=done, 내역 기록). */
+    suspend fun markDone(id: String): Settlement
+
+    /** AI(Gemini) 정산 계산 후, 멤버별 금액이 반영된 정산방 상세를 반환. */
+    suspend fun calculate(id: String, aiNote: String): Settlement
 }

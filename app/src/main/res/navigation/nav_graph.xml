@@ -310,8 +310,11 @@
         android:name="com.android.bilzy.ui.scan.RecognizingFragment"
         android:label="Recognizing"
         tools:layout="@layout/fragment_recognizing">
+        <!-- 인식 완료 → 영수증 저장 확인 (뒤로가기 시 재업로드 방지 위해 recognizing 제거) -->
         <action android:id="@+id/action_recognizing_to_receiptSave"
-            app:destination="@id/receiptSaveFragment" />
+            app:destination="@id/receiptSaveFragment"
+            app:popUpTo="@id/recognizingFragment"
+            app:popUpToInclusive="true" />
         <!-- OCR 업로드 성공 → 결과 확인 화면 (뒤로가기 시 재업로드 방지 위해 recognizing 제거) -->
         <action android:id="@+id/recognizing_to_ocrResult"
             app:destination="@id/ocrResultFragment"
@@ -337,8 +340,11 @@
         android:name="com.android.bilzy.ui.scan.ReceiptSavedFragment"
         android:label="ReceiptSaved"
         tools:layout="@layout/fragment_receipt_saved">
+        <!-- 저장 완료 → OCR 결과 (저장 화면 2개를 백스택에서 정리) -->
         <action android:id="@+id/action_receiptSaved_to_ocrResult"
-            app:destination="@id/ocrResultFragment" />
+            app:destination="@id/ocrResultFragment"
+            app:popUpTo="@id/receiptSaveFragment"
+            app:popUpToInclusive="true" />
     </fragment>
 
     <fragment

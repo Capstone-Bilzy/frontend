@@ -9,10 +9,15 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.android.bilzy.R
 import com.android.bilzy.databinding.FragmentHomeBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
@@ -21,6 +26,7 @@ class HomeFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val viewModel: HomeViewModel by viewModels()
+    private lateinit var historyAdapter: HomeHistoryAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -45,9 +51,40 @@ class HomeFragment : Fragment() {
         binding.navHistory.setOnClickListener {
             findNavController().navigate(R.id.action_home_to_historyList)
         }
+        binding.btnSeeAll.setOnClickListener {
+            findNavController().navigate(R.id.action_home_to_historyList)
+        }
 
         binding.navMyPage.setOnClickListener {
             findNavController().navigate(R.id.action_home_to_myPage)
+        }
+
+        setupHistory()
+        observeHistory()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // 정산 완료 후 홈 복귀 시 최신 내역을 다시 불러온다.
+        viewModel.loadHistory()
+    }
+
+    private fun setupHistory() {
+        historyAdapter = HomeHistoryAdapter { /* TODO: 상세 화면 연결 */ }
+        binding.rvHistory.layoutManager = LinearLayoutManager(requireContext())
+        binding.rvHistory.adapter = historyAdapter
+    }
+
+    private fun observeHistory() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.history.collect { list ->
+                    list ?: return@collect  // 로딩 중
+                    historyAdapter.submit(list)
+                    binding.rvHistory.visibility = if (list.isEmpty()) View.GONE else View.VISIBLE
+                    binding.tvHistoryEmpty.visibility = if (list.isEmpty()) View.VISIBLE else View.GONE
+                }
+            }
         }
     }
 

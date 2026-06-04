@@ -20,6 +20,7 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -46,6 +47,7 @@ class QrScanFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val viewModel: QrScanViewModel by viewModels()
+    private val roomViewModel: com.android.bilzy.ui.room.RoomViewModel by hiltNavGraphViewModels(R.id.nav_graph)
 
     private lateinit var cameraExecutor: ExecutorService
     private val scanner by lazy {
@@ -112,6 +114,7 @@ class QrScanFragment : Fragment() {
                 viewModel.joinState.collect { state ->
                     when (state) {
                         is QrScanViewModel.JoinState.Success -> {
+                            roomViewModel.setRoom(state.settlementId)
                             viewModel.consumeState()
                             findNavController().navigate(R.id.action_qrScan_to_enteringRoom)
                         }

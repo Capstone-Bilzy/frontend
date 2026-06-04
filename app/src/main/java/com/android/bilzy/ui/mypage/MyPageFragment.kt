@@ -5,14 +5,23 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.android.bilzy.R
 import com.android.bilzy.databinding.FragmentMyPageBinding
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class MyPageFragment : Fragment() {
 
     private var _binding: FragmentMyPageBinding? = null
     private val binding get() = _binding!!
+
+    private val viewModel: MyPageViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -25,6 +34,8 @@ class MyPageFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        observeProfile()
 
         binding.menuAccount.setOnClickListener {
             findNavController().navigate(R.id.action_myPage_to_myPageAccount)
@@ -44,6 +55,18 @@ class MyPageFragment : Fragment() {
 
         binding.navHistory.setOnClickListener {
             findNavController().navigate(R.id.action_myPage_to_historyList)
+        }
+    }
+
+    private fun observeProfile() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.profile.collect { p ->
+                    p ?: return@collect
+                    binding.tvUserName.text = p.nickname
+                    if (p.loginType.isNotBlank()) binding.tvLoginType.text = p.loginType
+                }
+            }
         }
     }
 

@@ -104,18 +104,20 @@
                         android:layout_marginEnd="4dp" />
 
                     <TextView
+                        android:id="@+id/tvMemberChip"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="6명 참여"
+                        android:text="참여"
                         android:textColor="#BEBEF7"
                         android:textSize="11sp" />
 
                 </LinearLayout>
 
                 <TextView
+                    android:id="@+id/tvRoomTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="강남역 저녁 정산 · 1차"
+                    android:text="정산"
                     android:textColor="#FFFFFF"
                     android:textSize="18sp"
                     android:textStyle="bold"
@@ -179,85 +181,12 @@
                 android:textStyle="bold"
                 android:layout_marginBottom="10dp" />
 
-            <!-- Person cards (hardcoded sample) -->
-
-            <!-- Person 1: 정민지 (나) -->
+            <!-- Person cards (실제 멤버로 동적 생성) -->
             <LinearLayout
+                android:id="@+id/personsContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:background="@drawable/bg_person_card"
-                android:padding="14dp"
-                android:layout_marginBottom="8dp">
-                <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content">
-                    <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:layout_alignParentStart="true">
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="정민지" android:textColor="#FFFFFF" android:textSize="15sp" android:textStyle="bold" />
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="6dp" android:text="나" android:textColor="#A5A6F6" android:textSize="11sp" android:background="@drawable/bg_role_chip" android:paddingStart="6dp" android:paddingEnd="6dp" android:paddingTop="2dp" android:paddingBottom="2dp" />
-                    </LinearLayout>
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_alignParentEnd="true" android:layout_centerVertical="true" android:text="48,150원" android:textColor="#FFFFFF" android:textSize="15sp" android:textStyle="bold" />
-                </RelativeLayout>
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="삼겹살, 계란찜, 된장찌개, 사이다, 주류" android:textColor="#8888BB" android:textSize="11sp" />
-                <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="6dp">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="냉면 -7,500원" android:textColor="#FFFFFF" android:textSize="11sp" android:background="@drawable/bg_chip_green" android:paddingStart="8dp" android:paddingEnd="8dp" android:paddingTop="3dp" android:paddingBottom="3dp" android:layout_marginEnd="6dp" />
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="공기밥 -1,000원" android:textColor="#FFFFFF" android:textSize="11sp" android:background="@drawable/bg_chip_green" android:paddingStart="8dp" android:paddingEnd="8dp" android:paddingTop="3dp" android:paddingBottom="3dp" />
-                </LinearLayout>
-            </LinearLayout>
-
-            <!-- Person 2: 김민준 -->
-            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:background="@drawable/bg_person_card" android:padding="14dp" android:layout_marginBottom="8dp">
-                <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_alignParentStart="true" android:text="김민준" android:textColor="#FFFFFF" android:textSize="15sp" android:textStyle="bold" />
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_alignParentEnd="true" android:layout_centerVertical="true" android:text="41,650원" android:textColor="#FFFFFF" android:textSize="15sp" android:textStyle="bold" />
-                </RelativeLayout>
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="삼겹살, 냉면, 공기밥, 계란찜, 된장찌개" android:textColor="#8888BB" android:textSize="11sp" />
-                <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="6dp">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="주류 -13,200원" android:textColor="#FFFFFF" android:textSize="11sp" android:background="@drawable/bg_chip_green" android:paddingStart="8dp" android:paddingEnd="8dp" android:paddingTop="3dp" android:paddingBottom="3dp" android:layout_marginEnd="6dp" />
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="사이다 -3,000원" android:textColor="#FFFFFF" android:textSize="11sp" android:background="@drawable/bg_chip_green" android:paddingStart="8dp" android:paddingEnd="8dp" android:paddingTop="3dp" android:paddingBottom="3dp" />
-                </LinearLayout>
-            </LinearLayout>
-
-            <!-- Person 3: 이서연 -->
-            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:background="@drawable/bg_person_card" android:padding="14dp" android:layout_marginBottom="8dp">
-                <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_alignParentStart="true" android:text="이서연" android:textColor="#FFFFFF" android:textSize="15sp" android:textStyle="bold" />
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_alignParentEnd="true" android:layout_centerVertical="true" android:text="51,950원" android:textColor="#FFFFFF" android:textSize="15sp" android:textStyle="bold" />
-                </RelativeLayout>
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="삼겹살, 냉면, 공기밥, 계란찜, 된장찌개, 주류" android:textColor="#8888BB" android:textSize="11sp" />
-                <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="6dp">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="사이다 -3,000원" android:textColor="#FFFFFF" android:textSize="11sp" android:background="@drawable/bg_chip_green" android:paddingStart="8dp" android:paddingEnd="8dp" android:paddingTop="3dp" android:paddingBottom="3dp" />
-                </LinearLayout>
-            </LinearLayout>
-
-            <!-- Person 4: 박현우 -->
-            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:background="@drawable/bg_person_card" android:padding="14dp" android:layout_marginBottom="8dp">
-                <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_alignParentStart="true" android:text="박현우" android:textColor="#FFFFFF" android:textSize="15sp" android:textStyle="bold" />
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_alignParentEnd="true" android:layout_centerVertical="true" android:text="47,050원" android:textColor="#FFFFFF" android:textSize="15sp" android:textStyle="bold" />
-                </RelativeLayout>
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="삼겹살, 냉면, 공기밥, 주류" android:textColor="#8888BB" android:textSize="11sp" />
-                <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="6dp">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="계란찜 -2,400원" android:textColor="#FFFFFF" android:textSize="11sp" android:background="@drawable/bg_chip_green" android:paddingStart="8dp" android:paddingEnd="8dp" android:paddingTop="3dp" android:paddingBottom="3dp" android:layout_marginEnd="6dp" />
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="된장찌개 -2,400원" android:textColor="#FFFFFF" android:textSize="11sp" android:background="@drawable/bg_chip_green" android:paddingStart="8dp" android:paddingEnd="8dp" android:paddingTop="3dp" android:paddingBottom="3dp" />
-                </LinearLayout>
-            </LinearLayout>
-
-            <!-- Person 5: 최지수 -->
-            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:background="@drawable/bg_person_card" android:padding="14dp" android:layout_marginBottom="8dp">
-                <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_alignParentStart="true" android:text="최지수" android:textColor="#FFFFFF" android:textSize="15sp" android:textStyle="bold" />
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_alignParentEnd="true" android:layout_centerVertical="true" android:text="60,600원" android:textColor="#FFFFFF" android:textSize="15sp" android:textStyle="bold" />
-                </RelativeLayout>
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="삼겹살, 냉면, 공기밥, 계란찜, 된장찌개, 사이다, 주류" android:textColor="#8888BB" android:textSize="11sp" />
-            </LinearLayout>
-
-            <!-- Person 6: 강승호 -->
-            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:background="@drawable/bg_person_card" android:padding="14dp">
-                <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_alignParentStart="true" android:text="강승호" android:textColor="#FFFFFF" android:textSize="15sp" android:textStyle="bold" />
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_alignParentEnd="true" android:layout_centerVertical="true" android:text="60,600원" android:textColor="#FFFFFF" android:textSize="15sp" android:textStyle="bold" />
-                </RelativeLayout>
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="삼겹살, 냉면, 공기밥, 계란찜, 된장찌개, 사이다, 주류" android:textColor="#8888BB" android:textSize="11sp" />
-            </LinearLayout>
+                android:orientation="vertical" />
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

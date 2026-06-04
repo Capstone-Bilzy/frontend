@@ -85,6 +85,7 @@
 
             <!-- Receipt table card -->
             <LinearLayout
+                android:id="@+id/receiptTable"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
@@ -179,9 +180,10 @@
                         android:layout_marginEnd="4dp" />
 
                     <TextView
+                        android:id="@+id/tvSplitLabel"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="기본 1/N (6명)"
+                        android:text="기본 1/N"
                         android:textColor="#BEBEF7"
                         android:textSize="11sp" />
 

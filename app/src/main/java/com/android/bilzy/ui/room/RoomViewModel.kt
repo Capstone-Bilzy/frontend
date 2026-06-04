@@ -1,0 +1,109 @@
+package com.android.bilzy.ui.room
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.android.bilzy.data.local.TokenStore
+import com.android.bilzy.domain.model.Settlement
+import com.android.bilzy.domain.repository.SettlementRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
+import javax.inject.Inject
+
+/**
+ * 정산방 입장 이후 화면들(입장→멤버대기→금액조정→계산→결과→완료)이 공유하는 ViewModel.
+ * nav_graph 스코프(hiltNavGraphViewModels(R.id.nav_graph))로 주입해 settlement_id와 조회 결과를 공유한다.
+ * 진입 경로(호스트: QrInvite, 게스트: QrScan) 양쪽에서 setRoom()으로 id를 넣는다.
+ */
+@HiltViewModel
+class RoomViewModel @Inject constructor(
+    private val settlementRepository: SettlementRepository,
+    private val tokenStore: TokenStore
+) : ViewModel() {
+
+    /** 현재 보고 있는 정산방 id. */
+    var settlementId: String? = null
+        private set
+
+    private val _settlement = MutableStateFlow<Settlement?>(null)
+    val settlement = _settlement.asStateFlow()
+
+    /** 내 닉네임(멤버 목록에서 '나' 식별용). */
+    private val _myNickname = MutableStateFlow<String?>(null)
+    val myNickname = _myNickname.asStateFlow()
+
+    /** 금액 조정 화면에서 만든 특이사항(칩 선택 등) → AI 계산에 전달. */
+    var aiNote: String = ""
+
+    /** true면 AI 계산이 적용된 멤버 금액(저장값), false면 클라이언트 엔빵으로 표시. */
+    var aiApplied: Boolean = false
+        private set
+
+    fun setRoom(id: String?) {
+        if (id.isNullOrBlank()) return
+        if (settlementId != id) {
+            settlementId = id
+            _settlement.value = null
+        }
+        viewModelScope.launch { _myNickname.value = tokenStore.currentNickname() }
+    }
+
+    /**
+     * 내가 이 방의 멤버가 아니면 참여시킨다(이미 멤버면 409가 나도 무시).
+     * 호스트 흐름(방을 만든 사람)도 멤버 목록·정산 결과에 본인이 보이도록 한다.
+     */
+    fun ensureMyMembership() {
+        val id = settlementId ?: return
+        viewModelScope.launch {
+            val nick = tokenStore.currentNickname()?.takeIf { it.isNotBlank() } ?: "참여자"
+            runCatching { settlementRepository.joinByQr(id, nick) } // 이미 참여 중이면 무시
+            runCatching { settlementRepository.getSettlement(id) }
+                .onSuccess { _settlement.value = it }
+        }
+    }
+
+    /** 정산방 상세를 다시 불러온다(멤버·항목·총액 포함). 멤버 대기 폴링에도 사용. */
+    fun load() {
+        val id = settlementId ?: return
+        viewModelScope.launch {
+            runCatching { settlementRepository.getSettlement(id) }
+                .onSuccess { _settlement.value = it }
+        }
+    }
+
+    /**
+     * AI(Gemini) 정산 계산. 성공 시 멤버별 금액·사유가 반영된 상세로 갱신하고 aiApplied=true.
+     * 실패하면 false(호출 측은 엔빵으로 폴백).
+     */
+    suspend fun calculate(): Boolean {
+        val id = settlementId ?: return false
+        return runCatching { settlementRepository.calculate(id, aiNote) }
+            .onSuccess {
+                _settlement.value = it
+                aiApplied = it.members.any { m -> m.amount > 0 }
+            }
+            .isSuccess
+    }
+
+    /** 정산 완료 처리. 성공 여부 반환. */
+    suspend fun markDone(): Boolean {
+        val id = settlementId ?: return false
+        return runCatching { settlementRepository.markDone(id) }
+            .onSuccess { _settlement.value = it }
+            .isSuccess
+    }
+
+    companion object {
+        /**
+         * 총액을 n명에게 엔빵(원 단위). 나머지는 앞사람부터 1원씩 더해 합이 총액과 정확히 일치한다.
+         * 예) 100,000원 / 3명 → [33,334, 33,333, 33,333]
+         */
+        fun evenSplit(total: Long, n: Int): List<Long> {
+            if (n <= 0) return emptyList()
+            val base = total / n
+            val remainder = (total - base * n).toInt()
+            return List(n) { i -> base + if (i < remainder) 1 else 0 }
+        }
+    }
+}

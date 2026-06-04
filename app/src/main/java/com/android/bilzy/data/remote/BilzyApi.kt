@@ -4,6 +4,7 @@ import com.android.bilzy.data.remote.dto.AddItemRequest
 import com.android.bilzy.data.remote.dto.AddMemberRequest
 import com.android.bilzy.data.remote.dto.AuthResponse
 import com.android.bilzy.data.remote.dto.CreateSettlementRequest
+import com.android.bilzy.data.remote.dto.HistoryDto
 import com.android.bilzy.data.remote.dto.OcrConfirmRequest
 import com.android.bilzy.data.remote.dto.OcrConfirmResponse
 import com.android.bilzy.data.remote.dto.OcrScanResponse
@@ -13,6 +14,7 @@ import com.android.bilzy.data.remote.dto.SettlementDto
 import com.android.bilzy.data.remote.dto.SettlementMemberDto
 import com.android.bilzy.data.remote.dto.SocialLoginRequest
 import com.android.bilzy.data.remote.dto.UpdateSettlementRequest
+import com.android.bilzy.data.remote.dto.UserDto
 import com.android.bilzy.data.remote.dto.UpdateStatusRequest
 import okhttp3.MultipartBody
 import retrofit2.http.Body
@@ -35,6 +37,13 @@ interface BilzyApi {
     // ── 인증 ─────────────────────────────────────────────
     @POST("auth/social")
     suspend fun socialLogin(@Body body: SocialLoginRequest): AuthResponse
+
+    // ── 유저 ─────────────────────────────────────────────
+    @GET("users/me")
+    suspend fun getMe(): UserDto
+
+    @GET("users/me/history")
+    suspend fun getHistory(): List<HistoryDto>
 
     @POST("auth/refresh")
     suspend fun refresh(@Body body: RefreshRequest): AuthResponse
@@ -70,6 +79,17 @@ interface BilzyApi {
         @Path("id") id: String,
         @Body body: AddMemberRequest
     ): SettlementMemberDto
+
+    /** AI(Gemini) 정산 계산. 멤버별 금액·사유는 서버에 저장되고, 이후 GET 상세로 받는다. */
+    @POST("settlements/{id}/calculate")
+    suspend fun calculateSplit(
+        @Path("id") id: String,
+        @Body body: com.android.bilzy.data.remote.dto.CalculateRequest
+    ): com.android.bilzy.data.remote.dto.CalculateResultDto
+
+    /** 정산 완료 처리(status=done, 내역 기록). */
+    @POST("settlements/{id}/done")
+    suspend fun markSettlementDone(@Path("id") id: String): SettlementDto
 
     // ── OCR ──────────────────────────────────────────────
     /** 영수증 이미지 업로드 → 서버(Gemini)가 OCR. settlement_id는 쿼리 파라미터. */

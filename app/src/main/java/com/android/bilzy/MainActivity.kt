@@ -22,6 +22,8 @@ class MainActivity : AppCompatActivity() {
     @Inject lateinit var tokenStore: TokenStore
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // 런치 시 스플래시(Theme.Bilzy.Splash) → 콘텐츠 표시 전 일반 테마로 전환
+        setTheme(R.style.Theme_Bilzy)
         super.onCreate(savedInstanceState)
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
         window.statusBarColor = android.graphics.Color.parseColor("#0A1130")

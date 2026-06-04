@@ -42,3 +42,10 @@ data class UserDto(
     val provider: String = "",
     @SerialName("created_at") val createdAt: String? = null
 )
+
+fun UserDto.toProfile() = com.android.bilzy.domain.model.UserProfile(
+    id = id,
+    nickname = nickname,
+    profileImageUrl = profileImageUrl,
+    provider = provider
+)

@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="Theme.Bilzy" parent="Theme.Material3.DayNight.NoActionBar" />
+
+    <!-- 런치(스플래시) 테마: 네이비 배경 + 중앙 로고. onCreate에서 Theme.Bilzy로 전환. -->
+    <style name="Theme.Bilzy.Splash" parent="Theme.Bilzy">
+        <item name="android:windowBackground">@drawable/splash_background</item>
+    </style>
 </resources>

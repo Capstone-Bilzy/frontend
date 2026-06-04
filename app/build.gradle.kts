@@ -124,6 +124,9 @@ dependencies {
     // ML Kit 바코드(QR) 인식
     implementation(libs.mlkit.barcode.scanning)
 
+    // ZXing (QR 코드 생성)
+    implementation("com.google.zxing:core:3.5.3")
+
     implementation("androidx.core:core-ktx:1.13.1")
     implementation("androidx.appcompat:appcompat:1.7.0")
     implementation("com.google.android.material:material:1.12.0")

@@ -21,6 +21,17 @@ data class UpdateStatusRequest(val status: String)
 @Serializable
 data class AddMemberRequest(val nickname: String)
 
+/** POST /settlements/{id}/calculate 요청. ai_note에 특이사항(칩 선택 등)을 문자열로 담는다. */
+@Serializable
+data class CalculateRequest(@SerialName("ai_note") val aiNote: String = "")
+
+/** AI 계산 응답(요약/면책). 멤버별 금액은 calculate 후 GET 상세로 다시 받는다. */
+@Serializable
+data class CalculateResultDto(
+    val summary: String? = null,
+    @SerialName("ai_disclaimer") val aiDisclaimer: String? = null
+)
+
 // ── 응답 ─────────────────────────────────────────────
 /** GET/POST /settlements 응답. members/items는 GET 상세에서만 채워짐. */
 @Serializable

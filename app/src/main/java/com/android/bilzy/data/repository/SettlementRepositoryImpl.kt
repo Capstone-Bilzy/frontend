@@ -35,4 +35,13 @@ class SettlementRepositoryImpl @Inject constructor(
     override suspend fun joinByQr(id: String, nickname: String) {
         api.joinSettlement(id, AddMemberRequest(nickname))
     }
+
+    override suspend fun markDone(id: String): Settlement =
+        api.markSettlementDone(id).toDomain()
+
+    override suspend fun calculate(id: String, aiNote: String): Settlement {
+        api.calculateSplit(id, com.android.bilzy.data.remote.dto.CalculateRequest(aiNote))
+        // 계산 결과(멤버별 금액·사유)는 서버에 저장되므로 상세를 다시 받아 반영
+        return api.getSettlement(id).toDomain()
+    }
 }

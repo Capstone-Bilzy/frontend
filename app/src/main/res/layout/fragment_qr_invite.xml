@@ -88,6 +88,7 @@
             android:background="@drawable/bg_scan_frame">
 
             <ImageView
+                android:id="@+id/ivQr"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:src="@drawable/ic_qr"
@@ -98,20 +99,22 @@
         </FrameLayout>
 
         <TextView
+            android:id="@+id/tvRoomTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="강남역 저녁 정산"
+            android:text="정산방"
             android:textColor="#FFFFFF"
             android:textSize="14sp"
             android:textStyle="bold"
             android:gravity="center" />
 
         <TextView
+            android:id="@+id/tvRoomCode"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:text="2026.04.24"
+            android:text="QR을 스캔해 입장"
             android:textColor="#8888BB"
             android:textSize="12sp"
             android:gravity="center" />

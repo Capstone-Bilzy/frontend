@@ -79,12 +79,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Viewfinder (receipt preview area) -->
-    <View
-        android:id="@+id/receiptCard"
+    <!-- Receipt preview (촬영한 영수증 이미지) -->
+    <ImageView
+        android:id="@+id/ivReceipt"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@drawable/bg_scan_frame"
+        android:scaleType="centerCrop"
+        android:padding="2dp"
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
         android:layout_marginTop="16dp"

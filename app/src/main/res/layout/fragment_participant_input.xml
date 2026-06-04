@@ -88,7 +88,7 @@
         android:layout_height="52dp"
         android:hint="이름 또는 닉네임"
         android:textColorHint="#5555AA"
-        android:textColor="#FFFFFF"
+        android:textColor="#1A1F3E"
         android:textSize="15sp"
         android:background="@drawable/bg_input_white"
         android:paddingStart="16dp"

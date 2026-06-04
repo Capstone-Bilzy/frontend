@@ -216,226 +216,38 @@
                         android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/btnSeeAll"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
                         android:text="전체보기 >"
                         android:textColor="#8080BB"
-                        android:textSize="12sp" />
+                        android:textSize="12sp"
+                        android:clickable="true"
+                        android:focusable="true" />
 
                 </RelativeLayout>
 
-                <!-- Item 1 -->
-                <RelativeLayout
+                <!-- 실데이터 리스트 -->
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvHistory"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp">
+                    android:layout_marginTop="8dp"
+                    android:nestedScrollingEnabled="false" />
 
-                    <View
-                        android:id="@+id/avatar1"
-                        android:layout_width="42dp"
-                        android:layout_height="42dp"
-                        android:layout_alignParentStart="true"
-                        android:layout_centerVertical="true"
-                        android:background="@drawable/bg_avatar_circle" />
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_toEndOf="@id/avatar1"
-                        android:layout_toStartOf="@+id/tvAmount1"
-                        android:layout_centerVertical="true"
-                        android:layout_marginStart="12dp"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="회사 점심 약속"
-                            android:textColor="#FFFFFF"
-                            android:textSize="13sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="5.04 · 4명 참여"
-                            android:textColor="#8080BB"
-                            android:textSize="11sp" />
-
-                    </LinearLayout>
-
-                    <TextView
-                        android:id="@+id/tvAmount1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true"
-                        android:text="57,500원"
-                        android:textColor="#FFFFFF"
-                        android:textSize="13sp"
-                        android:textStyle="bold" />
-
-                </RelativeLayout>
-
-                <!-- Item 2 -->
-                <RelativeLayout
+                <!-- 빈 상태 -->
+                <TextView
+                    android:id="@+id/tvHistoryEmpty"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp">
-
-                    <View
-                        android:id="@+id/avatar2"
-                        android:layout_width="42dp"
-                        android:layout_height="42dp"
-                        android:layout_alignParentStart="true"
-                        android:layout_centerVertical="true"
-                        android:background="@drawable/bg_avatar_circle" />
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_toEndOf="@id/avatar2"
-                        android:layout_toStartOf="@+id/tvAmount2"
-                        android:layout_centerVertical="true"
-                        android:layout_marginStart="12dp"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="동기 모임"
-                            android:textColor="#FFFFFF"
-                            android:textSize="13sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="5.15 · 7명 참여"
-                            android:textColor="#8080BB"
-                            android:textSize="11sp" />
-
-                    </LinearLayout>
-
-                    <TextView
-                        android:id="@+id/tvAmount2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true"
-                        android:text="112,000원"
-                        android:textColor="#FFFFFF"
-                        android:textSize="13sp"
-                        android:textStyle="bold" />
-
-                </RelativeLayout>
-
-                <!-- Item 3 -->
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp">
-
-                    <View
-                        android:id="@+id/avatar3"
-                        android:layout_width="42dp"
-                        android:layout_height="42dp"
-                        android:layout_alignParentStart="true"
-                        android:layout_centerVertical="true"
-                        android:background="@drawable/bg_avatar_circle" />
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_toEndOf="@id/avatar3"
-                        android:layout_toStartOf="@+id/tvAmount3"
-                        android:layout_centerVertical="true"
-                        android:layout_marginStart="12dp"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="팀 빌딩 워크숍"
-                            android:textColor="#FFFFFF"
-                            android:textSize="13sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="5.20 · 10명 참여"
-                            android:textColor="#8080BB"
-                            android:textSize="11sp" />
-
-                    </LinearLayout>
-
-                    <TextView
-                        android:id="@+id/tvAmount3"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true"
-                        android:text="230,000원"
-                        android:textColor="#FFFFFF"
-                        android:textSize="13sp"
-                        android:textStyle="bold" />
-
-                </RelativeLayout>
-
-                <!-- Item 4 -->
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp">
-
-                    <View
-                        android:id="@+id/avatar4"
-                        android:layout_width="42dp"
-                        android:layout_height="42dp"
-                        android:layout_alignParentStart="true"
-                        android:layout_centerVertical="true"
-                        android:background="@drawable/bg_avatar_circle" />
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_toEndOf="@id/avatar4"
-                        android:layout_toStartOf="@+id/tvAmount4"
-                        android:layout_centerVertical="true"
-                        android:layout_marginStart="12dp"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="프로젝트 발표회"
-                            android:textColor="#FFFFFF"
-                            android:textSize="13sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="5.25 · 15명 참여"
-                            android:textColor="#8080BB"
-                            android:textSize="11sp" />
-
-                    </LinearLayout>
-
-                    <TextView
-                        android:id="@+id/tvAmount4"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true"
-                        android:text="312,600원"
-                        android:textColor="#FFFFFF"
-                        android:textSize="13sp"
-                        android:textStyle="bold" />
-
-                </RelativeLayout>
+                    android:text="아직 정산 내역이 없어요"
+                    android:textColor="#8080BB"
+                    android:textSize="13sp"
+                    android:gravity="center"
+                    android:paddingTop="20dp"
+                    android:paddingBottom="12dp"
+                    android:visibility="gone" />
 
             </LinearLayout>
 
