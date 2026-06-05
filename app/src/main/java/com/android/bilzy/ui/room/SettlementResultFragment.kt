@@ -124,9 +124,9 @@ class SettlementResultFragment : Fragment() {
         if (isMe) {
             nameWrap.addView(TextView(ctx).apply {
                 text = "나"
-                setTextColor(Color.parseColor("#A5A6F6"))
+                setTextColor(Color.parseColor("#BEBEF7"))
                 setTextSize(TypedValue.COMPLEX_UNIT_SP, 11f)
-                setBackgroundResource(R.drawable.bg_role_chip)
+                setBackgroundResource(R.drawable.bg_chip_purple)
                 setPadding(dp(6), dp(2), dp(6), dp(2))
                 layoutParams = LinearLayout.LayoutParams(
                     ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT

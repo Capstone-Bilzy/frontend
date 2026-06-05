@@ -114,6 +114,7 @@ class QrScanFragment : Fragment() {
                 viewModel.joinState.collect { state ->
                     when (state) {
                         is QrScanViewModel.JoinState.Success -> {
+                            roomViewModel.expectedCount = 0  // 게스트: 인원 게이팅 없음
                             roomViewModel.setRoom(state.settlementId)
                             viewModel.consumeState()
                             findNavController().navigate(R.id.action_qrScan_to_enteringRoom)

@@ -118,6 +118,8 @@
             app:destination="@id/scanHubFragment" />
         <action android:id="@+id/action_home_to_historyList"
             app:destination="@id/historyListFragment" />
+        <action android:id="@+id/action_home_to_historyDetail"
+            app:destination="@id/historyDetailFragment" />
         <action android:id="@+id/action_home_to_myPage"
             app:destination="@id/myPageFragment" />
     </fragment>
@@ -165,6 +167,11 @@
         android:name="com.android.bilzy.ui.history.HistoryDetailFragment"
         android:label="HistoryDetail"
         tools:layout="@layout/fragment_history_detail">
+        <argument
+            android:name="settlementId"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null" />
         <action android:id="@+id/action_historyDetail_to_home"
             app:destination="@id/homeFragment"
             app:popUpTo="@id/homeFragment"

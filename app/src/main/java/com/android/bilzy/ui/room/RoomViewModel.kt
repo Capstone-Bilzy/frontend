@@ -26,12 +26,24 @@ class RoomViewModel @Inject constructor(
     var settlementId: String? = null
         private set
 
+    /** 정산 인원 설정 화면에서 고른 인원수(호스트). 멤버 대기 게이팅에 사용. 0이면 미설정(게스트 등). */
+    var expectedCount: Int = 0
+
     private val _settlement = MutableStateFlow<Settlement?>(null)
     val settlement = _settlement.asStateFlow()
 
     /** 내 닉네임(멤버 목록에서 '나' 식별용). */
     private val _myNickname = MutableStateFlow<String?>(null)
     val myNickname = _myNickname.asStateFlow()
+
+    /** 참여자 입력 화면에서 직접 입력한 표시 이름. 있으면 join·식별에 로그인 닉네임보다 우선. */
+    private var myNameOverride: String? = null
+
+    /** 참여자 입력 화면에서 호출. 빈값이면 무시(로그인 닉네임 사용). */
+    fun setMyName(name: String) {
+        myNameOverride = name.trim().takeIf { it.isNotBlank() }
+        myNameOverride?.let { _myNickname.value = it }
+    }
 
     /** 금액 조정 화면에서 만든 특이사항(칩 선택 등) → AI 계산에 전달. */
     var aiNote: String = ""
@@ -46,7 +58,9 @@ class RoomViewModel @Inject constructor(
             settlementId = id
             _settlement.value = null
         }
-        viewModelScope.launch { _myNickname.value = tokenStore.currentNickname() }
+        viewModelScope.launch {
+            _myNickname.value = myNameOverride ?: tokenStore.currentNickname()
+        }
     }
 
     /**
@@ -56,7 +70,9 @@ class RoomViewModel @Inject constructor(
     fun ensureMyMembership() {
         val id = settlementId ?: return
         viewModelScope.launch {
-            val nick = tokenStore.currentNickname()?.takeIf { it.isNotBlank() } ?: "참여자"
+            val nick = myNameOverride
+                ?: tokenStore.currentNickname()?.takeIf { it.isNotBlank() }
+                ?: "참여자"
             runCatching { settlementRepository.joinByQr(id, nick) } // 이미 참여 중이면 무시
             runCatching { settlementRepository.getSettlement(id) }
                 .onSuccess { _settlement.value = it }

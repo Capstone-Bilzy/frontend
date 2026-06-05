@@ -135,7 +135,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:text="정산방"
-            android:textColor="#FFFFFF"
+            android:textColor="#BEBEF7"
             android:textSize="14sp"
             android:textStyle="bold"
             android:gravity="center" />
@@ -145,8 +145,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:text="QR을 스캔해 입장"
-            android:textColor="#8888BB"
+            android:text="2026.06.06"
+            android:textColor="#BEBEF7"
             android:textSize="12sp"
             android:gravity="center" />
 
@@ -164,7 +164,7 @@
                 android:layout_weight="1"
                 android:orientation="horizontal"
                 android:gravity="center"
-                android:background="@drawable/bg_history_card"
+                android:background="@drawable/bg_btn_sky"
                 android:clickable="true"
                 android:focusable="true"
                 android:layout_marginEnd="6dp">
@@ -173,7 +173,7 @@
                     android:layout_width="16dp"
                     android:layout_height="16dp"
                     android:src="@drawable/ic_download"
-                    app:tint="#C9C9F5"
+                    app:tint="#FFFFFF"
                     android:layout_marginEnd="6dp" />
 
                 <TextView
@@ -192,7 +192,7 @@
                 android:layout_weight="1"
                 android:orientation="horizontal"
                 android:gravity="center"
-                android:background="@drawable/bg_history_card"
+                android:background="@drawable/bg_btn_violet"
                 android:clickable="true"
                 android:focusable="true"
                 android:layout_marginStart="6dp">
@@ -201,7 +201,7 @@
                     android:layout_width="16dp"
                     android:layout_height="16dp"
                     android:src="@drawable/ic_share_circle"
-                    app:tint="#C9C9F5"
+                    app:tint="#FFFFFF"
                     android:layout_marginEnd="6dp" />
 
                 <TextView

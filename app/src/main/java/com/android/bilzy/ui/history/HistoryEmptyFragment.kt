@@ -27,13 +27,12 @@ class HistoryEmptyFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val pastItems = listOf(
-            HistoryItem("생일 파티", "4. 28. 2026 · 05:30 PM", "6명", "103,500원"),
-        )
-
         binding.rvPastHistory.layoutManager = LinearLayoutManager(requireContext())
-        binding.rvPastHistory.adapter = HistoryAdapter(pastItems) {
-            findNavController().navigate(R.id.action_historyEmpty_to_historyDetail)
+        binding.rvPastHistory.adapter = HistoryAdapter(emptyList()) {
+            findNavController().navigate(
+                R.id.action_historyEmpty_to_historyDetail,
+                androidx.core.os.bundleOf("settlementId" to it.settlementId)
+            )
         }
 
         binding.navHome.setOnClickListener {

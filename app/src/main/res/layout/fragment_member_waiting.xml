@@ -155,9 +155,9 @@
                     android:layout_height="16dp"
                     android:layout_gravity="bottom|end"
                     android:src="@drawable/ic_check"
-                    android:background="@drawable/bg_chip_green"
+                    android:background="@drawable/bg_check_badge"
                     android:padding="2dp"
-                    app:tint="#FFFFFF" />
+                    app:tint="#7C7AED" />
 
             </FrameLayout>
 

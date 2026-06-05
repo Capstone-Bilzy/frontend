@@ -57,8 +57,10 @@ class MemberWaitingFragment : Fragment() {
 
         observeRoom()
         handler.post(pollTick)
-        // 안전장치: 폴링이 지연돼도 일정 시간 뒤에는 진행
-        handler.postDelayed({ advance() }, 7000L)
+        // 인원수를 설정하지 않은 경우(게스트 등)에만 안전장치로 일정 시간 뒤 진행
+        if (roomViewModel.expectedCount <= 0) {
+            handler.postDelayed({ advance() }, 7000L)
+        }
     }
 
     private fun observeRoom() {
@@ -67,14 +69,22 @@ class MemberWaitingFragment : Fragment() {
                 roomViewModel.settlement.collect { settlement ->
                     settlement ?: return@collect
                     val members = settlement.members
+                    val target = roomViewModel.expectedCount
                     renderMembers(members)
-                    binding.tvStatus.text = "${members.size}명"
-                    binding.progressBar.progress = if (members.isNotEmpty()) 100 else 10
+                    binding.tvStatus.text =
+                        if (target > 0) "${members.size} / ${target}명" else "${members.size}명"
+                    binding.progressBar.progress = when {
+                        target > 0 -> (members.size * 100 / target).coerceIn(0, 100)
+                        members.isNotEmpty() -> 100
+                        else -> 10
+                    }
 
-                    // 내가 멤버에 포함되면(또는 멤버가 있으면) 곧 진행
                     val myNick = roomViewModel.myNickname.value
                     val iAmIn = myNick != null && members.any { it.nickname == myNick }
-                    if (iAmIn || members.isNotEmpty()) {
+                    val ready =
+                        if (target > 0) members.size >= target  // 설정 인원이 다 모이면
+                        else iAmIn || members.isNotEmpty()       // 인원 미설정이면 멤버가 생기는 대로
+                    if (ready) {
                         handler.postDelayed({ advance() }, 1200L)
                     }
                 }

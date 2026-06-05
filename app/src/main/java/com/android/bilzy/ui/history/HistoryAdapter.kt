@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.android.bilzy.R
 
 data class HistoryItem(
+    val settlementId: String,
     val name: String,
     val date: String,
     val peopleCount: String,

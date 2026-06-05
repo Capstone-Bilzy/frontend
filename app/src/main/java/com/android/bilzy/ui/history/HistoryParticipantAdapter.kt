@@ -34,7 +34,12 @@ class HistoryParticipantAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = participants[position]
         holder.tvName.text = item.name
-        holder.tvItems.text = item.items
+        if (item.items.isBlank()) {
+            holder.tvItems.visibility = View.GONE
+        } else {
+            holder.tvItems.visibility = View.VISIBLE
+            holder.tvItems.text = item.items
+        }
         holder.tvAmount.text = item.amount
         if (item.adjustment != null) {
             holder.tvAdjustment.visibility = View.VISIBLE

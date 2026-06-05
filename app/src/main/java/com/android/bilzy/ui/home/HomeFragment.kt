@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -70,7 +71,12 @@ class HomeFragment : Fragment() {
     }
 
     private fun setupHistory() {
-        historyAdapter = HomeHistoryAdapter { /* TODO: 상세 화면 연결 */ }
+        historyAdapter = HomeHistoryAdapter { item ->
+            findNavController().navigate(
+                R.id.action_home_to_historyDetail,
+                bundleOf("settlementId" to item.settlementId)
+            )
+        }
         binding.rvHistory.layoutManager = LinearLayoutManager(requireContext())
         binding.rvHistory.adapter = historyAdapter
     }

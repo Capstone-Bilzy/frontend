@@ -102,7 +102,8 @@ class QrInviteFragment : Fragment() {
                 binding.ivQr.setImageBitmap(bitmap)
                 binding.ivQr.imageTintList = null   // 생성된 QR은 원본 색 그대로
                 binding.ivQr.setPadding(0, 0, 0, 0)
-                binding.tvRoomCode.text = "QR을 스캔해 정산방에 입장"
+                binding.tvRoomCode.text =
+                    java.time.LocalDate.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyy.MM.dd"))
             }
             .onFailure {
                 binding.tvRoomCode.text = "QR 생성에 실패했어요"

@@ -70,6 +70,11 @@ class SettlementCompleteFragment : Fragment() {
         val stored = members.getOrNull(myIndex)?.amount ?: 0L
         val myAmount = if (stored > 0) stored else shares.getOrElse(myIndex) { 0L }
         binding.tvMyAmount.text = "${nf.format(myAmount)}원"
+
+        // 하단 배지: 내 사유(있으면), 없으면 'N분의 1 적용'. 두 번째 배지는 미사용.
+        val myReason = members.getOrNull(myIndex)?.reason?.takeIf { it.isNotBlank() }
+        binding.tvBadge1.text = myReason ?: "N분의 1 적용"
+        binding.tvBadge2.visibility = View.GONE
     }
 
     override fun onDestroyView() {
