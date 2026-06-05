@@ -44,7 +44,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
-                android:background="@drawable/bg_card_purple"
+                android:background="@drawable/bg_glass_card"
                 android:padding="20dp"
                 android:layout_marginBottom="28dp">
 
@@ -84,123 +84,53 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- Menu section label -->
+            <!-- 설정 -->
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="설정"
-                android:textColor="#CCFFFFFF"
-                android:textSize="14sp"
-                android:layout_marginBottom="8dp" />
-
-            <!-- Divider -->
-            <View
+                android:id="@+id/menuSettings"
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="#1AFFFFFF"
-                android:layout_marginBottom="8dp" />
+                android:layout_height="56dp"
+                android:gravity="center_vertical"
+                android:text="설정"
+                android:textColor="#FFFFFF"
+                android:textSize="15sp"
+                android:clickable="true"
+                android:focusable="true" />
 
             <!-- 계좌 정보 관리 -->
-            <LinearLayout
+            <TextView
                 android:id="@+id/menuAccount"
                 android:layout_width="match_parent"
-                android:layout_height="52dp"
-                android:orientation="horizontal"
+                android:layout_height="56dp"
                 android:gravity="center_vertical"
-                android:paddingStart="4dp"
-                android:paddingEnd="4dp"
+                android:text="계좌 정보 관리"
+                android:textColor="#FFFFFF"
+                android:textSize="15sp"
                 android:clickable="true"
-                android:focusable="true">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="계좌 정보 관리"
-                    android:textColor="#FFFFFF"
-                    android:textSize="15sp" />
-
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@drawable/ic_back"
-                    app:tint="#80FFFFFF"
-                    android:rotation="180" />
-            </LinearLayout>
-
-            <!-- Divider -->
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="#1AFFFFFF" />
+                android:focusable="true" />
 
             <!-- 이메일 문의 -->
-            <LinearLayout
+            <TextView
                 android:id="@+id/menuEmail"
                 android:layout_width="match_parent"
-                android:layout_height="52dp"
-                android:orientation="horizontal"
+                android:layout_height="56dp"
                 android:gravity="center_vertical"
-                android:paddingStart="4dp"
-                android:paddingEnd="4dp"
+                android:text="이메일 문의"
+                android:textColor="#FFFFFF"
+                android:textSize="15sp"
                 android:clickable="true"
-                android:focusable="true">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="이메일 문의"
-                    android:textColor="#FFFFFF"
-                    android:textSize="15sp" />
-
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@drawable/ic_back"
-                    app:tint="#80FFFFFF"
-                    android:rotation="180" />
-            </LinearLayout>
-
-            <!-- Divider -->
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="#1AFFFFFF" />
+                android:focusable="true" />
 
             <!-- 로그아웃 -->
-            <LinearLayout
+            <TextView
                 android:id="@+id/menuLogout"
                 android:layout_width="match_parent"
-                android:layout_height="52dp"
-                android:orientation="horizontal"
+                android:layout_height="56dp"
                 android:gravity="center_vertical"
-                android:paddingStart="4dp"
-                android:paddingEnd="4dp"
+                android:text="로그아웃"
+                android:textColor="#FFFFFF"
+                android:textSize="15sp"
                 android:clickable="true"
-                android:focusable="true">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="로그아웃"
-                    android:textColor="#FFFFFF"
-                    android:textSize="15sp" />
-
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@drawable/ic_back"
-                    app:tint="#80FFFFFF"
-                    android:rotation="180" />
-            </LinearLayout>
-
-            <!-- Divider -->
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="#1AFFFFFF" />
+                android:focusable="true" />
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
@@ -247,8 +177,19 @@
             android:id="@+id/navMyPage"
             android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
             android:orientation="vertical" android:gravity="center" android:clickable="true" android:focusable="true">
-            <ImageView android:layout_width="22dp" android:layout_height="22dp" android:src="@drawable/ic_mapage" app:tint="#A5A6F6" />
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:text="마이페이지" android:textColor="#A5A6F6" android:textSize="10sp" />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:background="@drawable/bg_nav_active"
+                android:paddingStart="18dp"
+                android:paddingEnd="18dp"
+                android:paddingTop="6dp"
+                android:paddingBottom="6dp">
+                <ImageView android:layout_width="22dp" android:layout_height="22dp" android:src="@drawable/ic_mapage" app:tint="#A5A6F6" />
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:text="마이페이지" android:textColor="#A5A6F6" android:textSize="10sp" />
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 

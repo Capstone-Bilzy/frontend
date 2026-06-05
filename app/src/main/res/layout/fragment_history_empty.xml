@@ -117,8 +117,15 @@
             android:id="@+id/navHistory"
             android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
             android:orientation="vertical" android:gravity="center" android:clickable="true" android:focusable="true">
-            <ImageView android:layout_width="22dp" android:layout_height="22dp" android:src="@drawable/ic_history" app:tint="#A5A6F6" />
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:text="정산내역" android:textColor="#A5A6F6" android:textSize="10sp" />
+            <LinearLayout
+                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:orientation="vertical" android:gravity="center"
+                android:background="@drawable/bg_nav_active"
+                android:paddingStart="18dp" android:paddingEnd="18dp"
+                android:paddingTop="6dp" android:paddingBottom="6dp">
+                <ImageView android:layout_width="22dp" android:layout_height="22dp" android:src="@drawable/ic_history" app:tint="#A5A6F6" />
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:text="정산내역" android:textColor="#A5A6F6" android:textSize="10sp" />
+            </LinearLayout>
         </LinearLayout>
 
         <LinearLayout

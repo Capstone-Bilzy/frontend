@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="NotchedTicketLayout">
+        <!-- sideDivider: 좌우 가장자리에 반원 컷 + 점선(상/하 섹션 경계). topCenter: 윗면 중앙에 반원 컷 -->
+        <attr name="notchMode" format="enum">
+            <enum name="sideDivider" value="0" />
+            <enum name="topCenter" value="1" />
+        </attr>
+    </declare-styleable>
+</resources>

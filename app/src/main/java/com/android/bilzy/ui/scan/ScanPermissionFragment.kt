@@ -35,7 +35,7 @@ class ScanPermissionFragment : Fragment() {
                 Toast.makeText(requireContext(), "설정 > 권한에서 카메라를 허용해주세요", Toast.LENGTH_LONG).show()
                 openAppSettings()
             } else {
-                Toast.makeText(requireContext(), "카메라 권한이 필요해요. 직접 입력도 가능해요", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "영수증 스캔에는 카메라 권한이 필요해요", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -57,10 +57,6 @@ class ScanPermissionFragment : Fragment() {
             } else {
                 requestCameraPermission.launch(Manifest.permission.CAMERA)
             }
-        }
-
-        binding.btnManual.setOnClickListener {
-            findNavController().navigate(R.id.action_scanPermission_to_manualInput)
         }
     }
 

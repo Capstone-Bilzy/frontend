@@ -148,15 +148,17 @@ class SettlementResultFragment : Fragment() {
             }
         })
         card.addView(row)
-        // AI 계산 사유(있을 때만)
+        // AI 계산 사유(있을 때만) — 초록 아웃라인 칩
         if (!reason.isNullOrBlank()) {
             card.addView(TextView(ctx).apply {
                 text = reason
-                setTextColor(Color.parseColor("#8888BB"))
+                setTextColor(Color.parseColor("#7CE7A0"))
                 setTextSize(TypedValue.COMPLEX_UNIT_SP, 11f)
+                setBackgroundResource(R.drawable.bg_chip_green_outline)
+                setPadding(dp(10), dp(4), dp(10), dp(4))
                 layoutParams = LinearLayout.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT
-                ).apply { topMargin = dp(4) }
+                    ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
+                ).apply { topMargin = dp(8) }
             })
         }
         return card

@@ -164,31 +164,31 @@
                 android:focusable="true" />
 
             <!-- Total row -->
-            <RelativeLayout
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp">
+                android:orientation="horizontal"
+                android:gravity="end|center_vertical"
+                android:layout_marginTop="14dp">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
                     android:text="총 합계"
                     android:textColor="#BEBEF7"
-                    android:textSize="13sp" />
+                    android:textSize="14sp"
+                    android:layout_marginEnd="10dp" />
 
                 <TextView
                     android:id="@+id/tvTotal"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_marginTop="18dp"
                     android:text="0원"
                     android:textColor="#FFFFFF"
-                    android:textSize="16sp"
+                    android:textSize="18sp"
                     android:textStyle="bold" />
 
-            </RelativeLayout>
+            </LinearLayout>
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

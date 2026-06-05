@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- Translucent navy base -->
+    <!-- Frosted periwinkle base (더 뿌연 느낌) -->
     <item>
         <shape android:shape="rectangle">
-            <solid android:color="#660D1540" />
-            <corners android:radius="16dp" />
+            <solid android:color="#59544FB0" />
+            <corners android:radius="24dp" />
         </shape>
     </item>
-    <!-- Frosted white veil -->
+    <!-- White frost veil -->
     <item>
         <shape android:shape="rectangle">
-            <solid android:color="#0DFFFFFF" />
-            <corners android:radius="16dp" />
+            <solid android:color="#1FFFFFFF" />
+            <corners android:radius="24dp" />
         </shape>
     </item>
     <!-- Lavender glass border -->
     <item>
         <shape android:shape="rectangle">
-            <stroke android:color="#66A5A6F6" android:width="1.5dp" />
-            <corners android:radius="16dp" />
+            <stroke android:color="#80A5A6F6" android:width="1.5dp" />
+            <corners android:radius="24dp" />
         </shape>
     </item>
 </layer-list>

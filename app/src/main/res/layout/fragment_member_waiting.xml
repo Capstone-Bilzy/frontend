@@ -139,7 +139,7 @@
             <FrameLayout
                 android:layout_width="44dp"
                 android:layout_height="44dp"
-                android:background="@drawable/bg_role_chip">
+                android:background="@drawable/bg_avatar_done">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -182,15 +182,15 @@
             <FrameLayout
                 android:layout_width="44dp"
                 android:layout_height="44dp"
-                android:background="@drawable/bg_avatar_circle">
+                android:background="@drawable/bg_avatar_pending">
                 <ImageView
                     android:layout_width="16dp"
                     android:layout_height="16dp"
                     android:layout_gravity="bottom|end"
                     android:src="@drawable/ic_check"
-                    android:background="@drawable/bg_avatar_circle"
+                    android:background="@drawable/bg_avatar_pending"
                     android:padding="2dp"
-                    app:tint="#5555AA" />
+                    app:tint="#6E6E9C" />
             </FrameLayout>
             <TextView
                 android:layout_width="wrap_content"
@@ -211,15 +211,15 @@
             <FrameLayout
                 android:layout_width="44dp"
                 android:layout_height="44dp"
-                android:background="@drawable/bg_avatar_circle">
+                android:background="@drawable/bg_avatar_pending">
                 <ImageView
                     android:layout_width="16dp"
                     android:layout_height="16dp"
                     android:layout_gravity="bottom|end"
                     android:src="@drawable/ic_check"
-                    android:background="@drawable/bg_avatar_circle"
+                    android:background="@drawable/bg_avatar_pending"
                     android:padding="2dp"
-                    app:tint="#5555AA" />
+                    app:tint="#6E6E9C" />
             </FrameLayout>
             <TextView
                 android:layout_width="wrap_content"
@@ -240,15 +240,15 @@
             <FrameLayout
                 android:layout_width="44dp"
                 android:layout_height="44dp"
-                android:background="@drawable/bg_avatar_circle">
+                android:background="@drawable/bg_avatar_pending">
                 <ImageView
                     android:layout_width="16dp"
                     android:layout_height="16dp"
                     android:layout_gravity="bottom|end"
                     android:src="@drawable/ic_check"
-                    android:background="@drawable/bg_avatar_circle"
+                    android:background="@drawable/bg_avatar_pending"
                     android:padding="2dp"
-                    app:tint="#5555AA" />
+                    app:tint="#6E6E9C" />
             </FrameLayout>
             <TextView
                 android:layout_width="wrap_content"
@@ -269,15 +269,15 @@
             <FrameLayout
                 android:layout_width="44dp"
                 android:layout_height="44dp"
-                android:background="@drawable/bg_avatar_circle">
+                android:background="@drawable/bg_avatar_pending">
                 <ImageView
                     android:layout_width="16dp"
                     android:layout_height="16dp"
                     android:layout_gravity="bottom|end"
                     android:src="@drawable/ic_check"
-                    android:background="@drawable/bg_avatar_circle"
+                    android:background="@drawable/bg_avatar_pending"
                     android:padding="2dp"
-                    app:tint="#5555AA" />
+                    app:tint="#6E6E9C" />
             </FrameLayout>
             <TextView
                 android:layout_width="wrap_content"
@@ -298,15 +298,15 @@
             <FrameLayout
                 android:layout_width="44dp"
                 android:layout_height="44dp"
-                android:background="@drawable/bg_avatar_circle">
+                android:background="@drawable/bg_avatar_pending">
                 <ImageView
                     android:layout_width="16dp"
                     android:layout_height="16dp"
                     android:layout_gravity="bottom|end"
                     android:src="@drawable/ic_check"
-                    android:background="@drawable/bg_avatar_circle"
+                    android:background="@drawable/bg_avatar_pending"
                     android:padding="2dp"
-                    app:tint="#5555AA" />
+                    app:tint="#6E6E9C" />
             </FrameLayout>
             <TextView
                 android:layout_width="wrap_content"

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+    <!-- 공유용 QR 이미지를 보관하는 캐시 하위 폴더 -->
+    <cache-path name="qr_share" path="qr/" />
+</paths>

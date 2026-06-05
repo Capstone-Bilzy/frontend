@@ -79,33 +79,13 @@
         android:layout_height="56dp"
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
-        android:layout_marginBottom="12dp"
+        android:layout_marginBottom="36dp"
         android:text="권한 허용하기"
         android:textColor="#FFFFFF"
         android:textSize="16sp"
         android:textStyle="bold"
         android:gravity="center"
         android:background="@drawable/bg_button_dark"
-        android:clickable="true"
-        android:focusable="true"
-        app:layout_constraintBottom_toTopOf="@id/btnManual"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <!-- "직접 입력하기" button -->
-    <TextView
-        android:id="@+id/btnManual"
-        android:layout_width="0dp"
-        android:layout_height="56dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginBottom="36dp"
-        android:text="직접 입력하기"
-        android:textColor="#FFFFFF"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        android:gravity="center"
-        android:background="@drawable/bg_history_card"
         android:clickable="true"
         android:focusable="true"
         app:layout_constraintBottom_toTopOf="@id/bottomNav"
@@ -142,8 +122,15 @@
             android:layout_weight="1"
             android:orientation="vertical"
             android:gravity="center">
-            <ImageView android:layout_width="22dp" android:layout_height="22dp" android:src="@drawable/ic_scan" app:tint="#A5A6F6" />
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:text="스캔" android:textColor="#A5A6F6" android:textSize="10sp" />
+            <LinearLayout
+                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:orientation="vertical" android:gravity="center"
+                android:background="@drawable/bg_nav_active"
+                android:paddingStart="18dp" android:paddingEnd="18dp"
+                android:paddingTop="6dp" android:paddingBottom="6dp">
+                <ImageView android:layout_width="22dp" android:layout_height="22dp" android:src="@drawable/ic_scan" app:tint="#A5A6F6" />
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:text="스캔" android:textColor="#A5A6F6" android:textSize="10sp" />
+            </LinearLayout>
         </LinearLayout>
 
         <LinearLayout

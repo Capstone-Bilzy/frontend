@@ -15,6 +15,7 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
+import java.util.concurrent.TimeUnit
 import javax.inject.Named
 import javax.inject.Singleton
 
@@ -67,6 +68,12 @@ object NetworkModule {
             .addInterceptor(authInterceptor)
             .addInterceptor(logging())
             .authenticator(tokenAuthenticator)
+            // OCR(/ocr/scan)·AI 정산(/calculate)은 서버가 Gemini를 호출해 오래 걸린다.
+            // 기본 10초로는 타임아웃 나므로 읽기/쓰기를 넉넉히 늘린다.
+            .connectTimeout(30, TimeUnit.SECONDS)
+            .readTimeout(120, TimeUnit.SECONDS)
+            .writeTimeout(120, TimeUnit.SECONDS)
+            .callTimeout(150, TimeUnit.SECONDS)
             .build()
     }
 

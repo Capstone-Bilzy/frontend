@@ -103,7 +103,7 @@
             android:layout_marginBottom="16dp">
 
             <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
-                <FrameLayout android:layout_width="44dp" android:layout_height="44dp" android:background="@drawable/bg_role_chip">
+                <FrameLayout android:layout_width="44dp" android:layout_height="44dp" android:background="@drawable/bg_avatar_done">
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="center" android:text="정" android:textColor="#FFFFFF" android:textSize="14sp" android:textStyle="bold" />
                     <ImageView android:layout_width="14dp" android:layout_height="14dp" android:layout_gravity="bottom|end" android:src="@drawable/ic_check" android:background="@drawable/bg_chip_green" android:padding="2dp" app:tint="#FFFFFF" />
                 </FrameLayout>
@@ -111,7 +111,7 @@
             </LinearLayout>
 
             <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
-                <FrameLayout android:layout_width="44dp" android:layout_height="44dp" android:background="@drawable/bg_role_chip">
+                <FrameLayout android:layout_width="44dp" android:layout_height="44dp" android:background="@drawable/bg_avatar_done">
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="center" android:text="김" android:textColor="#FFFFFF" android:textSize="14sp" android:textStyle="bold" />
                     <ImageView android:layout_width="14dp" android:layout_height="14dp" android:layout_gravity="bottom|end" android:src="@drawable/ic_check" android:background="@drawable/bg_chip_green" android:padding="2dp" app:tint="#FFFFFF" />
                 </FrameLayout>
@@ -119,7 +119,7 @@
             </LinearLayout>
 
             <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
-                <FrameLayout android:layout_width="44dp" android:layout_height="44dp" android:background="@drawable/bg_role_chip">
+                <FrameLayout android:layout_width="44dp" android:layout_height="44dp" android:background="@drawable/bg_avatar_done">
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="center" android:text="이" android:textColor="#FFFFFF" android:textSize="14sp" android:textStyle="bold" />
                     <ImageView android:layout_width="14dp" android:layout_height="14dp" android:layout_gravity="bottom|end" android:src="@drawable/ic_check" android:background="@drawable/bg_chip_green" android:padding="2dp" app:tint="#FFFFFF" />
                 </FrameLayout>
@@ -127,7 +127,7 @@
             </LinearLayout>
 
             <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
-                <FrameLayout android:layout_width="44dp" android:layout_height="44dp" android:background="@drawable/bg_role_chip">
+                <FrameLayout android:layout_width="44dp" android:layout_height="44dp" android:background="@drawable/bg_avatar_done">
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="center" android:text="박" android:textColor="#FFFFFF" android:textSize="14sp" android:textStyle="bold" />
                     <ImageView android:layout_width="14dp" android:layout_height="14dp" android:layout_gravity="bottom|end" android:src="@drawable/ic_check" android:background="@drawable/bg_chip_green" android:padding="2dp" app:tint="#FFFFFF" />
                 </FrameLayout>
@@ -135,17 +135,17 @@
             </LinearLayout>
 
             <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
-                <FrameLayout android:layout_width="44dp" android:layout_height="44dp" android:background="@drawable/bg_avatar_circle">
+                <FrameLayout android:layout_width="44dp" android:layout_height="44dp" android:background="@drawable/bg_avatar_pending">
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="center" android:text="최" android:textColor="#8888BB" android:textSize="14sp" android:textStyle="bold" />
-                    <ImageView android:layout_width="14dp" android:layout_height="14dp" android:layout_gravity="bottom|end" android:src="@drawable/ic_check" android:background="@drawable/bg_avatar_circle" android:padding="2dp" app:tint="#5555AA" />
+                    <ImageView android:layout_width="14dp" android:layout_height="14dp" android:layout_gravity="bottom|end" android:src="@drawable/ic_check" android:background="@drawable/bg_avatar_pending" android:padding="2dp" app:tint="#6E6E9C" />
                 </FrameLayout>
                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="최지수" android:textColor="#8888BB" android:textSize="9sp" android:gravity="center" />
             </LinearLayout>
 
             <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
-                <FrameLayout android:layout_width="44dp" android:layout_height="44dp" android:background="@drawable/bg_avatar_circle">
+                <FrameLayout android:layout_width="44dp" android:layout_height="44dp" android:background="@drawable/bg_avatar_pending">
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="center" android:text="강" android:textColor="#8888BB" android:textSize="14sp" android:textStyle="bold" />
-                    <ImageView android:layout_width="14dp" android:layout_height="14dp" android:layout_gravity="bottom|end" android:src="@drawable/ic_check" android:background="@drawable/bg_avatar_circle" android:padding="2dp" app:tint="#5555AA" />
+                    <ImageView android:layout_width="14dp" android:layout_height="14dp" android:layout_gravity="bottom|end" android:src="@drawable/ic_check" android:background="@drawable/bg_avatar_pending" android:padding="2dp" app:tint="#6E6E9C" />
                 </FrameLayout>
                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="강승호" android:textColor="#8888BB" android:textSize="9sp" android:gravity="center" />
             </LinearLayout>

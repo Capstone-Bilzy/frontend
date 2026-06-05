@@ -103,7 +103,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:background="@drawable/bg_scan_frame"
+        android:background="@drawable/bg_chip_green_outline"
         android:paddingStart="14dp"
         android:paddingEnd="14dp"
         android:paddingTop="8dp"
@@ -117,14 +117,14 @@
             android:layout_width="16dp"
             android:layout_height="16dp"
             android:src="@drawable/ic_check"
-            app:tint="#A5A6F6"
+            app:tint="#7CE7A0"
             android:layout_marginEnd="6dp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="인식 완료"
-            android:textColor="#A5A6F6"
+            android:textColor="#7CE7A0"
             android:textSize="13sp"
             android:textStyle="bold" />
 
