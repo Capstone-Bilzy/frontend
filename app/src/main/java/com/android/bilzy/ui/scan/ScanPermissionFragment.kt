@@ -58,6 +58,17 @@ class ScanPermissionFragment : Fragment() {
                 requestCameraPermission.launch(Manifest.permission.CAMERA)
             }
         }
+
+        // 하단 네비게이션 (스캔은 현재 화면이라 별도 동작 없음)
+        binding.navHome.setOnClickListener {
+            findNavController().navigate(R.id.action_scanPermission_to_home)
+        }
+        binding.navHistory.setOnClickListener {
+            findNavController().navigate(R.id.action_scanPermission_to_historyList)
+        }
+        binding.navMyPage.setOnClickListener {
+            findNavController().navigate(R.id.action_scanPermission_to_myPage)
+        }
     }
 
     private fun hasCameraPermission() =

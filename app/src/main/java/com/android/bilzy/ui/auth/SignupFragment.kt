@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -17,8 +17,8 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 /**
- * 회원가입 진입 화면. 소셜 로그인은 백엔드가 upsert(없으면 생성)라 로그인과 동일 동작이므로
- * LoginViewModel을 그대로 재사용한다.
+ * 회원가입 진입 화면. "카카오로 회원가입"을 누르면 **카카오 OAuth를 먼저** 수행해
+ * 실제 닉네임/프로필을 확보한 뒤 약관 동의로 진행한다(동의 화면에 실제 정보 표시).
  */
 @AndroidEntryPoint
 class SignupFragment : Fragment() {
@@ -26,7 +26,8 @@ class SignupFragment : Fragment() {
     private var _binding: FragmentSignupBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: LoginViewModel by viewModels()
+    // Signup → Terms → Info 가 공유하는 nav_graph 스코프 ViewModel
+    private val viewModel: SignupViewModel by hiltNavGraphViewModels(R.id.nav_graph)
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -41,33 +42,33 @@ class SignupFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.btnKakao.setOnClickListener {
-            viewModel.loginWithKakao(requireContext())
+            viewModel.startKakaoSignup(requireContext())
         }
 
         binding.btnNaver.setOnClickListener {
             Toast.makeText(requireContext(), "네이버 로그인은 준비 중이에요", Toast.LENGTH_SHORT).show()
         }
 
-        observeState()
+        observePrepare()
     }
 
-    private fun observeState() {
+    private fun observePrepare() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.state.collect { state ->
+                viewModel.prepareState.collect { state ->
                     when (state) {
-                        is LoginViewModel.LoginState.Loading -> setLoading(true)
-                        is LoginViewModel.LoginState.Success -> {
+                        is SignupViewModel.PrepareState.Loading -> setLoading(true)
+                        is SignupViewModel.PrepareState.Ready -> {
                             setLoading(false)
-                            findNavController().navigate(R.id.loginLoadingFragment)
-                            viewModel.consumeState()
+                            viewModel.consumePrepareState()
+                            findNavController().navigate(R.id.action_signup_to_signupKakaoTerms)
                         }
-                        is LoginViewModel.LoginState.Error -> {
+                        is SignupViewModel.PrepareState.Error -> {
                             setLoading(false)
                             Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
-                            viewModel.consumeState()
+                            viewModel.consumePrepareState()
                         }
-                        is LoginViewModel.LoginState.Idle -> setLoading(false)
+                        is SignupViewModel.PrepareState.Idle -> setLoading(false)
                     }
                 }
             }

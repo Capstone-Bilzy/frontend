@@ -196,12 +196,9 @@ class QrScanFragment : Fragment() {
         viewModel.join(id)
     }
 
-    /** `bilzy://join/{settlement_id}` → settlement_id */
-    private fun parseSettlementId(raw: String): String? {
-        val prefix = "bilzy://join/"
-        if (!raw.startsWith(prefix)) return null
-        return raw.removePrefix(prefix).trim('/').ifBlank { null }
-    }
+    /** `bilzy://join/{settlement_id}` → settlement_id (UUID 검증 포함) */
+    private fun parseSettlementId(raw: String): String? =
+        com.android.bilzy.util.JoinLink.parse(raw)
 
     private fun hasCameraPermission() =
         ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) ==

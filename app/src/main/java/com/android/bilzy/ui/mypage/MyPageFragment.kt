@@ -36,13 +36,15 @@ class MyPageFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         observeProfile()
+        observeLogout()
 
         binding.menuAccount.setOnClickListener {
             findNavController().navigate(R.id.action_myPage_to_myPageAccount)
         }
 
         binding.menuLogout.setOnClickListener {
-            findNavController().navigate(R.id.action_myPage_to_onboarding)
+            // 토큰 클리어가 끝나면 observeLogout()에서 온보딩으로 이동한다.
+            viewModel.logout()
         }
 
         binding.navHome.setOnClickListener {
@@ -65,6 +67,16 @@ class MyPageFragment : Fragment() {
                     p ?: return@collect
                     binding.tvUserName.text = p.nickname
                     if (p.loginType.isNotBlank()) binding.tvLoginType.text = p.loginType
+                }
+            }
+        }
+    }
+
+    private fun observeLogout() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.loggedOut.collect {
+                    findNavController().navigate(R.id.action_myPage_to_onboarding)
                 }
             }
         }

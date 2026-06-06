@@ -88,6 +88,7 @@
                 android:layout_marginBottom="24dp">
 
                 <TextView
+                    android:id="@+id/tvPeopleChip"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="👥 4명 참여"
@@ -101,6 +102,7 @@
                     android:layout_marginBottom="10dp" />
 
                 <TextView
+                    android:id="@+id/tvSettlementName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="회사 점심 약속 · 1차"
@@ -118,6 +120,7 @@
                     android:layout_marginBottom="4dp" />
 
                 <TextView
+                    android:id="@+id/tvTotalAmount"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="57,500원"
@@ -142,6 +145,7 @@
                     </LinearLayout>
 
                     <TextView
+                        android:id="@+id/tvDate"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
@@ -171,6 +175,7 @@
 
             <!-- 첨부된 영수증 section header -->
             <RelativeLayout
+                android:id="@+id/receiptSectionHeader"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp">
@@ -207,10 +212,12 @@
                 android:padding="12dp"
                 android:layout_marginBottom="16dp">
 
-                <View
+                <ImageView
+                    android:id="@+id/ivReceiptThumb"
                     android:layout_width="56dp"
                     android:layout_height="56dp"
                     android:background="@drawable/bg_receipt_thumb"
+                    android:scaleType="centerCrop"
                     android:layout_marginEnd="14dp" />
 
                 <LinearLayout
@@ -248,7 +255,7 @@
                     android:paddingEnd="4dp" />
             </LinearLayout>
 
-            <!-- 영수증 사진 추가하기 (dashed border) -->
+            <!-- 영수증 사진 추가하기 (dashed border) — 백엔드 첨부 미지원이라 기본 숨김 -->
             <LinearLayout
                 android:id="@+id/btnAddReceipt"
                 android:layout_width="match_parent"
@@ -258,6 +265,7 @@
                 android:background="@drawable/bg_dashed_border"
                 android:clickable="true"
                 android:focusable="true"
+                android:visibility="gone"
                 android:layout_marginBottom="8dp">
 
                 <ImageView

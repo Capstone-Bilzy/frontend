@@ -111,6 +111,8 @@ dependencies {
 
     // Kakao 로그인 SDK
     implementation(libs.kakao.user)
+    // Kakao 공유(카카오톡 메시지 보내기)
+    implementation(libs.kakao.share)
 
     // Hilt Navigation (hiltNavGraphViewModels)
     implementation(libs.androidx.hilt.navigation.fragment)

@@ -1,13 +1,15 @@
 package com.android.bilzy.domain.repository
 
-import com.android.bilzy.data.model.Account
-import kotlinx.coroutines.flow.Flow
+import com.android.bilzy.domain.model.BankAccount
 
+/**
+ * 사용자 대표 계좌. 백엔드 REST(/users/me/account)로 통신.
+ * (옛 Firebase accounts 컬렉션 구현은 REST로 교체됨.)
+ */
 interface AccountRepository {
-    suspend fun getAccounts(userUid: String): List<Account>
-    fun observeAccounts(userUid: String): Flow<List<Account>>
-    suspend fun saveAccount(account: Account): String
-    suspend fun updateAccount(id: String, updates: Map<String, Any>)
-    suspend fun deleteAccount(id: String)
-    suspend fun setPrimaryAccount(userUid: String, accountId: String)
+    /** 내 대표 계좌 조회. 미설정 시 빈 값(BankAccount.isEmpty). */
+    suspend fun getMyAccount(): BankAccount
+
+    /** 내 대표 계좌 저장/수정. 저장된 계좌를 반환. */
+    suspend fun saveMyAccount(account: BankAccount): BankAccount
 }

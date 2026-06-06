@@ -3,16 +3,20 @@ package com.android.bilzy.ui.mypage
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.bilzy.data.local.TokenStore
+import com.android.bilzy.domain.repository.AuthRepository
 import com.android.bilzy.domain.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class MyPageViewModel @Inject constructor(
     private val userRepository: UserRepository,
+    private val authRepository: AuthRepository,
     private val tokenStore: TokenStore
 ) : ViewModel() {
 
@@ -21,7 +25,23 @@ class MyPageViewModel @Inject constructor(
     private val _profile = MutableStateFlow<ProfileUi?>(null)
     val profile = _profile.asStateFlow()
 
+    /** 로그아웃 완료(토큰 클리어 끝) 1회성 이벤트. 화면은 이걸 받고 온보딩으로 이동. */
+    private val _loggedOut = Channel<Unit>(Channel.BUFFERED)
+    val loggedOut = _loggedOut.receiveAsFlow()
+
+    private var loggingOut = false
+
     init { load() }
+
+    /** 백엔드 /auth/logout + 카카오 로그아웃 + 토큰 클리어(실패해도 토큰은 항상 비움). */
+    fun logout() {
+        if (loggingOut) return
+        loggingOut = true
+        viewModelScope.launch {
+            runCatching { authRepository.logout() }
+            _loggedOut.send(Unit)
+        }
+    }
 
     fun load() {
         viewModelScope.launch {

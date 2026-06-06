@@ -137,7 +137,7 @@
                         android:id="@+id/tvCurrentBank"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="신한은행"
+                        android:text="-"
                         android:textColor="#FFFFFF"
                         android:textSize="13sp"
                         android:textStyle="bold" />
@@ -160,7 +160,7 @@
                         android:id="@+id/tvCurrentNumber"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="110-123-456789"
+                        android:text="-"
                         android:textColor="#FFFFFF"
                         android:textSize="13sp"
                         android:textStyle="bold" />
@@ -182,7 +182,7 @@
                         android:id="@+id/tvCurrentName"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="정민지"
+                        android:text="-"
                         android:textColor="#A5A6F6"
                         android:textSize="13sp"
                         android:textStyle="bold" />
@@ -243,8 +243,7 @@
                     android:textColorHint="#4DFFFFFF"
                     android:textColor="#FFFFFF"
                     android:textSize="15sp"
-                    android:inputType="phone"
-                    android:text="110-123-456789" />
+                    android:inputType="phone" />
             </LinearLayout>
 
             <!-- 계좌 명의 -->
@@ -282,8 +281,7 @@
                     android:textColorHint="#4DFFFFFF"
                     android:textColor="#FFFFFF"
                     android:textSize="15sp"
-                    android:inputType="textPersonName"
-                    android:text="정민지" />
+                    android:inputType="textPersonName" />
             </LinearLayout>
 
         </LinearLayout>

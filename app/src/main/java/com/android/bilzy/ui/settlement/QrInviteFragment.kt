@@ -25,6 +25,9 @@ import com.android.bilzy.databinding.FragmentQrInviteBinding
 import com.android.bilzy.ui.room.RoomViewModel
 import com.android.bilzy.ui.scan.ScanFlowViewModel
 import com.android.bilzy.util.QrGenerator
+import com.kakao.sdk.share.ShareClient
+import com.kakao.sdk.template.model.Link
+import com.kakao.sdk.template.model.TextTemplate
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
 import java.io.FileOutputStream
@@ -76,6 +79,8 @@ class QrInviteFragment : Fragment() {
         }
 
         binding.btnShareQr.setOnClickListener { shareQr() }
+
+        binding.btnKakaoShare.setOnClickListener { shareViaKakao() }
 
         binding.btnEnter.setOnClickListener {
             roomViewModel.setRoom(scanViewModel.settlementId)
@@ -164,6 +169,36 @@ class QrInviteFragment : Fragment() {
             startActivity(Intent.createChooser(intent, "QR코드 공유"))
         }.onFailure {
             toast("공유에 실패했어요")
+        }
+    }
+
+    /**
+     * 카카오톡 공유(ShareClient)로 초대 메시지 전송. 카카오톡을 열어 친구/채팅을 고르면
+     * 정산방 초대 텍스트 카드가 전송된다. (동의/검수 불필요한 기본 템플릿)
+     */
+    private fun shareViaKakao() {
+        val id = scanViewModel.settlementId
+        if (id.isNullOrBlank()) { toast("정산방이 아직 준비되지 않았어요"); return }
+
+        val title = scanViewModel.settlementTitle.ifBlank { "정산방" }
+        val link = joinLink ?: "bilzy://join/$id"
+        val template = TextTemplate(
+            text = "「$title」 정산방에 초대합니다! 💸\n\n" +
+                "Bilzy 앱에서 QR을 스캔하거나 아래 초대 코드로 입장하세요.\n$link",
+            // 등록된 웹 도메인이 없어 링크는 비워 둠(메시지 탭 시 동작 없음). 텍스트에 초대 링크 포함.
+            link = Link()
+        )
+
+        if (!ShareClient.instance.isKakaoTalkSharingAvailable(requireContext())) {
+            toast("카카오톡이 설치되어 있지 않아요")
+            return
+        }
+        ShareClient.instance.shareDefault(requireContext(), template) { result, error ->
+            if (error != null || result == null) {
+                toast("카카오톡 공유에 실패했어요")
+            } else {
+                startActivity(result.intent)
+            }
         }
     }
 

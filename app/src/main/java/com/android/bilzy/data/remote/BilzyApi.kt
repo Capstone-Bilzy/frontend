@@ -45,6 +45,16 @@ interface BilzyApi {
     @GET("users/me/history")
     suspend fun getHistory(): List<HistoryDto>
 
+    /** 대표 계좌 조회. 신규 유저는 세 필드가 빈 문자열. */
+    @GET("users/me/account")
+    suspend fun getAccount(): com.android.bilzy.data.remote.dto.AccountDto
+
+    /** 대표 계좌 저장/수정(upsert). 계좌번호는 서버에서 AES-256 암호화 저장. */
+    @POST("users/me/account")
+    suspend fun saveAccount(
+        @Body body: com.android.bilzy.data.remote.dto.AccountRequest
+    ): com.android.bilzy.data.remote.dto.AccountDto
+
     @POST("auth/refresh")
     suspend fun refresh(@Body body: RefreshRequest): AuthResponse
 
