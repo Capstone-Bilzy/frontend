@@ -4,13 +4,16 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.android.bilzy.R
 import com.android.bilzy.databinding.FragmentParticipantInputBinding
 import com.android.bilzy.ui.room.RoomViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class ParticipantInputFragment : Fragment() {
@@ -34,9 +37,24 @@ class ParticipantInputFragment : Fragment() {
 
         binding.btnClearName.setOnClickListener { binding.etName.text?.clear() }
 
+        // 이미 정한 표시 이름이 있으면 미리 채워 둔다("사용자" 폴백은 제외).
+        roomViewModel.loadSuggestedName()
+        viewLifecycleOwner.lifecycleScope.launch {
+            roomViewModel.suggestedName.collect { name ->
+                if (!name.isNullOrBlank() && binding.etName.text.isNullOrBlank()) {
+                    binding.etName.setText(name)
+                }
+            }
+        }
+
         binding.btnNext.setOnClickListener {
-            // 입력한 이름을 표시 이름으로 저장(빈값이면 로그인 닉네임 사용)
-            roomViewModel.setMyName(binding.etName.text?.toString().orEmpty())
+            val name = binding.etName.text?.toString()?.trim().orEmpty()
+            if (name.isEmpty()) {
+                Toast.makeText(requireContext(), "이름을 입력해주세요", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            // 입력한 이름을 표시 이름으로 저장(이후 입장에도 재사용됨)
+            roomViewModel.setMyName(name)
             findNavController().navigate(R.id.action_participantInput_to_qrInvite)
         }
     }

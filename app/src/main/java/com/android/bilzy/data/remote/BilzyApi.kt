@@ -9,7 +9,9 @@ import com.android.bilzy.data.remote.dto.OcrConfirmRequest
 import com.android.bilzy.data.remote.dto.OcrConfirmResponse
 import com.android.bilzy.data.remote.dto.OcrScanResponse
 import com.android.bilzy.data.remote.dto.ReceiptItemDto
+import com.android.bilzy.data.remote.dto.ReceiptScanResponse
 import com.android.bilzy.data.remote.dto.RefreshRequest
+import com.android.bilzy.data.remote.dto.SavedReceiptDto
 import com.android.bilzy.data.remote.dto.SettlementDto
 import com.android.bilzy.data.remote.dto.SettlementMemberDto
 import com.android.bilzy.data.remote.dto.SocialLoginRequest
@@ -17,6 +19,7 @@ import com.android.bilzy.data.remote.dto.UpdateSettlementRequest
 import com.android.bilzy.data.remote.dto.UserDto
 import com.android.bilzy.data.remote.dto.UpdateStatusRequest
 import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -115,4 +118,26 @@ interface BilzyApi {
 
     @POST("ocr/add-item")
     suspend fun addItem(@Body body: AddItemRequest): ReceiptItemDto
+
+    // ── 저장 영수증 보관함 ────────────────────────────────
+    /** 보관함 목록 (가게명·총액·signed 이미지 URL·저장일) */
+    @GET("receipts")
+    suspend fun getSavedReceipts(): List<SavedReceiptDto>
+
+    /** 보관함 저장 전 독립 OCR — 금액 프리필용 items/total만 반환(저장 없음). */
+    @Multipart
+    @POST("receipts/scan")
+    suspend fun scanSavedReceipt(@Part file: MultipartBody.Part): ReceiptScanResponse
+
+    /** 영수증 보관함 저장 (이미지 + 사용자 수동확인 가게명·총액). */
+    @Multipart
+    @POST("receipts")
+    suspend fun saveReceipt(
+        @Part file: MultipartBody.Part,
+        @Part("store_name") storeName: RequestBody,
+        @Part("total_amount") totalAmount: RequestBody
+    ): SavedReceiptDto
+
+    @DELETE("receipts/{id}")
+    suspend fun deleteSavedReceipt(@Path("id") id: String)
 }

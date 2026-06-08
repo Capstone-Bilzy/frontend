@@ -68,7 +68,7 @@
                         android:id="@+id/tvUserName"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="정민지"
+                        android:text=""
                         android:textColor="#FFFFFF"
                         android:textSize="17sp"
                         android:textStyle="bold"
@@ -78,7 +78,7 @@
                         android:id="@+id/tvLoginType"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="카카오 계정 로그인"
+                        android:text=""
                         android:textColor="#80FFFFFF"
                         android:textSize="13sp" />
                 </LinearLayout>
@@ -91,6 +91,18 @@
                 android:layout_height="56dp"
                 android:gravity="center_vertical"
                 android:text="설정"
+                android:textColor="#FFFFFF"
+                android:textSize="15sp"
+                android:clickable="true"
+                android:focusable="true" />
+
+            <!-- 저장한 영수증 -->
+            <TextView
+                android:id="@+id/menuSavedReceipts"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:gravity="center_vertical"
+                android:text="저장한 영수증"
                 android:textColor="#FFFFFF"
                 android:textSize="15sp"
                 android:clickable="true"

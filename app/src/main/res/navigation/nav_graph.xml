@@ -186,6 +186,8 @@
             app:popUpToInclusive="true" />
         <action android:id="@+id/action_receiptPicker_to_scanHub"
             app:destination="@id/scanHubFragment" />
+        <action android:id="@+id/action_receiptPicker_to_receiptSave"
+            app:destination="@id/receiptSaveFragment" />
     </fragment>
 
     <!-- ==================== MY PAGE ==================== -->
@@ -205,6 +207,8 @@
             app:destination="@id/historyListFragment" />
         <action android:id="@+id/action_myPage_to_myPageAccount"
             app:destination="@id/myPageAccountFragment" />
+        <action android:id="@+id/action_myPage_to_receiptPicker"
+            app:destination="@id/receiptPickerFragment" />
         <action android:id="@+id/action_myPage_to_onboarding"
             app:destination="@id/onboardingFragment"
             app:popUpTo="@id/onboardingFragment"
@@ -317,11 +321,11 @@
         android:name="com.android.bilzy.ui.scan.ReceiptSavedFragment"
         android:label="ReceiptSaved"
         tools:layout="@layout/fragment_receipt_saved">
-        <!-- 저장 완료 → OCR 결과 (저장 화면 2개를 백스택에서 정리) -->
-        <action android:id="@+id/action_receiptSaved_to_ocrResult"
-            app:destination="@id/ocrResultFragment"
-            app:popUpTo="@id/receiptSaveFragment"
-            app:popUpToInclusive="true" />
+        <!-- 보관 완료 → 보관함 목록 (저장 화면 2개를 백스택에서 정리) -->
+        <action android:id="@+id/action_receiptSaved_to_receiptPicker"
+            app:destination="@id/receiptPickerFragment"
+            app:popUpTo="@id/receiptPickerFragment"
+            app:popUpToInclusive="false" />
     </fragment>
 
     <fragment

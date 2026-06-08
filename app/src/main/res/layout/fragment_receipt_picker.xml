@@ -47,7 +47,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="영수증 선택"
+            android:text="저장한 영수증"
             android:textColor="#FFFFFF"
             android:textSize="17sp"
             android:textStyle="bold" />
@@ -91,7 +91,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="이 정산에 첨부할 영수증을 선택해주세요"
+                    android:text="스캔한 영수증을 모아봐요"
                     android:textColor="#FFFFFF"
                     android:textSize="15sp"
                     android:textStyle="bold"
@@ -100,10 +100,21 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="저장된 영수증 중에서 골라 첨부할 수 있어요"
+                    android:text="가게명·금액과 함께 영수증 사진을 보관해요"
                     android:textColor="#B3A5A6F6"
                     android:textSize="12sp" />
             </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvEmpty"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="아직 저장한 영수증이 없어요"
+                android:textColor="#80FFFFFF"
+                android:textSize="13sp"
+                android:gravity="center"
+                android:paddingVertical="40dp"
+                android:visibility="gone" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvReceipts"

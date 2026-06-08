@@ -18,7 +18,12 @@ class AuthRepositoryImpl @Inject constructor(
     override suspend fun socialLogin(provider: String, accessToken: String) {
         val res = api.socialLogin(SocialLoginRequest(provider, accessToken))
         tokenStore.saveTokens(res.accessToken, res.refreshToken)
-        res.user?.nickname?.takeIf { it.isNotBlank() }?.let { tokenStore.saveNickname(it) }
+        // 카카오 미동의 시 닉네임이 "사용자" 폴백으로 옴 — 사용자가 직접 정한 이름이 이미 있으면 덮어쓰지 않는다.
+        res.user?.nickname?.takeIf { it.isNotBlank() }?.let { incoming ->
+            val isGeneric = incoming == "사용자" || incoming == "참여자"
+            val existing = tokenStore.currentNickname()
+            if (!isGeneric || existing.isNullOrBlank()) tokenStore.saveNickname(incoming)
+        }
     }
 
     override suspend fun logout() {

@@ -90,7 +90,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="💬  카카오로 시작하기"
+            android:text="💬  카카오로 로그인"
             android:textColor="#191919"
             android:textSize="15sp"
             android:textStyle="bold" />
@@ -115,7 +115,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="N  네이버로 시작하기"
+            android:text="N  네이버로 로그인"
             android:textColor="#FFFFFF"
             android:textSize="15sp"
             android:textStyle="bold" />

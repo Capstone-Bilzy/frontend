@@ -48,7 +48,7 @@
             android:id="@+id/tvTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="회사 점심 약속"
+            android:text=""
             android:textColor="#FFFFFF"
             android:textSize="17sp"
             android:textStyle="bold" />
@@ -91,7 +91,7 @@
                     android:id="@+id/tvPeopleChip"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="👥 4명 참여"
+                    android:text=""
                     android:textColor="#FFFFFF"
                     android:textSize="12sp"
                     android:background="@drawable/bg_chip"
@@ -105,7 +105,7 @@
                     android:id="@+id/tvSettlementName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="회사 점심 약속 · 1차"
+                    android:text=""
                     android:textColor="#FFFFFF"
                     android:textSize="16sp"
                     android:textStyle="bold"
@@ -123,7 +123,7 @@
                     android:id="@+id/tvTotalAmount"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="57,500원"
+                    android:text=""
                     android:textColor="#FFFFFF"
                     android:textSize="28sp"
                     android:textStyle="bold"
@@ -150,7 +150,7 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
                         android:layout_centerVertical="true"
-                        android:text="2026.05.04"
+                        android:text=""
                         android:textColor="#80FFFFFF"
                         android:textSize="12sp" />
                 </RelativeLayout>
@@ -230,7 +230,7 @@
                         android:id="@+id/tvReceiptName"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="버거킹 강남점"
+                        android:text=""
                         android:textColor="#FFFFFF"
                         android:textSize="14sp"
                         android:textStyle="bold"
@@ -240,7 +240,7 @@
                         android:id="@+id/tvReceiptMeta"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="57,500원 · 2026.05.04"
+                        android:text=""
                         android:textColor="#80FFFFFF"
                         android:textSize="12sp" />
                 </LinearLayout>

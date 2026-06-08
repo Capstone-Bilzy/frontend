@@ -107,7 +107,7 @@
                         android:id="@+id/tvMemberChip"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="참여"
+                        android:text=""
                         android:textColor="#BEBEF7"
                         android:textSize="11sp" />
 
@@ -117,7 +117,7 @@
                     android:id="@+id/tvRoomTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="정산"
+                    android:text=""
                     android:textColor="#FFFFFF"
                     android:textSize="18sp"
                     android:textStyle="bold"
@@ -134,7 +134,7 @@
                     android:id="@+id/tvTotalAmount"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="310,000원"
+                    android:text=""
                     android:textColor="#FFFFFF"
                     android:textSize="28sp"
                     android:textStyle="bold"
@@ -159,11 +159,12 @@
                     </LinearLayout>
 
                     <TextView
+                        android:id="@+id/tvDate"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
                         android:layout_centerVertical="true"
-                        android:text="2026.04.24"
+                        android:text=""
                         android:textColor="#8888BB"
                         android:textSize="12sp" />
 

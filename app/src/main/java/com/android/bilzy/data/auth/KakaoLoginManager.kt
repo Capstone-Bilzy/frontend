@@ -98,17 +98,27 @@ class KakaoLoginManager @Inject constructor(
         }
     }
 
-    /** me() 호출로 아직 동의가 안 된 프로필 scope 목록을 구한다. 실패하면 빈 목록(추가요청 안 함). */
+    /**
+     * me() 호출로 추가 동의가 필요한 프로필 scope 목록을 구한다.
+     * needsAgreement 플래그가 true이거나 실제 값이 비어 있으면 요청 대상에 넣는다
+     * (콘솔에 동의항목이 있는데 값이 안 온 경우까지 커버). 실패하면 빈 목록.
+     */
     private suspend fun missingProfileScopes(): List<String> =
         suspendCancellableCoroutine { cont ->
             UserApiClient.instance.me { user, error ->
                 if (error != null || user == null) {
+                    Log.w(TAG, "me() 실패 — 추가동의 생략", error)
                     cont.resume(emptyList())
                     return@me
                 }
                 val account = user.kakaoAccount
+                val profile = account?.profile
+                Log.d(TAG, "me(): nickname=${profile?.nickname} " +
+                    "nickNeed=${account?.profileNicknameNeedsAgreement} imgNeed=${account?.profileImageNeedsAgreement}")
                 val scopes = buildList {
-                    if (account?.profileNicknameNeedsAgreement == true) add("profile_nickname")
+                    if (account?.profileNicknameNeedsAgreement == true || profile?.nickname.isNullOrBlank()) {
+                        add("profile_nickname")
+                    }
                     if (account?.profileImageNeedsAgreement == true) add("profile_image")
                 }
                 cont.resume(scopes)

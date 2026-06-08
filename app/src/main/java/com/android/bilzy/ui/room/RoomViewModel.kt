@@ -39,10 +39,25 @@ class RoomViewModel @Inject constructor(
     /** 참여자 입력 화면에서 직접 입력한 표시 이름. 있으면 join·식별에 로그인 닉네임보다 우선. */
     private var myNameOverride: String? = null
 
-    /** 참여자 입력 화면에서 호출. 빈값이면 무시(로그인 닉네임 사용). */
+    /** 참여자 입력 화면에서 호출. 입력한 이름은 TokenStore에 저장해 이후 입장(호스트·게스트)에 재사용한다. */
     fun setMyName(name: String) {
-        myNameOverride = name.trim().takeIf { it.isNotBlank() }
-        myNameOverride?.let { _myNickname.value = it }
+        val clean = name.trim().takeIf { it.isNotBlank() }
+        myNameOverride = clean
+        clean?.let {
+            _myNickname.value = it
+            viewModelScope.launch { tokenStore.saveNickname(it) }
+        }
+    }
+
+    /** 참여자 입력 화면 프리필용 — 이미 정한 표시 이름(일반 폴백 "사용자"/"참여자"는 제외). */
+    private val _suggestedName = MutableStateFlow<String?>(null)
+    val suggestedName = _suggestedName.asStateFlow()
+
+    fun loadSuggestedName() {
+        viewModelScope.launch {
+            val name = myNameOverride ?: tokenStore.currentNickname()
+            _suggestedName.value = name?.takeIf { it.isNotBlank() && it != "사용자" && it != "참여자" }
+        }
     }
 
     /** 금액 조정 화면에서 만든 특이사항(칩 선택 등) → AI 계산에 전달. */

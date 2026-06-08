@@ -42,6 +42,10 @@ class MyPageFragment : Fragment() {
             findNavController().navigate(R.id.action_myPage_to_myPageAccount)
         }
 
+        binding.menuSavedReceipts.setOnClickListener {
+            findNavController().navigate(R.id.action_myPage_to_receiptPicker)
+        }
+
         binding.menuLogout.setOnClickListener {
             // 토큰 클리어가 끝나면 observeLogout()에서 온보딩으로 이동한다.
             viewModel.logout()

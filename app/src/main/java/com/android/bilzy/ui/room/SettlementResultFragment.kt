@@ -77,6 +77,7 @@ class SettlementResultFragment : Fragment() {
         binding.tvMemberChip.text = "${members.size}명 참여"
         binding.tvRoomTitle.text = settlement.title.ifBlank { "정산" }
         binding.tvTotalAmount.text = "${nf.format(total)}원"
+        binding.tvDate.text = formatDate(settlement.createdAt)
 
         // 저장된 금액이 있으면 사용, 없으면 엔빵
         val hasStored = members.any { it.amount > 0 }
@@ -166,6 +167,12 @@ class SettlementResultFragment : Fragment() {
 
     private fun dp(value: Int): Int =
         (value * resources.displayMetrics.density).toInt()
+
+    /** ISO 8601(2026-06-08T...) → "2026.06.08". 없으면 빈 문자열. */
+    private fun formatDate(iso: String?): String {
+        iso ?: return ""
+        return iso.substringBefore('T').replace('-', '.')
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()

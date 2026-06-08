@@ -25,7 +25,7 @@ class ReceiptSavedFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.btnStart.setOnClickListener {
-            findNavController().navigate(R.id.action_receiptSaved_to_ocrResult)
+            findNavController().navigate(R.id.action_receiptSaved_to_receiptPicker)
         }
     }
 
