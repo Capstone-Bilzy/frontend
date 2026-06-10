@@ -21,10 +21,12 @@ class HistoryListViewModel @Inject constructor(
     val history = _history.asStateFlow()
 
     fun load() {
+        // 캐시가 있으면 먼저 즉시 표시(재진입 깜빡임 제거) 후 네트워크로 갱신.
+        userRepository.cachedHistory()?.let { _history.value = it }
         viewModelScope.launch {
             runCatching { userRepository.getMyHistory() }
                 .onSuccess { _history.value = it }
-                .onFailure { _history.value = emptyList() }
+                .onFailure { if (_history.value == null) _history.value = emptyList() }
         }
     }
 }

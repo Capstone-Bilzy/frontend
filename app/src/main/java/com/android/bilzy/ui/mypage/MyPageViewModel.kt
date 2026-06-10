@@ -44,6 +44,10 @@ class MyPageViewModel @Inject constructor(
     }
 
     fun load() {
+        // 캐시가 있으면 먼저 즉시 표시(재진입 깜빡임 제거) 후 네트워크로 갱신.
+        userRepository.cachedProfile()?.let {
+            _profile.value = ProfileUi(it.nickname.ifBlank { "사용자" }, loginTypeText(it.provider))
+        }
         viewModelScope.launch {
             runCatching { userRepository.getMyProfile() }
                 .onSuccess {

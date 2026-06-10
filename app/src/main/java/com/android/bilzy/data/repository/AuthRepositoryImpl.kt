@@ -5,6 +5,7 @@ import com.android.bilzy.data.local.TokenStore
 import com.android.bilzy.data.remote.BilzyApi
 import com.android.bilzy.data.remote.dto.SocialLoginRequest
 import com.android.bilzy.domain.repository.AuthRepository
+import com.android.bilzy.domain.repository.UserRepository
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -12,7 +13,8 @@ import javax.inject.Singleton
 class AuthRepositoryImpl @Inject constructor(
     private val api: BilzyApi,
     private val tokenStore: TokenStore,
-    private val kakaoLoginManager: KakaoLoginManager
+    private val kakaoLoginManager: KakaoLoginManager,
+    private val userRepository: UserRepository
 ) : AuthRepository {
 
     override suspend fun socialLogin(provider: String, accessToken: String) {
@@ -30,6 +32,7 @@ class AuthRepositoryImpl @Inject constructor(
         runCatching { api.logout() }
         runCatching { kakaoLoginManager.logout() }
         tokenStore.clear()
+        userRepository.clearCache()
     }
 
     override suspend fun isLoggedIn(): Boolean = tokenStore.isLoggedIn()

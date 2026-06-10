@@ -17,6 +17,7 @@ import com.android.bilzy.R
 import com.android.bilzy.databinding.FragmentReceiptPickerBinding
 import com.android.bilzy.domain.model.SavedReceipt
 import com.android.bilzy.ui.receipt.SavedReceiptViewModel
+import com.android.bilzy.util.ImageCompressor
 import androidx.appcompat.app.AlertDialog
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -42,8 +43,11 @@ class ReceiptPickerFragment : Fragment() {
             return@registerForActivityResult
         }
         val mime = requireContext().contentResolver.getType(uri) ?: "image/jpeg"
-        viewModel.setPendingImage(bytes, mime)
-        findNavController().navigate(R.id.action_receiptPicker_to_receiptSave)
+        viewLifecycleOwner.lifecycleScope.launch {
+            val compressed = ImageCompressor.compress(bytes, mime)
+            viewModel.setPendingImage(compressed.bytes, compressed.mime)
+            findNavController().navigate(R.id.action_receiptPicker_to_receiptSave)
+        }
     }
 
     override fun onCreateView(

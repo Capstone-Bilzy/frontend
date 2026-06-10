@@ -17,10 +17,13 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.android.bilzy.R
 import com.android.bilzy.databinding.FragmentScanCameraBinding
+import com.android.bilzy.util.ImageCompressor
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class ScanCameraFragment : Fragment() {
@@ -50,6 +53,15 @@ class ScanCameraFragment : Fragment() {
             val mime = resolver.getType(uri) ?: "image/jpeg"
             proceedWith(bytes, mime)
         }
+
+    /** 이미지를 압축한 뒤 ViewModel에 넘기고 인식 화면으로 이동한다. */
+    private fun proceedWith(bytes: ByteArray, mime: String) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            val compressed = ImageCompressor.compress(bytes, mime)
+            viewModel.setPendingImage(compressed.bytes, compressed.mime)
+            findNavController().navigate(R.id.recognizingFragment)
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -120,12 +132,6 @@ class ScanCameraFragment : Fragment() {
                 }
             }
         )
-    }
-
-    /** 이미지를 ViewModel에 넘기고 인식(업로드) 화면으로 이동 */
-    private fun proceedWith(bytes: ByteArray, mime: String) {
-        viewModel.setPendingImage(bytes, mime)
-        findNavController().navigate(R.id.recognizingFragment)
     }
 
     override fun onDestroyView() {
