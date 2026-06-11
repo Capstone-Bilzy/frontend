@@ -185,7 +185,7 @@
                 android:nestedScrollingEnabled="false"
                 android:layout_marginBottom="16dp" />
 
-            <!-- 영수증 사진 추가하기 (dashed border) -->
+            <!-- 영수증 사진 추가하기 (dashed border) — 보관함 기능 제거로 숨김 -->
             <LinearLayout
                 android:id="@+id/btnAddReceipt"
                 android:layout_width="match_parent"
@@ -195,6 +195,7 @@
                 android:background="@drawable/bg_dashed_border"
                 android:clickable="true"
                 android:focusable="true"
+                android:visibility="gone"
                 android:layout_marginBottom="8dp">
 
                 <ImageView

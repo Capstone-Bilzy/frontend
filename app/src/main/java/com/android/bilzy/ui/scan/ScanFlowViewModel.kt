@@ -59,6 +59,15 @@ class ScanFlowViewModel @Inject constructor(
         capturedImage = bytes
     }
 
+    /**
+     * 영수증 저장 화면에서 '다시 찍기'를 누르면 호출. 스캔 때 정산건에 올라간 영수증 이미지를 서버에서 지운다.
+     * 실패해도 흐름은 막지 않는다(재촬영 시 새 이미지가 덮어씀).
+     */
+    fun discardReceiptImage() {
+        val id = settlementId ?: return
+        viewModelScope.launch { runCatching { settlementRepository.deleteReceiptImage(id) } }
+    }
+
     sealed interface ScanState {
         data object Idle : ScanState
         data object Loading : ScanState

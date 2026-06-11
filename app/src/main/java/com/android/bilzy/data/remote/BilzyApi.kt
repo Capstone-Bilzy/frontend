@@ -9,9 +9,7 @@ import com.android.bilzy.data.remote.dto.OcrConfirmRequest
 import com.android.bilzy.data.remote.dto.OcrConfirmResponse
 import com.android.bilzy.data.remote.dto.OcrScanResponse
 import com.android.bilzy.data.remote.dto.ReceiptItemDto
-import com.android.bilzy.data.remote.dto.ReceiptScanResponse
 import com.android.bilzy.data.remote.dto.RefreshRequest
-import com.android.bilzy.data.remote.dto.SavedReceiptDto
 import com.android.bilzy.data.remote.dto.SettlementDto
 import com.android.bilzy.data.remote.dto.SettlementMemberDto
 import com.android.bilzy.data.remote.dto.SocialLoginRequest
@@ -119,25 +117,11 @@ interface BilzyApi {
     @POST("ocr/add-item")
     suspend fun addItem(@Body body: AddItemRequest): ReceiptItemDto
 
-    // ── 저장 영수증 보관함 ────────────────────────────────
-    /** 보관함 목록 (가게명·총액·signed 이미지 URL·저장일) */
-    @GET("receipts")
-    suspend fun getSavedReceipts(): List<SavedReceiptDto>
-
-    /** 보관함 저장 전 독립 OCR — 금액 프리필용 items/total만 반환(저장 없음). */
-    @Multipart
-    @POST("receipts/scan")
-    suspend fun scanSavedReceipt(@Part file: MultipartBody.Part): ReceiptScanResponse
-
-    /** 영수증 보관함 저장 (이미지 + 사용자 수동확인 가게명·총액). */
-    @Multipart
-    @POST("receipts")
-    suspend fun saveReceipt(
-        @Part file: MultipartBody.Part,
-        @Part("store_name") storeName: RequestBody,
-        @Part("total_amount") totalAmount: RequestBody
-    ): SavedReceiptDto
-
-    @DELETE("receipts/{id}")
-    suspend fun deleteSavedReceipt(@Path("id") id: String)
+    /**
+     * 정산건에 붙은 영수증 이미지 삭제(저장 안 함 선택 시).
+     * 스캔 때 /ocr/scan이 이미지를 정산건에 저장하므로, 사용자가 보관을 원치 않으면 이걸로 지운다.
+     * TODO(backend): 별도 저장소에 DELETE /settlements/{id}/receipt 엔드포인트 추가 필요.
+     */
+    @DELETE("settlements/{id}/receipt")
+    suspend fun deleteSettlementReceipt(@Path("id") id: String)
 }

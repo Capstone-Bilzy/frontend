@@ -42,9 +42,6 @@ class HistoryDetailFragment : Fragment() {
         binding.rvParticipants.layoutManager = LinearLayoutManager(requireContext())
 
         binding.btnBack.setOnClickListener { findNavController().navigateUp() }
-        binding.btnAddReceipt.setOnClickListener {
-            findNavController().navigate(R.id.action_historyDetail_to_receiptPicker)
-        }
         binding.navHome.setOnClickListener {
             findNavController().navigate(R.id.action_historyDetail_to_home)
         }

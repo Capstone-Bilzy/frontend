@@ -17,6 +17,9 @@ interface SettlementRepository {
 
     suspend fun deleteSettlement(id: String)
 
+    /** 정산건에 붙은 영수증 이미지 삭제(사용자가 '저장 안 함'/'다시 찍기' 선택 시). */
+    suspend fun deleteReceiptImage(id: String)
+
     /** QR로 인식한 정산방에 내 닉네임으로 참여. */
     suspend fun joinByQr(id: String, nickname: String)
 

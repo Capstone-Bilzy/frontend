@@ -96,18 +96,6 @@
                 android:clickable="true"
                 android:focusable="true" />
 
-            <!-- 저장한 영수증 -->
-            <TextView
-                android:id="@+id/menuSavedReceipts"
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:gravity="center_vertical"
-                android:text="저장한 영수증"
-                android:textColor="#FFFFFF"
-                android:textSize="15sp"
-                android:clickable="true"
-                android:focusable="true" />
-
             <!-- 계좌 정보 관리 -->
             <TextView
                 android:id="@+id/menuAccount"

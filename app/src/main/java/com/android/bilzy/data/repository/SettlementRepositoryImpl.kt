@@ -32,6 +32,9 @@ class SettlementRepositoryImpl @Inject constructor(
     override suspend fun deleteSettlement(id: String) =
         api.deleteSettlement(id)
 
+    override suspend fun deleteReceiptImage(id: String) =
+        api.deleteSettlementReceipt(id)
+
     override suspend fun joinByQr(id: String, nickname: String) {
         api.joinSettlement(id, AddMemberRequest(nickname))
     }

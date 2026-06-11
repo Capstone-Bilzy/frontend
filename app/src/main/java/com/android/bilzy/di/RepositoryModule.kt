@@ -4,7 +4,6 @@ import com.android.bilzy.data.repository.AccountRepositoryImpl
 import com.android.bilzy.data.repository.AuthRepositoryImpl
 import com.android.bilzy.data.repository.NotificationRepositoryImpl
 import com.android.bilzy.data.repository.OcrRepositoryImpl
-import com.android.bilzy.data.repository.SavedReceiptRepositoryImpl
 import com.android.bilzy.data.repository.SettlementItemRepositoryImpl
 import com.android.bilzy.data.repository.SettlementMemberRepositoryImpl
 import com.android.bilzy.data.repository.SettlementRepositoryImpl
@@ -13,7 +12,6 @@ import com.android.bilzy.domain.repository.AccountRepository
 import com.android.bilzy.domain.repository.AuthRepository
 import com.android.bilzy.domain.repository.NotificationRepository
 import com.android.bilzy.domain.repository.OcrRepository
-import com.android.bilzy.domain.repository.SavedReceiptRepository
 import com.android.bilzy.domain.repository.SettlementItemRepository
 import com.android.bilzy.domain.repository.SettlementMemberRepository
 import com.android.bilzy.domain.repository.SettlementRepository
@@ -42,9 +40,6 @@ abstract class RepositoryModule {
 
     @Binds @Singleton
     abstract fun bindOcrRepository(impl: OcrRepositoryImpl): OcrRepository
-
-    @Binds @Singleton
-    abstract fun bindSavedReceiptRepository(impl: SavedReceiptRepositoryImpl): SavedReceiptRepository
 
     @Binds @Singleton
     abstract fun bindSettlementMemberRepository(impl: SettlementMemberRepositoryImpl): SettlementMemberRepository
