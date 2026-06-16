@@ -14,7 +14,7 @@
         android:text="Bilzy"
         android:textColor="#A5A6F6"
         android:textStyle="bold|italic"
-        android:textSize="26sp"
+        android:textSize="31sp"
         android:fontFamily="sans-serif-black"
         android:layout_marginStart="20dp"
         android:layout_marginTop="52dp"
@@ -48,8 +48,8 @@
 
             <ImageView
                 android:id="@+id/successIcon"
-                android:layout_width="178dp"
-                android:layout_height="178dp"
+                android:layout_width="298dp"
+                android:layout_height="298dp"
                 android:src="@drawable/ic_done_3d"
                 android:scaleType="fitCenter" />
 
@@ -59,7 +59,7 @@
                 android:layout_height="wrap_content"
                 android:text="정산 완료!"
                 android:textColor="#FFFFFF"
-                android:textSize="24sp"
+                android:textSize="29sp"
                 android:textStyle="bold"
                 android:gravity="center"
                 android:layout_marginTop="8dp" />
@@ -70,7 +70,7 @@
                 android:layout_height="wrap_content"
                 android:text=""
                 android:textColor="#FFFFFF"
-                android:textSize="30sp"
+                android:textSize="36sp"
                 android:textStyle="bold"
                 android:gravity="center"
                 android:layout_marginTop="4dp" />
@@ -81,7 +81,7 @@
                 android:layout_height="wrap_content"
                 android:text=""
                 android:textColor="#BEBEF7"
-                android:textSize="13sp"
+                android:textSize="16sp"
                 android:gravity="center"
                 android:layout_marginTop="6dp" />
 
@@ -122,7 +122,7 @@
                     android:layout_height="wrap_content"
                     android:text="내가 낼 금액"
                     android:textColor="#BEBEF7"
-                    android:textSize="11sp" />
+                    android:textSize="13sp" />
 
             </LinearLayout>
 
@@ -132,7 +132,7 @@
                 android:layout_height="wrap_content"
                 android:text=""
                 android:textColor="#FFFFFF"
-                android:textSize="28sp"
+                android:textSize="34sp"
                 android:textStyle="bold"
                 android:layout_marginBottom="10dp" />
 
@@ -148,7 +148,7 @@
                     android:layout_height="wrap_content"
                     android:text="냉면 -7,500원"
                     android:textColor="#7CE7A0"
-                    android:textSize="11sp"
+                    android:textSize="13sp"
                     android:background="@drawable/bg_chip_green_outline"
                     android:paddingStart="10dp"
                     android:paddingEnd="10dp"
@@ -162,7 +162,7 @@
                     android:layout_height="wrap_content"
                     android:text="공기밥 -1,000원"
                     android:textColor="#7CE7A0"
-                    android:textSize="11sp"
+                    android:textSize="13sp"
                     android:background="@drawable/bg_chip_green_outline"
                     android:paddingStart="10dp"
                     android:paddingEnd="10dp"
@@ -187,7 +187,7 @@
                     android:layout_height="wrap_content"
                     android:text="송금 계좌"
                     android:textColor="#A5A6F6"
-                    android:textSize="12sp"
+                    android:textSize="14sp"
                     android:textStyle="bold"
                     android:layout_marginEnd="6dp" />
 
@@ -196,7 +196,7 @@
                     android:layout_height="wrap_content"
                     android:text="|"
                     android:textColor="#5A52B5"
-                    android:textSize="14sp"
+                    android:textSize="17sp"
                     android:layout_marginEnd="8dp" />
 
                 <TextView
@@ -206,7 +206,7 @@
                     android:layout_weight="1"
                     android:text=""
                     android:textColor="#FFFFFF"
-                    android:textSize="12sp"
+                    android:textSize="14sp"
                     android:ellipsize="end"
                     android:maxLines="1" />
 
@@ -226,7 +226,7 @@
         android:layout_marginBottom="36dp"
         android:text="정산 종료하기"
         android:textColor="#FFFFFF"
-        android:textSize="16sp"
+        android:textSize="19sp"
         android:textStyle="bold"
         android:gravity="center"
         android:background="@drawable/bg_button_dark"

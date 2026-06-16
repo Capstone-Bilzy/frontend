@@ -14,7 +14,7 @@
         android:text="Bilzy"
         android:textColor="#A5A6F6"
         android:textStyle="bold|italic"
-        android:textSize="26sp"
+        android:textSize="31sp"
         android:fontFamily="sans-serif-black"
         android:layout_marginStart="20dp"
         android:layout_marginTop="52dp"
@@ -48,7 +48,7 @@
             android:layout_marginStart="6dp"
             android:text="OCR 결과"
             android:textColor="#FFFFFF"
-            android:textSize="16sp"
+            android:textSize="19sp"
             android:textStyle="bold" />
 
     </LinearLayout>
@@ -77,7 +77,7 @@
                 android:layout_height="wrap_content"
                 android:text="영수증을 인식했어요!\n잘못된 항목은 직접 수정해주세요."
                 android:textColor="#BEBEF7"
-                android:textSize="13sp"
+                android:textSize="16sp"
                 android:gravity="center"
                 android:lineSpacingExtra="2dp"
                 android:layout_gravity="center_horizontal"
@@ -89,7 +89,7 @@
                 android:layout_height="wrap_content"
                 android:text="모임 이름"
                 android:textColor="#FFFFFF"
-                android:textSize="13sp"
+                android:textSize="16sp"
                 android:textStyle="bold"
                 android:layout_marginBottom="6dp" />
 
@@ -100,7 +100,7 @@
                 android:hint="예: 5월 회식"
                 android:textColorHint="#5555AA"
                 android:textColor="#1A1F3E"
-                android:textSize="14sp"
+                android:textSize="17sp"
                 android:background="@drawable/bg_input_white"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
@@ -113,7 +113,7 @@
                 android:layout_height="wrap_content"
                 android:text="가게 이름"
                 android:textColor="#FFFFFF"
-                android:textSize="13sp"
+                android:textSize="16sp"
                 android:textStyle="bold"
                 android:layout_marginBottom="6dp" />
 
@@ -124,7 +124,7 @@
                 android:hint="가게명"
                 android:textColorHint="#5555AA"
                 android:textColor="#1A1F3E"
-                android:textSize="14sp"
+                android:textSize="17sp"
                 android:background="@drawable/bg_input_white"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
@@ -137,7 +137,7 @@
                 android:layout_height="wrap_content"
                 android:text="상세 내역"
                 android:textColor="#FFFFFF"
-                android:textSize="13sp"
+                android:textSize="16sp"
                 android:textStyle="bold"
                 android:layout_marginBottom="6dp" />
 
@@ -156,7 +156,7 @@
                 android:layout_marginTop="8dp"
                 android:text="⊕  항목 추가"
                 android:textColor="#A5A6F6"
-                android:textSize="14sp"
+                android:textSize="17sp"
                 android:textStyle="bold"
                 android:gravity="center"
                 android:background="@drawable/bg_dashed_border"
@@ -176,7 +176,7 @@
                     android:layout_height="wrap_content"
                     android:text="총 합계"
                     android:textColor="#BEBEF7"
-                    android:textSize="14sp"
+                    android:textSize="17sp"
                     android:layout_marginEnd="10dp" />
 
                 <TextView
@@ -185,7 +185,7 @@
                     android:layout_height="wrap_content"
                     android:text="0원"
                     android:textColor="#FFFFFF"
-                    android:textSize="18sp"
+                    android:textSize="22sp"
                     android:textStyle="bold" />
 
             </LinearLayout>
@@ -203,7 +203,7 @@
         android:layout_marginBottom="36dp"
         android:text="정산 인원 설정하기"
         android:textColor="#FFFFFF"
-        android:textSize="16sp"
+        android:textSize="19sp"
         android:textStyle="bold"
         android:gravity="center"
         android:background="@drawable/bg_button_dark"

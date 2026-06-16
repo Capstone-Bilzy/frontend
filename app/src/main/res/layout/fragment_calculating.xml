@@ -22,18 +22,18 @@
             android:text="Bilzy"
             android:textColor="#A5A6F6"
             android:textStyle="bold|italic"
-            android:textSize="26sp"
+            android:textSize="31sp"
             android:fontFamily="sans-serif-black"
             android:layout_marginBottom="20dp" />
 
         <!-- 3D Wait illustration -->
         <ImageView
-            android:layout_width="220dp"
-            android:layout_height="220dp"
+            android:layout_width="371dp"
+            android:layout_height="match_parent"
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="8dp"
-            android:src="@drawable/ic_wait_3d"
-            android:scaleType="fitCenter" />
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_wait_3d" />
 
         <!-- "대기 중이에요" -->
         <TextView
@@ -43,7 +43,7 @@
             android:layout_gravity="center_horizontal"
             android:text="대기 중이에요"
             android:textColor="#FFFFFF"
-            android:textSize="24sp"
+            android:textSize="29sp"
             android:textStyle="bold"
             android:layout_marginTop="16dp" />
 
@@ -53,7 +53,7 @@
             android:layout_gravity="center_horizontal"
             android:text="나머지 인원의 입력을 기다리고 있어요"
             android:textColor="#BEBEF7"
-            android:textSize="13sp"
+            android:textSize="16sp"
             android:layout_marginTop="6dp"
             android:layout_marginBottom="28dp" />
 
@@ -69,7 +69,7 @@
                 android:layout_alignParentStart="true"
                 android:text="정산 완료 현황"
                 android:textColor="#FFFFFF"
-                android:textSize="14sp"
+                android:textSize="17sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -79,7 +79,7 @@
                 android:layout_alignParentEnd="true"
                 android:text=""
                 android:textColor="#A5A6F6"
-                android:textSize="14sp"
+                android:textSize="17sp"
                 android:textStyle="bold" />
 
         </RelativeLayout>
@@ -116,7 +116,7 @@
                 android:layout_height="wrap_content"
                 android:text="ⓘ"
                 android:textColor="#8888BB"
-                android:textSize="16sp"
+                android:textSize="19sp"
                 android:layout_marginEnd="8dp" />
 
             <TextView
@@ -126,7 +126,7 @@
                 android:layout_weight="1"
                 android:text="AI가 최적의 정산 금액을 계산하고 있어요"
                 android:textColor="#BEBEF7"
-                android:textSize="12sp"
+                android:textSize="14sp"
                 android:lineSpacingExtra="2dp" />
 
         </LinearLayout>

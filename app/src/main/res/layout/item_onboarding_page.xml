@@ -16,7 +16,7 @@
         android:layout_height="wrap_content"
         android:text=""
         android:textColor="#FFFFFF"
-        android:textSize="22sp"
+        android:textSize="26sp"
         android:textStyle="bold"
         android:gravity="center"
         android:lineSpacingExtra="6dp"
@@ -28,7 +28,7 @@
         android:layout_height="wrap_content"
         android:text=""
         android:textColor="#A5A6F6"
-        android:textSize="13sp"
+        android:textSize="16sp"
         android:gravity="center"
         android:lineSpacingExtra="3dp"
         android:layout_marginBottom="36dp" />

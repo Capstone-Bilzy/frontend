@@ -30,7 +30,7 @@
             android:layout_height="wrap_content"
             android:text="모임 이름"
             android:textColor="#FFFFFF"
-            android:textSize="13sp"
+            android:textSize="16sp"
             android:textStyle="bold"
             android:maxLines="1"
             android:ellipsize="end" />
@@ -41,7 +41,7 @@
             android:layout_height="wrap_content"
             android:text="5.04 · 정산 완료"
             android:textColor="#8080BB"
-            android:textSize="11sp" />
+            android:textSize="13sp" />
 
     </LinearLayout>
 
@@ -53,7 +53,7 @@
         android:layout_centerVertical="true"
         android:text="0원"
         android:textColor="#FFFFFF"
-        android:textSize="13sp"
+        android:textSize="16sp"
         android:textStyle="bold" />
 
 </RelativeLayout>

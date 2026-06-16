@@ -14,7 +14,7 @@
         android:text="Bilzy"
         android:textColor="#A5A6F6"
         android:textStyle="bold|italic"
-        android:textSize="26sp"
+        android:textSize="31sp"
         android:fontFamily="sans-serif-black"
         android:layout_marginStart="20dp"
         android:layout_marginTop="52dp"
@@ -50,7 +50,7 @@
         android:layout_height="wrap_content"
         android:text="영수증 스캔에 카메라 권한이 필요해요"
         android:textColor="#FFFFFF"
-        android:textSize="20sp"
+        android:textSize="24sp"
         android:textStyle="bold"
         android:gravity="center"
         android:lineSpacingExtra="4dp"
@@ -64,7 +64,7 @@
         android:layout_height="wrap_content"
         android:text="영수증의 모임 이름과 상세 내역을\n자동으로 채워드릴게요"
         android:textColor="#BEBEF7"
-        android:textSize="13sp"
+        android:textSize="16sp"
         android:gravity="center"
         android:lineSpacingExtra="3dp"
         android:layout_marginTop="10dp"
@@ -82,7 +82,7 @@
         android:layout_marginBottom="36dp"
         android:text="권한 허용하기"
         android:textColor="#FFFFFF"
-        android:textSize="16sp"
+        android:textSize="19sp"
         android:textStyle="bold"
         android:gravity="center"
         android:background="@drawable/bg_button_dark"
@@ -116,7 +116,7 @@
             android:clickable="true"
             android:focusable="true">
             <ImageView android:layout_width="22dp" android:layout_height="22dp" android:src="@drawable/ic_home" app:tint="#80FFFFFF" />
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:text="홈" android:textColor="#80FFFFFF" android:textSize="10sp" />
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:text="홈" android:textColor="#80FFFFFF" android:textSize="12sp" />
         </LinearLayout>
 
         <LinearLayout
@@ -132,7 +132,7 @@
                 android:paddingStart="18dp" android:paddingEnd="18dp"
                 android:paddingTop="6dp" android:paddingBottom="6dp">
                 <ImageView android:layout_width="22dp" android:layout_height="22dp" android:src="@drawable/ic_scan" app:tint="#A5A6F6" />
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:text="스캔" android:textColor="#A5A6F6" android:textSize="10sp" />
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:text="스캔" android:textColor="#A5A6F6" android:textSize="12sp" />
             </LinearLayout>
         </LinearLayout>
 
@@ -146,7 +146,7 @@
             android:clickable="true"
             android:focusable="true">
             <ImageView android:layout_width="22dp" android:layout_height="22dp" android:src="@drawable/ic_history" app:tint="#80FFFFFF" />
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:text="정산내역" android:textColor="#80FFFFFF" android:textSize="10sp" />
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:text="정산내역" android:textColor="#80FFFFFF" android:textSize="12sp" />
         </LinearLayout>
 
         <LinearLayout
@@ -159,7 +159,7 @@
             android:clickable="true"
             android:focusable="true">
             <ImageView android:layout_width="22dp" android:layout_height="22dp" android:src="@drawable/ic_mapage" app:tint="#80FFFFFF" />
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:text="마이페이지" android:textColor="#80FFFFFF" android:textSize="10sp" />
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:text="마이페이지" android:textColor="#80FFFFFF" android:textSize="12sp" />
         </LinearLayout>
 
     </LinearLayout>

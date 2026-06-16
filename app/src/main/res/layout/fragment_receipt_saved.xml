@@ -14,7 +14,7 @@
         android:text="Bilzy"
         android:textColor="#A5A6F6"
         android:textStyle="bold|italic"
-        android:textSize="26sp"
+        android:textSize="31sp"
         android:fontFamily="sans-serif-black"
         android:layout_marginStart="20dp"
         android:layout_marginTop="52dp"
@@ -35,10 +35,10 @@
 
         <ImageView
             android:id="@+id/illustrationArea"
-            android:layout_width="200dp"
-            android:layout_height="200dp"
-            android:src="@drawable/ic_bill_3d"
-            android:scaleType="fitCenter" />
+            android:layout_width="305dp"
+            android:layout_height="match_parent"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_bill_3d" />
 
         <TextView
             android:id="@+id/tvTitle"
@@ -46,7 +46,7 @@
             android:layout_height="wrap_content"
             android:text="영수증이 저장되었어요"
             android:textColor="#FFFFFF"
-            android:textSize="22sp"
+            android:textSize="26sp"
             android:textStyle="bold"
             android:gravity="center"
             android:layout_marginTop="16dp" />
@@ -57,7 +57,7 @@
             android:layout_height="wrap_content"
             android:text="정산내역에서 언제든 확인할 수 있어요"
             android:textColor="#BEBEF7"
-            android:textSize="13sp"
+            android:textSize="16sp"
             android:gravity="center"
             android:layout_marginTop="8dp" />
 
@@ -73,7 +73,7 @@
         android:layout_marginBottom="36dp"
         android:text="정산내역으로 돌아가기"
         android:textColor="#FFFFFF"
-        android:textSize="16sp"
+        android:textSize="19sp"
         android:textStyle="bold"
         android:gravity="center"
         android:background="@drawable/bg_button_dark"

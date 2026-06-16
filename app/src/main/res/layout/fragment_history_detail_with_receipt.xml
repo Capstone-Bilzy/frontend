@@ -13,7 +13,7 @@
         android:text="Bilzy"
         android:textColor="#A5A6F6"
         android:textStyle="bold|italic"
-        android:textSize="26sp"
+        android:textSize="31sp"
         android:fontFamily="sans-serif-black"
         android:layout_marginStart="20dp"
         android:layout_marginTop="52dp"
@@ -50,7 +50,7 @@
             android:layout_height="wrap_content"
             android:text=""
             android:textColor="#FFFFFF"
-            android:textSize="17sp"
+            android:textSize="20sp"
             android:textStyle="bold" />
     </LinearLayout>
 
@@ -93,7 +93,7 @@
                     android:layout_height="wrap_content"
                     android:text=""
                     android:textColor="#FFFFFF"
-                    android:textSize="12sp"
+                    android:textSize="14sp"
                     android:background="@drawable/bg_chip"
                     android:paddingStart="10dp"
                     android:paddingEnd="10dp"
@@ -107,7 +107,7 @@
                     android:layout_height="wrap_content"
                     android:text=""
                     android:textColor="#FFFFFF"
-                    android:textSize="16sp"
+                    android:textSize="19sp"
                     android:textStyle="bold"
                     android:layout_marginBottom="8dp" />
 
@@ -116,7 +116,7 @@
                     android:layout_height="wrap_content"
                     android:text="총 결제 금액"
                     android:textColor="#80FFFFFF"
-                    android:textSize="12sp"
+                    android:textSize="14sp"
                     android:layout_marginBottom="4dp" />
 
                 <TextView
@@ -125,7 +125,7 @@
                     android:layout_height="wrap_content"
                     android:text=""
                     android:textColor="#FFFFFF"
-                    android:textSize="28sp"
+                    android:textSize="34sp"
                     android:textStyle="bold"
                     android:layout_marginBottom="16dp" />
 
@@ -148,7 +148,7 @@
                         android:layout_centerVertical="true"
                         android:text=""
                         android:textColor="#80FFFFFF"
-                        android:textSize="12sp" />
+                        android:textSize="14sp" />
                 </RelativeLayout>
             </LinearLayout>
 
@@ -158,7 +158,7 @@
                 android:layout_height="wrap_content"
                 android:text="참여자 정산 내역"
                 android:textColor="#FFFFFF"
-                android:textSize="14sp"
+                android:textSize="17sp"
                 android:textStyle="bold"
                 android:layout_marginBottom="12dp" />
 
@@ -183,7 +183,7 @@
                     android:layout_centerVertical="true"
                     android:text="첨부된 영수증"
                     android:textColor="#FFFFFF"
-                    android:textSize="14sp"
+                    android:textSize="17sp"
                     android:textStyle="bold" />
 
                 <TextView
@@ -194,7 +194,7 @@
                     android:layout_centerVertical="true"
                     android:text="1장"
                     android:textColor="#80FFFFFF"
-                    android:textSize="12sp" />
+                    android:textSize="14sp" />
             </RelativeLayout>
 
             <!-- Attached receipt card -->
@@ -228,7 +228,7 @@
                         android:layout_height="wrap_content"
                         android:text=""
                         android:textColor="#FFFFFF"
-                        android:textSize="14sp"
+                        android:textSize="17sp"
                         android:textStyle="bold"
                         android:layout_marginBottom="4dp" />
 
@@ -238,7 +238,7 @@
                         android:layout_height="wrap_content"
                         android:text=""
                         android:textColor="#80FFFFFF"
-                        android:textSize="12sp" />
+                        android:textSize="14sp" />
                 </LinearLayout>
 
                 <TextView
@@ -247,7 +247,7 @@
                     android:layout_height="wrap_content"
                     android:text="⋯"
                     android:textColor="#80FFFFFF"
-                    android:textSize="20sp"
+                    android:textSize="24sp"
                     android:paddingStart="8dp"
                     android:paddingEnd="4dp"
                     android:clickable="true"
@@ -279,7 +279,7 @@
                     android:layout_height="wrap_content"
                     android:text="영수증 사진 추가하기"
                     android:textColor="#A5A6F6"
-                    android:textSize="13sp" />
+                    android:textSize="16sp" />
             </LinearLayout>
 
         </LinearLayout>
@@ -303,7 +303,7 @@
             android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
             android:orientation="vertical" android:gravity="center" android:clickable="true" android:focusable="true">
             <ImageView android:layout_width="22dp" android:layout_height="22dp" android:src="@drawable/ic_home" app:tint="#80FFFFFF" />
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:text="홈" android:textColor="#80FFFFFF" android:textSize="10sp" />
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:text="홈" android:textColor="#80FFFFFF" android:textSize="12sp" />
         </LinearLayout>
 
         <LinearLayout
@@ -311,7 +311,7 @@
             android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
             android:orientation="vertical" android:gravity="center" android:clickable="true" android:focusable="true">
             <ImageView android:layout_width="22dp" android:layout_height="22dp" android:src="@drawable/ic_scan" app:tint="#80FFFFFF" />
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:text="스캔" android:textColor="#80FFFFFF" android:textSize="10sp" />
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:text="스캔" android:textColor="#80FFFFFF" android:textSize="12sp" />
         </LinearLayout>
 
         <LinearLayout
@@ -325,7 +325,7 @@
                 android:paddingStart="18dp" android:paddingEnd="18dp"
                 android:paddingTop="6dp" android:paddingBottom="6dp">
                 <ImageView android:layout_width="22dp" android:layout_height="22dp" android:src="@drawable/ic_history" app:tint="#A5A6F6" />
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:text="정산내역" android:textColor="#A5A6F6" android:textSize="10sp" />
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:text="정산내역" android:textColor="#A5A6F6" android:textSize="12sp" />
             </LinearLayout>
         </LinearLayout>
 
@@ -334,7 +334,7 @@
             android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
             android:orientation="vertical" android:gravity="center" android:clickable="true" android:focusable="true">
             <ImageView android:layout_width="22dp" android:layout_height="22dp" android:src="@drawable/ic_mapage" app:tint="#80FFFFFF" />
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:text="마이페이지" android:textColor="#80FFFFFF" android:textSize="10sp" />
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:text="마이페이지" android:textColor="#80FFFFFF" android:textSize="12sp" />
         </LinearLayout>
     </LinearLayout>
 

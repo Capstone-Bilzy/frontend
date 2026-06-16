@@ -28,6 +28,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import com.android.bilzy.data.demo.DemoData
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -116,10 +117,11 @@ class HistoryDetailWithReceiptFragment : Fragment() {
         binding.tvPeopleChip.text = "👥 ${s.members.size}명 참여"
         binding.tvDate.text = formatDate(s.createdAt)
 
+        val demoItems = if (s.id == DemoData.DEMO_ID) DemoData.memberItems else emptyMap()
         val participants = s.members.map { m ->
             ParticipantItem(
                 name = m.nickname,
-                items = "",                       // 멤버별 주문 항목은 상세 응답에 없음 → 숨김
+                items = demoItems[m.id] ?: "",
                 amount = nf.format(m.amount) + "원",
                 adjustment = m.reason?.takeIf { it.isNotBlank() }
             )

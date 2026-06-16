@@ -25,7 +25,7 @@
         android:layout_weight="1"
         android:text="참여자"
         android:textColor="#FFFFFF"
-        android:textSize="15sp"
+        android:textSize="18sp"
         android:layout_marginStart="12dp" />
 
     <ImageView

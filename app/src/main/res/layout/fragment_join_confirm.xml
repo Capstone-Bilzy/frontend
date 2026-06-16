@@ -24,7 +24,7 @@
             android:text="Bilzy"
             android:textColor="#A5A6F6"
             android:textStyle="bold|italic"
-            android:textSize="28sp"
+            android:textSize="34sp"
             android:fontFamily="sans-serif-black"
             android:layout_marginBottom="28dp" />
 
@@ -33,7 +33,7 @@
             android:layout_height="wrap_content"
             android:text="정산방 초대"
             android:textColor="#FFFFFF"
-            android:textSize="20sp"
+            android:textSize="24sp"
             android:textStyle="bold"
             android:layout_marginBottom="10dp" />
 
@@ -42,7 +42,7 @@
             android:layout_height="wrap_content"
             android:text="초대받은 정산방에 입장할까요?\n입장하면 내 닉네임으로 참여자에 추가됩니다."
             android:textColor="#CCFFFFFF"
-            android:textSize="13sp"
+            android:textSize="16sp"
             android:gravity="center"
             android:lineSpacingExtra="4dp"
             android:layout_marginBottom="36dp" />
@@ -53,7 +53,7 @@
             android:layout_height="56dp"
             android:text="입장하기"
             android:textColor="#FFFFFF"
-            android:textSize="16sp"
+            android:textSize="19sp"
             android:textStyle="bold"
             android:gravity="center"
             android:background="@drawable/bg_button_primary"
@@ -67,7 +67,7 @@
             android:layout_height="52dp"
             android:text="취소"
             android:textColor="#99FFFFFF"
-            android:textSize="15sp"
+            android:textSize="18sp"
             android:gravity="center"
             android:clickable="true"
             android:focusable="true" />

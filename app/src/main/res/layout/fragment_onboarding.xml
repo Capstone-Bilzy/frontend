@@ -66,7 +66,7 @@
             android:layout_height="wrap_content"
             android:text="이미 계정이 있으신가요?  "
             android:textColor="#80FFFFFF"
-            android:textSize="13sp" />
+            android:textSize="16sp" />
 
         <TextView
             android:id="@+id/btnLogin"
@@ -74,7 +74,7 @@
             android:layout_height="wrap_content"
             android:text="로그인"
             android:textColor="#A5A6F6"
-            android:textSize="13sp"
+            android:textSize="16sp"
             android:textStyle="bold"
             android:clickable="true"
             android:focusable="true"
@@ -93,7 +93,7 @@
         android:layout_marginBottom="32dp"
         android:text="회원가입"
         android:textColor="#FFFFFF"
-        android:textSize="15sp"
+        android:textSize="18sp"
         android:textStyle="bold"
         android:gravity="center"
         android:background="@drawable/bg_button_primary"

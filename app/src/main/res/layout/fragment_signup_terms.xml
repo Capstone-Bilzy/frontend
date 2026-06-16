@@ -27,7 +27,7 @@
         android:layout_height="wrap_content"
         android:text="카카오"
         android:textColor="#FFFFFF"
-        android:textSize="17sp"
+        android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintTop_toTopOf="@id/btnBack"
         app:layout_constraintBottom_toBottomOf="@id/btnBack"
@@ -92,7 +92,7 @@
                     android:layout_weight="1"
                     android:text="모두 확인하였으며 동의합니다."
                     android:textColor="#FFFFFF"
-                    android:textSize="14sp"
+                    android:textSize="17sp"
                     android:textStyle="bold" />
             </LinearLayout>
 
@@ -124,7 +124,7 @@
                     android:layout_weight="1"
                     android:text="이용약관 (필수)"
                     android:textColor="#CCFFFFFF"
-                    android:textSize="14sp" />
+                    android:textSize="17sp" />
 
                 <ImageView
                     android:layout_width="20dp"
@@ -162,7 +162,7 @@
                     android:layout_weight="1"
                     android:text="개인정보 수집 및 이용 (필수)"
                     android:textColor="#CCFFFFFF"
-                    android:textSize="14sp" />
+                    android:textSize="17sp" />
 
                 <ImageView
                     android:layout_width="20dp"
@@ -200,7 +200,7 @@
                     android:layout_weight="1"
                     android:text="위치기반 서비스 이용약관 (선택)"
                     android:textColor="#80FFFFFF"
-                    android:textSize="14sp" />
+                    android:textSize="17sp" />
 
                 <ImageView
                     android:layout_width="20dp"
@@ -237,7 +237,7 @@
                     android:layout_weight="1"
                     android:text="마케팅 정보 수신 동의 (선택)"
                     android:textColor="#80FFFFFF"
-                    android:textSize="14sp" />
+                    android:textSize="17sp" />
 
                 <ImageView
                     android:layout_width="20dp"
@@ -273,7 +273,7 @@
             android:layout_height="wrap_content"
             android:text="💬  동의하고 계속하기"
             android:textColor="#191919"
-            android:textSize="15sp"
+            android:textSize="18sp"
             android:textStyle="bold" />
     </LinearLayout>
 

@@ -14,7 +14,7 @@
         android:text="Bilzy"
         android:textColor="#A5A6F6"
         android:textStyle="bold|italic"
-        android:textSize="26sp"
+        android:textSize="31sp"
         android:fontFamily="sans-serif-black"
         android:layout_marginStart="20dp"
         android:layout_marginTop="52dp"
@@ -40,7 +40,7 @@
         android:layout_height="wrap_content"
         android:text="멤버 합류를 기다리고 있어요"
         android:textColor="#FFFFFF"
-        android:textSize="22sp"
+        android:textSize="26sp"
         android:textStyle="bold"
         android:gravity="center"
         android:layout_marginTop="16dp"
@@ -54,7 +54,7 @@
         android:layout_height="wrap_content"
         android:text="모두가 모이면 자동으로 정산이 시작됩니다"
         android:textColor="#BEBEF7"
-        android:textSize="13sp"
+        android:textSize="16sp"
         android:gravity="center"
         android:layout_marginTop="6dp"
         app:layout_constraintTop_toBottomOf="@id/tvTitle"
@@ -86,7 +86,7 @@
                 android:layout_alignParentStart="true"
                 android:text="모인 멤버"
                 android:textColor="#FFFFFF"
-                android:textSize="14sp"
+                android:textSize="17sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -96,7 +96,7 @@
                 android:layout_alignParentEnd="true"
                 android:text=""
                 android:textColor="#A5A6F6"
-                android:textSize="14sp"
+                android:textSize="17sp"
                 android:textStyle="bold" />
 
         </RelativeLayout>

@@ -5,9 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:background="@drawable/bg_history_card"
+    android:background="@drawable/bg_participant_card"
     android:padding="16dp"
-    android:layout_marginBottom="8dp">
+    android:layout_marginBottom="16dp">
 
     <!-- Name + Amount -->
     <RelativeLayout
@@ -22,7 +22,7 @@
             android:layout_alignParentStart="true"
             android:text="정민지"
             android:textColor="#FFFFFF"
-            android:textSize="15sp"
+            android:textSize="18sp"
             android:textStyle="bold" />
 
         <TextView
@@ -32,7 +32,7 @@
             android:layout_alignParentEnd="true"
             android:text="10,875원"
             android:textColor="#FFFFFF"
-            android:textSize="15sp"
+            android:textSize="18sp"
             android:textStyle="bold" />
     </RelativeLayout>
 
@@ -43,8 +43,8 @@
         android:layout_height="wrap_content"
         android:text="햄버거, 감자튀김, 음료"
         android:textColor="#80FFFFFF"
-        android:textSize="12sp"
-        android:layout_marginBottom="8dp" />
+        android:textSize="14sp"
+        android:layout_marginBottom="14dp" />
 
     <!-- AI adjustment chip -->
     <TextView
@@ -53,7 +53,7 @@
         android:layout_height="wrap_content"
         android:text="핫도그 -3,500원"
         android:textColor="#7CE7A0"
-        android:textSize="11sp"
+        android:textSize="13sp"
         android:background="@drawable/bg_chip_green_outline"
         android:paddingStart="10dp"
         android:paddingEnd="10dp"

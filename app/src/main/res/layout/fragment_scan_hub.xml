@@ -33,7 +33,7 @@
             android:layout_marginStart="10dp"
             android:text="스캔"
             android:textColor="#FFFFFF"
-            android:textSize="18sp"
+            android:textSize="22sp"
             android:textStyle="bold" />
 
     </LinearLayout>
@@ -107,7 +107,7 @@
                 android:layout_marginTop="16dp"
                 android:text="정산해야 하는 영수증의\n결제 정보가 나오게 찍어주세요"
                 android:textColor="#666699"
-                android:textSize="13sp"
+                android:textSize="16sp"
                 android:gravity="center"
                 android:lineSpacingExtra="4dp" />
 
@@ -135,7 +135,7 @@
                 android:layout_marginTop="16dp"
                 android:text="초대 받은 정산방의\nQR코드가 나오게 찍어주세요"
                 android:textColor="#666699"
-                android:textSize="13sp"
+                android:textSize="16sp"
                 android:gravity="center"
                 android:lineSpacingExtra="4dp" />
 
@@ -208,7 +208,7 @@
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
                 android:textColor="#606090"
-                android:textSize="13sp"
+                android:textSize="16sp"
                 android:clickable="true"
                 android:focusable="true" />
 
@@ -225,7 +225,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="#FFFFFF"
-                    android:textSize="13sp"
+                    android:textSize="16sp"
                     android:textStyle="bold" />
 
                 <TextView
@@ -233,7 +233,7 @@
                     android:layout_height="wrap_content"
                     android:text="▲"
                     android:textColor="#A5A6F6"
-                    android:textSize="8sp"
+                    android:textSize="10sp"
                     android:layout_marginTop="2dp" />
 
             </LinearLayout>

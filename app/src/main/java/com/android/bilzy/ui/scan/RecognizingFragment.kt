@@ -127,7 +127,7 @@ class RecognizingFragment : Fragment() {
         frames.forEachIndexed { i, frame ->
             val active = i <= step
             // 활성 단계는 보라색 칩 + 흰색, 대기 단계는 흐린 원 + 회색으로 색이 또렷하게 바뀐다.
-            frame.setBackgroundResource(if (active) R.drawable.bg_role_chip else R.drawable.bg_avatar_circle)
+            frame.setBackgroundResource(if (active) R.drawable.bg_step_active else R.drawable.bg_step_idle)
             icons[i].setColorFilter(if (active) ACTIVE_COLOR else IDLE_COLOR)
             labels[i].setTextColor(if (active) ACTIVE_COLOR else IDLE_COLOR)
         }

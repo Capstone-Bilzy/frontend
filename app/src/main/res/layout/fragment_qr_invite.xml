@@ -14,7 +14,7 @@
         android:text="Bilzy"
         android:textColor="#A5A6F6"
         android:textStyle="bold|italic"
-        android:textSize="26sp"
+        android:textSize="31sp"
         android:fontFamily="sans-serif-black"
         android:layout_marginStart="20dp"
         android:layout_marginTop="52dp"
@@ -49,7 +49,7 @@
             android:layout_marginStart="6dp"
             android:text="정산방 초대"
             android:textColor="#FFFFFF"
-            android:textSize="16sp"
+            android:textSize="19sp"
             android:textStyle="bold" />
 
     </LinearLayout>
@@ -78,7 +78,7 @@
             android:layout_height="wrap_content"
             android:text="QR코드를 스캔하여\n정산방에 들어가세요"
             android:textColor="#FFFFFF"
-            android:textSize="16sp"
+            android:textSize="19sp"
             android:textStyle="bold"
             android:gravity="center"
             android:lineSpacingExtra="4dp"
@@ -136,7 +136,7 @@
             android:layout_marginTop="16dp"
             android:text="정산방"
             android:textColor="#BEBEF7"
-            android:textSize="14sp"
+            android:textSize="17sp"
             android:textStyle="bold"
             android:gravity="center" />
 
@@ -147,7 +147,7 @@
             android:layout_marginTop="4dp"
             android:text="2026.06.06"
             android:textColor="#BEBEF7"
-            android:textSize="12sp"
+            android:textSize="14sp"
             android:gravity="center" />
 
         <!-- 이미지 저장 / 공유 버튼 행 -->
@@ -181,7 +181,7 @@
                     android:layout_height="wrap_content"
                     android:text="이미지 저장하기"
                     android:textColor="#FFFFFF"
-                    android:textSize="12sp" />
+                    android:textSize="14sp" />
 
             </LinearLayout>
 
@@ -209,7 +209,7 @@
                     android:layout_height="wrap_content"
                     android:text="QR코드 공유하기"
                     android:textColor="#FFFFFF"
-                    android:textSize="12sp" />
+                    android:textSize="14sp" />
 
             </LinearLayout>
 
@@ -232,7 +232,7 @@
                 android:layout_height="wrap_content"
                 android:text="💬  카카오톡으로 초대하기"
                 android:textColor="#191919"
-                android:textSize="13sp"
+                android:textSize="16sp"
                 android:textStyle="bold" />
 
         </LinearLayout>
@@ -249,7 +249,7 @@
         android:layout_marginBottom="36dp"
         android:text="정산방 입장하기"
         android:textColor="#FFFFFF"
-        android:textSize="16sp"
+        android:textSize="19sp"
         android:textStyle="bold"
         android:gravity="center"
         android:background="@drawable/bg_button_dark"

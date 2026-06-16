@@ -14,7 +14,7 @@
         android:text="Bilzy"
         android:textColor="#A5A6F6"
         android:textStyle="bold|italic"
-        android:textSize="26sp"
+        android:textSize="31sp"
         android:fontFamily="sans-serif-black"
         android:layout_marginStart="20dp"
         android:layout_marginTop="52dp"
@@ -49,7 +49,7 @@
             android:layout_marginStart="6dp"
             android:text="금액 조정하기"
             android:textColor="#FFFFFF"
-            android:textSize="16sp"
+            android:textSize="19sp"
             android:textStyle="bold" />
 
     </LinearLayout>
@@ -79,7 +79,7 @@
                 android:layout_height="wrap_content"
                 android:text="영수증 내역"
                 android:textColor="#FFFFFF"
-                android:textSize="15sp"
+                android:textSize="18sp"
                 android:textStyle="bold"
                 android:layout_marginBottom="10dp" />
 
@@ -131,7 +131,7 @@
                         android:layout_height="wrap_content"
                         android:text="기본 1/N"
                         android:textColor="#BEBEF7"
-                        android:textSize="11sp" />
+                        android:textSize="13sp" />
 
                 </LinearLayout>
 
@@ -148,7 +148,7 @@
                         android:layout_centerVertical="true"
                         android:text=""
                         android:textColor="#FFFFFF"
-                        android:textSize="28sp"
+                        android:textSize="34sp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -159,7 +159,7 @@
                         android:layout_centerVertical="true"
                         android:text=""
                         android:textColor="#7CE7A0"
-                        android:textSize="12sp"
+                        android:textSize="14sp"
                         android:background="@drawable/bg_chip_green_outline"
                         android:paddingStart="8dp"
                         android:paddingEnd="8dp"
@@ -176,7 +176,7 @@
                 android:layout_height="wrap_content"
                 android:text="AI가 영수증에서 찾은 항목"
                 android:textColor="#FFFFFF"
-                android:textSize="15sp"
+                android:textSize="18sp"
                 android:textStyle="bold"
                 android:layout_marginBottom="4dp" />
 
@@ -185,7 +185,7 @@
                 android:layout_height="wrap_content"
                 android:text="내가 안 먹은 메뉴를 선택하면 그만큼 차감돼요"
                 android:textColor="#8888BB"
-                android:textSize="12sp"
+                android:textSize="14sp"
                 android:layout_marginBottom="12dp" />
 
             <!-- 가로 스크롤 칩 행 (항목 수 제한 없음, 동적 생성) -->
@@ -217,7 +217,7 @@
                     android:layout_height="wrap_content"
                     android:text="ⓘ"
                     android:textColor="#8888BB"
-                    android:textSize="16sp"
+                    android:textSize="19sp"
                     android:layout_marginEnd="8dp" />
 
                 <TextView
@@ -226,7 +226,7 @@
                     android:layout_weight="1"
                     android:text="선택한 항목은 내 금액에서 1인분 가격이 빠져요\n(주류제외)"
                     android:textColor="#BEBEF7"
-                    android:textSize="12sp"
+                    android:textSize="14sp"
                     android:lineSpacingExtra="2dp" />
 
             </LinearLayout>
@@ -244,7 +244,7 @@
         android:layout_marginBottom="36dp"
         android:text="정산 시작"
         android:textColor="#FFFFFF"
-        android:textSize="16sp"
+        android:textSize="19sp"
         android:textStyle="bold"
         android:gravity="center"
         android:background="@drawable/bg_button_dark"

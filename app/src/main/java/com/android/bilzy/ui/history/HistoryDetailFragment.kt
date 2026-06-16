@@ -84,10 +84,12 @@ class HistoryDetailFragment : Fragment() {
         binding.tvPeopleChip.text = "👥 ${s.members.size}명 참여"
         binding.tvDate.text = formatDate(s.createdAt)
 
+        val demoItems = if (s.id == com.android.bilzy.data.demo.DemoData.DEMO_ID)
+            com.android.bilzy.data.demo.DemoData.memberItems else emptyMap()
         val participants = s.members.map { m ->
             ParticipantItem(
                 name = m.nickname,
-                items = "",                       // 멤버별 주문 항목은 상세 응답에 없음 → 숨김
+                items = demoItems[m.id] ?: "",
                 amount = nf.format(m.amount) + "원",
                 adjustment = m.reason?.takeIf { it.isNotBlank() }
             )

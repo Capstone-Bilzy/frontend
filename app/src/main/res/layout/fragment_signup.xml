@@ -33,7 +33,7 @@
                 android:text="Bilzy"
                 android:textColor="#A5A6F6"
                 android:textStyle="bold|italic"
-                android:textSize="56sp"
+                android:textSize="67sp"
                 android:fontFamily="sans-serif-black"
                 android:letterSpacing="-0.02" />
 
@@ -53,7 +53,7 @@
             android:layout_height="wrap_content"
             android:text="Bilzy와 함께 빠르고 간편한\n정산을 시작해보세요"
             android:textColor="#A5A6F6"
-            android:textSize="14sp"
+            android:textSize="17sp"
             android:gravity="center"
             android:lineSpacingExtra="3dp"
             android:layout_marginTop="8dp" />
@@ -80,7 +80,7 @@
             android:layout_height="wrap_content"
             android:text="💬  카카오로 3초 만에 시작하기"
             android:textColor="#191919"
-            android:textSize="15sp"
+            android:textSize="18sp"
             android:textStyle="bold" />
     </LinearLayout>
 
@@ -105,7 +105,7 @@
             android:layout_height="wrap_content"
             android:text="N  네이버로 3초 만에 시작하기"
             android:textColor="#FFFFFF"
-            android:textSize="15sp"
+            android:textSize="18sp"
             android:textStyle="bold" />
     </LinearLayout>
 
