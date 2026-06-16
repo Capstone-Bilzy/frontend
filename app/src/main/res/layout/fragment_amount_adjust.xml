@@ -93,60 +93,6 @@
                 android:padding="14dp"
                 android:layout_marginBottom="12dp">
 
-                <!-- Item rows -->
-                <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="6dp">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_alignParentStart="true" android:text="삼겹살" android:textColor="#FFFFFF" android:textSize="13sp" />
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_centerHorizontal="true" android:text="8" android:textColor="#BEBEF7" android:textSize="13sp" />
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_alignParentEnd="true" android:text="160,000원" android:textColor="#FFFFFF" android:textSize="13sp" />
-                </RelativeLayout>
-                <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="6dp">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_alignParentStart="true" android:text="냉면" android:textColor="#FFFFFF" android:textSize="13sp" />
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_centerHorizontal="true" android:text="5" android:textColor="#BEBEF7" android:textSize="13sp" />
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_alignParentEnd="true" android:text="45,000원" android:textColor="#FFFFFF" android:textSize="13sp" />
-                </RelativeLayout>
-                <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="6dp">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_alignParentStart="true" android:text="공기밥" android:textColor="#FFFFFF" android:textSize="13sp" />
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_centerHorizontal="true" android:text="6" android:textColor="#BEBEF7" android:textSize="13sp" />
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_alignParentEnd="true" android:text="6,000원" android:textColor="#FFFFFF" android:textSize="13sp" />
-                </RelativeLayout>
-                <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="6dp">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_alignParentStart="true" android:text="계란찜" android:textColor="#FFFFFF" android:textSize="13sp" />
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_centerHorizontal="true" android:text="2" android:textColor="#BEBEF7" android:textSize="13sp" />
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_alignParentEnd="true" android:text="12,000원" android:textColor="#FFFFFF" android:textSize="13sp" />
-                </RelativeLayout>
-                <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="6dp">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_alignParentStart="true" android:text="된장찌개" android:textColor="#FFFFFF" android:textSize="13sp" />
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_centerHorizontal="true" android:text="2" android:textColor="#BEBEF7" android:textSize="13sp" />
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_alignParentEnd="true" android:text="12,000원" android:textColor="#FFFFFF" android:textSize="13sp" />
-                </RelativeLayout>
-                <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="6dp">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_alignParentStart="true" android:text="사이다" android:textColor="#FFFFFF" android:textSize="13sp" />
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_centerHorizontal="true" android:text="3" android:textColor="#BEBEF7" android:textSize="13sp" />
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_alignParentEnd="true" android:text="9,000원" android:textColor="#FFFFFF" android:textSize="13sp" />
-                </RelativeLayout>
-                <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="6dp">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_alignParentStart="true" android:text="소주" android:textColor="#FFFFFF" android:textSize="13sp" />
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_centerHorizontal="true" android:text="5" android:textColor="#BEBEF7" android:textSize="13sp" />
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_alignParentEnd="true" android:text="30,000원" android:textColor="#FFFFFF" android:textSize="13sp" />
-                </RelativeLayout>
-                <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="10dp">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_alignParentStart="true" android:text="맥주" android:textColor="#FFFFFF" android:textSize="13sp" />
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_centerHorizontal="true" android:text="6" android:textColor="#BEBEF7" android:textSize="13sp" />
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_alignParentEnd="true" android:text="36,000원" android:textColor="#FFFFFF" android:textSize="13sp" />
-                </RelativeLayout>
-
-                <!-- Divider -->
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="#33FFFFFF"
-                    android:layout_marginBottom="8dp" />
-
-                <!-- Total row -->
-                <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_alignParentStart="true" android:text="합계" android:textColor="#FFFFFF" android:textSize="14sp" android:textStyle="bold" />
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_alignParentEnd="true" android:text="310,000원" android:textColor="#A5A6F6" android:textSize="14sp" android:textStyle="bold" />
-                </RelativeLayout>
 
             </LinearLayout>
 
@@ -200,7 +146,7 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentStart="true"
                         android:layout_centerVertical="true"
-                        android:text="51,667 원"
+                        android:text=""
                         android:textColor="#FFFFFF"
                         android:textSize="28sp"
                         android:textStyle="bold" />
@@ -211,7 +157,7 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
                         android:layout_centerVertical="true"
-                        android:text="-0원"
+                        android:text=""
                         android:textColor="#7CE7A0"
                         android:textSize="12sp"
                         android:background="@drawable/bg_chip_green_outline"
@@ -242,141 +188,20 @@
                 android:textSize="12sp"
                 android:layout_marginBottom="12dp" />
 
-            <!-- Chip grid row 1 -->
-            <LinearLayout
+            <!-- 가로 스크롤 칩 행 (항목 수 제한 없음, 동적 생성) -->
+            <HorizontalScrollView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginBottom="8dp">
-
-                <TextView
-                    android:id="@+id/chip1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="38dp"
-                    android:layout_marginEnd="8dp"
-                    android:text="삼겹살"
-                    android:textColor="#FFFFFF"
-                    android:textSize="13sp"
-                    android:gravity="center"
-                    android:background="@drawable/bg_chip_outline"
-                    android:paddingStart="16dp"
-                    android:paddingEnd="16dp"
-                    android:clickable="true"
-                    android:focusable="true" />
-
-                <TextView
-                    android:id="@+id/chip2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="38dp"
-                    android:layout_marginEnd="8dp"
-                    android:text="냉면"
-                    android:textColor="#FFFFFF"
-                    android:textSize="13sp"
-                    android:gravity="center"
-                    android:background="@drawable/bg_chip_outline"
-                    android:paddingStart="16dp"
-                    android:paddingEnd="16dp"
-                    android:clickable="true"
-                    android:focusable="true" />
-
-                <TextView
-                    android:id="@+id/chip3"
-                    android:layout_width="wrap_content"
-                    android:layout_height="38dp"
-                    android:layout_marginEnd="8dp"
-                    android:text="공기밥"
-                    android:textColor="#FFFFFF"
-                    android:textSize="13sp"
-                    android:gravity="center"
-                    android:background="@drawable/bg_chip_outline"
-                    android:paddingStart="16dp"
-                    android:paddingEnd="16dp"
-                    android:clickable="true"
-                    android:focusable="true" />
-
-                <TextView
-                    android:id="@+id/chip4"
-                    android:layout_width="wrap_content"
-                    android:layout_height="38dp"
-                    android:text="계란찜"
-                    android:textColor="#FFFFFF"
-                    android:textSize="13sp"
-                    android:gravity="center"
-                    android:background="@drawable/bg_chip_outline"
-                    android:paddingStart="16dp"
-                    android:paddingEnd="16dp"
-                    android:clickable="true"
-                    android:focusable="true" />
-
-            </LinearLayout>
-
-            <!-- Chip grid row 2 -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
+                android:scrollbars="none"
                 android:layout_marginBottom="12dp">
 
-                <TextView
-                    android:id="@+id/chip5"
+                <LinearLayout
+                    android:id="@+id/chipRow"
                     android:layout_width="wrap_content"
-                    android:layout_height="38dp"
-                    android:layout_marginEnd="8dp"
-                    android:text="된장찌개"
-                    android:textColor="#FFFFFF"
-                    android:textSize="13sp"
-                    android:gravity="center"
-                    android:background="@drawable/bg_chip_outline"
-                    android:paddingStart="16dp"
-                    android:paddingEnd="16dp"
-                    android:clickable="true"
-                    android:focusable="true" />
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal" />
 
-                <TextView
-                    android:id="@+id/chip6"
-                    android:layout_width="wrap_content"
-                    android:layout_height="38dp"
-                    android:layout_marginEnd="8dp"
-                    android:text="사이다"
-                    android:textColor="#FFFFFF"
-                    android:textSize="13sp"
-                    android:gravity="center"
-                    android:background="@drawable/bg_chip_outline"
-                    android:paddingStart="16dp"
-                    android:paddingEnd="16dp"
-                    android:clickable="true"
-                    android:focusable="true" />
-
-                <TextView
-                    android:id="@+id/chip7"
-                    android:layout_width="wrap_content"
-                    android:layout_height="38dp"
-                    android:layout_marginEnd="8dp"
-                    android:text="소주"
-                    android:textColor="#FFFFFF"
-                    android:textSize="13sp"
-                    android:gravity="center"
-                    android:background="@drawable/bg_chip_outline"
-                    android:paddingStart="16dp"
-                    android:paddingEnd="16dp"
-                    android:clickable="true"
-                    android:focusable="true" />
-
-                <TextView
-                    android:id="@+id/chip8"
-                    android:layout_width="wrap_content"
-                    android:layout_height="38dp"
-                    android:text="맥주"
-                    android:textColor="#FFFFFF"
-                    android:textSize="13sp"
-                    android:gravity="center"
-                    android:background="@drawable/bg_chip_outline"
-                    android:paddingStart="16dp"
-                    android:paddingEnd="16dp"
-                    android:clickable="true"
-                    android:focusable="true" />
-
-            </LinearLayout>
+            </HorizontalScrollView>
 
             <!-- Info box -->
             <LinearLayout

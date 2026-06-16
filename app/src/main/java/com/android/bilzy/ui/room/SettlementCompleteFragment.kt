@@ -40,7 +40,9 @@ class SettlementCompleteFragment : Fragment() {
             findNavController().navigate(R.id.action_settlementComplete_to_home)
         }
 
+        roomViewModel.loadMyAccount()
         observeRoom()
+        observeAccount()
     }
 
     private fun observeRoom() {
@@ -49,6 +51,21 @@ class SettlementCompleteFragment : Fragment() {
                 roomViewModel.settlement.collect { settlement ->
                     settlement ?: return@collect
                     render(settlement)
+                }
+            }
+        }
+    }
+
+    private fun observeAccount() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                roomViewModel.myAccount.collect { account ->
+                    if (account != null && !account.isEmpty) {
+                        binding.tvAccount.text =
+                            "${account.bankName} ${account.accountNumber} ${account.accountHolder}".trim()
+                    } else {
+                        binding.tvAccount.text = "계좌 정보 없음"
+                    }
                 }
             }
         }

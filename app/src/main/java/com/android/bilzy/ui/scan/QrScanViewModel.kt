@@ -8,6 +8,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
 import javax.inject.Inject
 
 /** QR로 인식한 정산방에 참여(join)하는 로직. */
@@ -43,9 +44,14 @@ class QrScanViewModel @Inject constructor(
                 settlementRepository.joinByQr(settlementId, nickname)
             }
                 .onSuccess { _joinState.value = JoinState.Success(settlementId) }
-                .onFailure {
-                    joinedSettlementId = null // 재시도 허용
-                    _joinState.value = JoinState.Error(it.message ?: "정산방 참여에 실패했어요")
+                .onFailure { e ->
+                    // 409 = 이미 참여 중 → 정상 입장으로 처리(호스트가 직접 입장하는 시나리오 포함)
+                    if (e is HttpException && e.code() == 409) {
+                        _joinState.value = JoinState.Success(settlementId)
+                    } else {
+                        joinedSettlementId = null // 재시도 허용
+                        _joinState.value = JoinState.Error(e.message ?: "정산방 참여에 실패했어요")
+                    }
                 }
         }
     }

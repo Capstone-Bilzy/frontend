@@ -188,27 +188,31 @@ class AmountAdjustFragment : Fragment() {
         }
     }
 
-    /** 차감 선택 칩을 실제 항목명으로 채운다(최대 8개). 남는 칩은 숨김. */
+    /** 차감 선택 칩을 실제 항목명으로 채운다(항목 수 제한 없음, 가로 스크롤). */
     private fun renderChips(items: List<ReceiptItem>) {
-        val chips = listOf(
-            binding.chip1, binding.chip2, binding.chip3, binding.chip4,
-            binding.chip5, binding.chip6, binding.chip7, binding.chip8
-        )
-        chips.forEachIndexed { index, chip ->
-            val item = items.getOrNull(index)
-            if (item == null) {
-                chip.visibility = View.GONE
-            } else {
-                chip.visibility = View.VISIBLE
-                chip.text = item.name
-                styleChip(chip, selectedChips.contains(index))
-                chip.setOnClickListener {
-                    if (selectedChips.contains(index)) selectedChips.remove(index)
-                    else selectedChips.add(index)
-                    styleChip(chip, selectedChips.contains(index))
-                    recompute()
-                }
+        val row = binding.chipRow
+        row.removeAllViews()
+        items.forEachIndexed { index, item ->
+            val chip = TextView(requireContext()).apply {
+                text = item.name
+                setTextColor(android.graphics.Color.WHITE)
+                setTextSize(TypedValue.COMPLEX_UNIT_SP, 13f)
+                gravity = Gravity.CENTER
+                setPadding(dp(16), 0, dp(16), 0)
+                layoutParams = LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT, dp(38)
+                ).apply { marginEnd = dp(8) }
+                isClickable = true
+                isFocusable = true
             }
+            styleChip(chip, selectedChips.contains(index))
+            chip.setOnClickListener {
+                if (selectedChips.contains(index)) selectedChips.remove(index)
+                else selectedChips.add(index)
+                styleChip(chip, selectedChips.contains(index))
+                recompute()
+            }
+            row.addView(chip)
         }
     }
 

@@ -3,8 +3,11 @@ package com.android.bilzy.ui.room
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.bilzy.data.local.TokenStore
+import com.android.bilzy.domain.model.BankAccount
 import com.android.bilzy.domain.model.Settlement
+import com.android.bilzy.domain.repository.AccountRepository
 import com.android.bilzy.domain.repository.SettlementRepository
+import com.android.bilzy.domain.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -19,6 +22,8 @@ import javax.inject.Inject
 @HiltViewModel
 class RoomViewModel @Inject constructor(
     private val settlementRepository: SettlementRepository,
+    private val accountRepository: AccountRepository,
+    private val userRepository: UserRepository,
     private val tokenStore: TokenStore
 ) : ViewModel() {
 
@@ -35,6 +40,10 @@ class RoomViewModel @Inject constructor(
     /** 내 닉네임(멤버 목록에서 '나' 식별용). */
     private val _myNickname = MutableStateFlow<String?>(null)
     val myNickname = _myNickname.asStateFlow()
+
+    /** 내 대표 계좌(정산 완료 화면의 '송금 계좌' 표시용). null = 아직 로딩 전 또는 미설정. */
+    private val _myAccount = MutableStateFlow<BankAccount?>(null)
+    val myAccount = _myAccount.asStateFlow()
 
     /** 참여자 입력 화면에서 직접 입력한 표시 이름. 있으면 join·식별에 로그인 닉네임보다 우선. */
     private var myNameOverride: String? = null
@@ -117,11 +126,23 @@ class RoomViewModel @Inject constructor(
             .isSuccess
     }
 
-    /** 정산 완료 처리. 성공 여부 반환. */
+    /** 정산 완료 화면 진입 시 내 계좌를 로드. 이미 로드됐으면 스킵. */
+    fun loadMyAccount() {
+        if (_myAccount.value != null) return
+        viewModelScope.launch {
+            runCatching { accountRepository.getMyAccount() }
+                .onSuccess { if (!it.isEmpty) _myAccount.value = it }
+        }
+    }
+
+    /** 정산 완료 처리. 성공 시 히스토리 캐시를 클리어해 홈 복귀 시 최신 내역이 표시되도록 한다. */
     suspend fun markDone(): Boolean {
         val id = settlementId ?: return false
         return runCatching { settlementRepository.markDone(id) }
-            .onSuccess { _settlement.value = it }
+            .onSuccess {
+                _settlement.value = it
+                userRepository.clearCache()
+            }
             .isSuccess
     }
 

@@ -1,9 +1,30 @@
 package com.android.bilzy.ui.history
 
+import android.Manifest
+import android.app.Dialog
+import android.content.ContentValues
+import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.Color
+import android.graphics.Typeface
+import android.os.Build
 import android.os.Bundle
+import android.os.Environment
+import android.provider.MediaStore
+import android.util.TypedValue
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.PopupMenu
+import android.widget.TextView
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -17,7 +38,9 @@ import com.android.bilzy.R
 import com.android.bilzy.databinding.FragmentHistoryDetailWithReceiptBinding
 import com.android.bilzy.domain.model.Settlement
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.text.NumberFormat
 
 /**
@@ -32,6 +55,15 @@ class HistoryDetailWithReceiptFragment : Fragment() {
 
     private val viewModel: HistoryDetailViewModel by viewModels()
     private val nf = NumberFormat.getInstance()
+
+    private var pendingDownloadUrl: String? = null
+
+    private val requestStoragePermission =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+            if (granted) pendingDownloadUrl?.let { saveToGallery(it) }
+            else Toast.makeText(requireContext(), "저장 권한이 필요해요", Toast.LENGTH_SHORT).show()
+            pendingDownloadUrl = null
+        }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -94,8 +126,54 @@ class HistoryDetailWithReceiptFragment : Fragment() {
         }
         binding.rvParticipants.adapter = HistoryParticipantAdapter(participants)
 
+        renderAvatars(s.members.size)
         renderReceipt(s)
     }
+
+    private fun renderAvatars(count: Int) {
+        val row = binding.avatarRow
+        row.removeAllViews()
+        if (count == 0) return
+
+        val maxVisible = 4
+        val visible = minOf(count, maxVisible)
+        val dp32 = dp(32)
+        val dpNeg8 = dp(-8)
+
+        repeat(visible) { i ->
+            val isLast = i == visible - 1 && count <= maxVisible
+            val circle = View(requireContext()).apply {
+                setBackgroundResource(R.drawable.bg_avatar_circle)
+                layoutParams = LinearLayout.LayoutParams(dp32, dp32).apply {
+                    marginEnd = if (isLast) 0 else dpNeg8
+                }
+            }
+            row.addView(circle)
+        }
+
+        if (count > maxVisible) {
+            val extra = count - maxVisible
+            val badge = FrameLayout(requireContext()).apply {
+                setBackgroundResource(R.drawable.bg_avatar_circle)
+                layoutParams = LinearLayout.LayoutParams(dp32, dp32)
+            }
+            badge.addView(TextView(requireContext()).apply {
+                text = "+$extra"
+                setTextColor(Color.WHITE)
+                setTextSize(TypedValue.COMPLEX_UNIT_SP, 10f)
+                setTypeface(typeface, Typeface.BOLD)
+                gravity = Gravity.CENTER
+                layoutParams = FrameLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT
+                )
+            })
+            row.addView(badge)
+        }
+    }
+
+    private fun dp(value: Int): Int =
+        (value * resources.displayMetrics.density).toInt()
 
     /** 정산방이 영수증 이미지를 가졌을 때만 영수증 섹션을 보여주고 Coil로 로드. */
     private fun renderReceipt(s: Settlement) {
@@ -113,6 +191,103 @@ class HistoryDetailWithReceiptFragment : Fragment() {
                 crossfade(true)
                 error(R.drawable.bg_receipt_thumb)
                 placeholder(R.drawable.bg_receipt_thumb)
+            }
+            binding.cardAttachedReceipt.setOnClickListener { showFullScreenImage(url!!) }
+            binding.tvReceiptMore.setOnClickListener { showReceiptOptions(it, url!!) }
+        } else {
+            binding.cardAttachedReceipt.setOnClickListener(null)
+        }
+    }
+
+    private fun showFullScreenImage(url: String) {
+        val dialog = Dialog(requireContext())
+        val iv = ImageView(requireContext()).apply {
+            scaleType = ImageView.ScaleType.FIT_CENTER
+            setBackgroundColor(Color.BLACK)
+            load(url) { crossfade(true) }
+            setOnClickListener { dialog.dismiss() }
+        }
+        dialog.setContentView(iv)
+        dialog.show()
+        dialog.window?.setLayout(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.MATCH_PARENT
+        )
+        dialog.window?.setBackgroundDrawableResource(android.R.color.black)
+    }
+
+    private fun showReceiptOptions(anchor: View, url: String) {
+        PopupMenu(requireContext(), anchor).apply {
+            menu.add(0, 0, 0, "크게 보기")
+            menu.add(0, 1, 1, "이미지 저장")
+            setOnMenuItemClickListener { item ->
+                when (item.itemId) {
+                    0 -> showFullScreenImage(url)
+                    1 -> downloadAndSave(url)
+                }
+                true
+            }
+            show()
+        }
+    }
+
+    private fun downloadAndSave(url: String) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q &&
+            ContextCompat.checkSelfPermission(
+                requireContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            pendingDownloadUrl = url
+            requestStoragePermission.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            return
+        }
+        saveToGallery(url)
+    }
+
+    private fun saveToGallery(url: String) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                val bytes = withContext(Dispatchers.IO) { java.net.URL(url).readBytes() }
+                val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+                    ?: run {
+                        Toast.makeText(requireContext(), "이미지 저장에 실패했어요", Toast.LENGTH_SHORT).show()
+                        return@launch
+                    }
+
+                val values = ContentValues().apply {
+                    put(MediaStore.Images.Media.DISPLAY_NAME, "receipt_${System.currentTimeMillis()}.jpg")
+                    put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                        put(MediaStore.Images.Media.RELATIVE_PATH,
+                            Environment.DIRECTORY_PICTURES + "/Bilzy")
+                        put(MediaStore.Images.Media.IS_PENDING, 1)
+                    }
+                }
+                val resolver = requireContext().contentResolver
+                val uri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
+                    ?: run {
+                        Toast.makeText(requireContext(), "저장에 실패했어요", Toast.LENGTH_SHORT).show()
+                        return@launch
+                    }
+
+                withContext(Dispatchers.IO) {
+                    resolver.openOutputStream(uri)?.use {
+                        bitmap.compress(Bitmap.CompressFormat.JPEG, 95, it)
+                    }
+                }
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    values.clear()
+                    values.put(MediaStore.Images.Media.IS_PENDING, 0)
+                    resolver.update(uri, values, null, null)
+                }
+
+                if (isAdded && _binding != null) {
+                    Toast.makeText(requireContext(), "갤러리에 저장됐어요", Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: Exception) {
+                if (isAdded && _binding != null) {
+                    Toast.makeText(requireContext(), "저장에 실패했어요", Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }

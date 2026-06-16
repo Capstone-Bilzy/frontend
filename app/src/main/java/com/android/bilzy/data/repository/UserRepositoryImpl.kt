@@ -22,7 +22,10 @@ class UserRepositoryImpl @Inject constructor(
         api.getMe().toProfile().also { profileCache = it }
 
     override suspend fun getMyHistory(): List<SettlementHistory> =
-        api.getHistory().mapNotNull { it.toDomain() }.also { historyCache = it }
+        api.getHistory()
+            .mapNotNull { it.toDomain() }
+            .sortedByDescending { it.createdAt ?: "" }
+            .also { historyCache = it }
 
     override fun cachedProfile(): UserProfile? = profileCache
 

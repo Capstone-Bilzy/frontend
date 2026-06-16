@@ -1,9 +1,16 @@
 package com.android.bilzy.ui.history
 
+import android.graphics.Color
+import android.graphics.Typeface
 import android.os.Bundle
+import android.util.TypedValue
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
+import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -86,7 +93,55 @@ class HistoryDetailFragment : Fragment() {
             )
         }
         binding.rvParticipants.adapter = HistoryParticipantAdapter(participants)
+
+        renderAvatars(s.members.size)
     }
+
+    private fun renderAvatars(count: Int) {
+        val row = binding.avatarRow
+        row.removeAllViews()
+        if (count == 0) return
+
+        val maxVisible = 4
+        val visible = minOf(count, maxVisible)
+        val dp32 = dp(32)
+        val dpNeg8 = dp(-8)
+
+        repeat(visible) { i ->
+            val isLast = i == visible - 1 && count <= maxVisible
+            val circle = View(requireContext()).apply {
+                setBackgroundResource(R.drawable.bg_avatar_circle)
+                layoutParams = LinearLayout.LayoutParams(dp32, dp32).apply {
+                    marginEnd = if (isLast) 0 else dpNeg8
+                }
+            }
+            row.addView(circle)
+        }
+
+        // 초과 인원 "+N" 뱃지
+        if (count > maxVisible) {
+            val extra = count - maxVisible
+            val badge = FrameLayout(requireContext()).apply {
+                setBackgroundResource(R.drawable.bg_avatar_circle)
+                layoutParams = LinearLayout.LayoutParams(dp32, dp32)
+            }
+            badge.addView(TextView(requireContext()).apply {
+                text = "+$extra"
+                setTextColor(Color.WHITE)
+                setTextSize(TypedValue.COMPLEX_UNIT_SP, 10f)
+                setTypeface(typeface, Typeface.BOLD)
+                gravity = Gravity.CENTER
+                layoutParams = FrameLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT
+                )
+            })
+            row.addView(badge)
+        }
+    }
+
+    private fun dp(value: Int): Int =
+        (value * resources.displayMetrics.density).toInt()
 
     /** "2026-05-04T..." → "2026.05.04" */
     private fun formatDate(iso: String?): String {

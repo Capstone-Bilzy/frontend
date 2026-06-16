@@ -134,15 +134,11 @@
                     android:layout_height="wrap_content">
 
                     <LinearLayout
+                        android:id="@+id/avatarRow"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:layout_alignParentStart="true">
-                        <View android:layout_width="32dp" android:layout_height="32dp" android:background="@drawable/bg_avatar_circle" android:layout_marginEnd="-8dp" />
-                        <View android:layout_width="32dp" android:layout_height="32dp" android:background="@drawable/bg_avatar_circle" android:layout_marginEnd="-8dp" />
-                        <View android:layout_width="32dp" android:layout_height="32dp" android:background="@drawable/bg_avatar_circle" android:layout_marginEnd="-8dp" />
-                        <View android:layout_width="32dp" android:layout_height="32dp" android:background="@drawable/bg_avatar_circle" />
-                    </LinearLayout>
+                        android:layout_alignParentStart="true" />
 
                     <TextView
                         android:id="@+id/tvDate"
@@ -246,13 +242,16 @@
                 </LinearLayout>
 
                 <TextView
+                    android:id="@+id/tvReceiptMore"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="⋯"
                     android:textColor="#80FFFFFF"
                     android:textSize="20sp"
                     android:paddingStart="8dp"
-                    android:paddingEnd="4dp" />
+                    android:paddingEnd="4dp"
+                    android:clickable="true"
+                    android:focusable="true" />
             </LinearLayout>
 
             <!-- 영수증 사진 추가하기 (dashed border) — 백엔드 첨부 미지원이라 기본 숨김 -->

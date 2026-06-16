@@ -147,13 +147,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:layout_alignParentStart="true">
-
-                        <View android:layout_width="32dp" android:layout_height="32dp" android:background="@drawable/bg_avatar_circle" android:layout_marginEnd="-8dp" />
-                        <View android:layout_width="32dp" android:layout_height="32dp" android:background="@drawable/bg_avatar_circle" android:layout_marginEnd="-8dp" />
-                        <View android:layout_width="32dp" android:layout_height="32dp" android:background="@drawable/bg_avatar_circle" android:layout_marginEnd="-8dp" />
-                        <View android:layout_width="32dp" android:layout_height="32dp" android:background="@drawable/bg_avatar_circle" />
-                    </LinearLayout>
+                        android:layout_alignParentStart="true" />
 
                     <TextView
                         android:id="@+id/tvDate"
