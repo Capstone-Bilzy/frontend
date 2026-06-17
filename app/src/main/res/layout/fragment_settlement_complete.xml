@@ -21,19 +21,30 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <!-- Unified glass ticket card (반원 컷 노치 + 점선) -->
-    <com.android.bilzy.ui.widget.NotchedTicketLayout
-        android:id="@+id/ticketCard"
+    <!-- Scrollable area between logo and button -->
+    <ScrollView
+        android:id="@+id/scrollContent"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        android:overScrollMode="never"
+        android:clipToPadding="false"
+        android:paddingBottom="16dp"
         app:layout_constraintTop_toBottomOf="@id/tvLogo"
         app:layout_constraintBottom_toTopOf="@id/btnHome"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintVertical_bias="0.45">
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- Unified glass ticket card (반원 컷 노치 + 점선) -->
+        <com.android.bilzy.ui.widget.NotchedTicketLayout
+            android:id="@+id/ticketCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp">
 
         <!-- Top section: illustration + result + total -->
         <LinearLayout
@@ -199,22 +210,31 @@
                     android:textSize="17sp"
                     android:layout_marginEnd="8dp" />
 
-                <TextView
-                    android:id="@+id/tvAccount"
+                <HorizontalScrollView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text=""
-                    android:textColor="#FFFFFF"
-                    android:textSize="14sp"
-                    android:ellipsize="end"
-                    android:maxLines="1" />
+                    android:scrollbars="none"
+                    android:overScrollMode="never">
+
+                    <TextView
+                        android:id="@+id/tvAccount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:textColor="#FFFFFF"
+                        android:textSize="14sp"
+                        android:singleLine="true" />
+
+                </HorizontalScrollView>
 
             </LinearLayout>
 
         </LinearLayout>
 
-    </com.android.bilzy.ui.widget.NotchedTicketLayout>
+        </com.android.bilzy.ui.widget.NotchedTicketLayout>
+
+    </ScrollView>
 
     <!-- Bottom button -->
     <TextView

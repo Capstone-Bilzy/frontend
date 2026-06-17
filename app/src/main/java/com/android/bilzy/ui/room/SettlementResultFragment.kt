@@ -8,6 +8,7 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import android.widget.TextView
@@ -78,6 +79,7 @@ class SettlementResultFragment : Fragment() {
         binding.tvRoomTitle.text = settlement.title.ifBlank { "정산" }
         binding.tvTotalAmount.text = "${nf.format(total)}원"
         binding.tvDate.text = formatDate(settlement.createdAt)
+        renderAvatars(members.map { it.nickname })
 
         // 저장된 금액이 있으면 사용, 없으면 엔빵
         val hasStored = members.any { it.amount > 0 }
@@ -90,6 +92,43 @@ class SettlementResultFragment : Fragment() {
             val amount = if (hasStored) m.amount else shares.getOrElse(i) { 0L }
             val reason = m.reason?.takeIf { hasStored && it.isNotBlank() }
             container.addView(personCard(m.nickname, amount, m.nickname == myNick, reason))
+        }
+    }
+
+    private fun renderAvatars(nicknames: List<String>) {
+        val row = binding.avatarRow
+        row.removeAllViews()
+        val visible = nicknames.take(3)
+        val overflow = nicknames.size - visible.size
+        visible.forEachIndexed { i, nick ->
+            val circle = FrameLayout(requireContext()).apply {
+                setBackgroundResource(R.drawable.bg_role_chip)
+                val size = dp(28)
+                layoutParams = LinearLayout.LayoutParams(size, size).apply {
+                    if (i > 0) marginStart = dp(-8)
+                }
+            }
+            circle.addView(TextView(requireContext()).apply {
+                text = nick.take(1)
+                setTextColor(Color.WHITE)
+                setTextSize(TypedValue.COMPLEX_UNIT_SP, 11f)
+                gravity = Gravity.CENTER
+                layoutParams = FrameLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT
+                )
+            })
+            row.addView(circle)
+        }
+        if (overflow > 0) {
+            row.addView(TextView(requireContext()).apply {
+                text = "+$overflow"
+                setTextColor(Color.WHITE)
+                setTextSize(TypedValue.COMPLEX_UNIT_SP, 11f)
+                gravity = Gravity.CENTER
+                setBackgroundResource(R.drawable.bg_avatar_circle)
+                val size = dp(28)
+                layoutParams = LinearLayout.LayoutParams(size, size).apply { marginStart = dp(-8) }
+            })
         }
     }
 
