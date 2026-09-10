@@ -1,0 +1,1308 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bilzy - 영수증 정산 프로토타입</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px 12px;
+    gap: 20px;
+    color: #fff;
+  }
+  .title {
+    text-align: center;
+    color: #A5A6F6;
+    font-family: "Pacifico", cursive;
+    font-style: italic;
+    font-size: 26px;
+    font-weight: 700;
+  }
+  .subtitle {
+    text-align: center;
+    color: rgba(255,255,255,0.5);
+    font-size: 12px;
+    margin-top: -16px;
+  }
+  .device {
+    width: 406px;
+    background: #0A1130;
+    border-radius: 48px;
+    border: 8px solid #1a1a2e;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(255,255,255,0.05);
+    overflow: hidden;
+    position: relative;
+  }
+  .notch {
+    position: absolute;
+    top: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 110px;
+    height: 28px;
+    background: #000;
+    border-radius: 20px;
+    z-index: 100;
+    pointer-events: none;
+  }
+  .viewport {
+    width: 390px;
+    height: 844px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    position: relative;
+    background: #0A1130;
+  }
+  .viewport::-webkit-scrollbar { width: 0; }
+  .screen {
+    position: relative;
+    width: 390px;
+    display: none;
+  }
+  .screen.active { display: block; }
+  .screen img {
+    width: 390px;
+    display: block;
+    user-select: none;
+    -webkit-user-drag: none;
+    pointer-events: none;
+  }
+  .hotspot {
+    position: absolute;
+    cursor: pointer;
+    transition: background 0.15s;
+    background: rgba(124,122,237,0);
+    border-radius: 12px;
+  }
+  .hotspot:hover { background: rgba(124,122,237,0.15); }
+  .hotspot:active { background: rgba(124,122,237,0.35); }
+  body.debug .hotspot {
+    background: rgba(255, 100, 100, 0.3);
+    outline: 1.5px solid rgba(255,100,100,0.7);
+  }
+  .controls {
+    background: rgba(255,255,255,0.05);
+    border-radius: 16px;
+    padding: 14px;
+    max-width: 700px;
+    width: 100%;
+  }
+  .control-row {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .label {
+    color: rgba(255,255,255,0.6);
+    font-size: 11px;
+    text-align: center;
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+  }
+  .btn {
+    padding: 6px 10px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: #fff;
+    font-size: 10.5px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .btn:hover {
+    background: rgba(124,122,237,0.2);
+    border-color: rgba(124,122,237,0.4);
+  }
+  .btn.active {
+    background: #4F46E5;
+    border-color: #7C7AED;
+  }
+  .options {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    justify-content: center;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+  .toggle {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: rgba(255,255,255,0.8);
+    font-size: 12px;
+    cursor: pointer;
+  }
+  .info {
+    color: rgba(255,255,255,0.5);
+    font-size: 11px;
+  }
+  .toast {
+    position: absolute;
+    bottom: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(40,42,60,0.95);
+    backdrop-filter: blur(20px);
+    color: #fff;
+    padding: 12px 20px;
+    border-radius: 22px;
+    font-size: 13px;
+    font-weight: 500;
+    border: 1px solid rgba(124,122,237,0.3);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    z-index: 200;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+  }
+  .toast.show { opacity: 1; }
+  
+  /* 스캔 허브 (스와이프) */
+  .hub-container {
+    position: relative;
+    width: 390px;
+    height: 844px;
+    overflow: hidden;
+    background: #0A1130;
+  }
+  .hub-slide {
+    display: flex;
+    width: 780px;
+    height: 100%;
+    transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+    cursor: grab;
+  }
+  .hub-slide.dragging {
+    transition: none;
+    cursor: grabbing;
+  }
+  .hub-pane {
+    position: relative;
+    width: 390px;
+    height: 844px;
+    flex-shrink: 0;
+  }
+  .hub-pane img {
+    width: 390px;
+    height: 844px;
+    display: block;
+    user-select: none;
+    -webkit-user-drag: none;
+    pointer-events: none;
+  }
+  .hub-tabs {
+    position: absolute;
+    bottom: 24px;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-around;
+    z-index: 50;
+    pointer-events: none;
+  }
+  .hub-tab {
+    color: rgba(255,255,255,0.5);
+    font-size: 13px;
+    font-weight: 400;
+    padding: 6px 16px;
+    cursor: pointer;
+    transition: all 0.3s;
+    pointer-events: auto;
+    position: relative;
+  }
+  .hub-tab.active {
+    color: #fff;
+    font-weight: 600;
+  }
+  .hub-tab.active::after {
+    content: '▲';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 8px;
+    color: #fff;
+  }
+
+  /* 온보딩 */
+  .onboard-container {
+    position: relative;
+    width: 390px;
+    height: 844px;
+    overflow: hidden;
+    background: #0A1130;
+  }
+  .onboard-slide {
+    display: flex;
+    width: 1170px;
+    height: 100%;
+    transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+    cursor: grab;
+  }
+  .onboard-slide.dragging {
+    transition: none;
+    cursor: grabbing;
+  }
+  .onboard-pane {
+    position: relative;
+    width: 390px;
+    height: 844px;
+    flex-shrink: 0;
+  }
+  .onboard-pane img {
+    width: 390px;
+    height: 844px;
+    display: block;
+    user-select: none;
+    -webkit-user-drag: none;
+    pointer-events: none;
+  }
+  .onboard-dots {
+    position: absolute;
+    top: 90px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+    z-index: 50;
+  }
+  .onboard-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 4px;
+    background: rgba(255,255,255,0.3);
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  .onboard-dot.active {
+    width: 24px;
+    background: #7C7AED;
+  }
+  .onboard-login-link {
+    position: absolute;
+    top: 700px;
+    left: 240px;
+    width: 60px;
+    height: 30px;
+    color: transparent;
+    cursor: pointer;
+    z-index: 60;
+    border-radius: 6px;
+  }
+  .onboard-signup {
+    position: absolute;
+    top: 750px;
+    left: 30px;
+    width: 330px;
+    height: 60px;
+    color: transparent;
+    cursor: pointer;
+    z-index: 60;
+    border-radius: 16px;
+  }
+  body.debug .onboard-login-link,
+  body.debug .onboard-signup {
+    background: rgba(255, 100, 100, 0.3);
+    outline: 1.5px solid rgba(255,100,100,0.7);
+  }
+
+  /* 로그인 화면 */
+  .login-screen {
+    width: 390px;
+    height: 844px;
+    background: linear-gradient(180deg, #0A1130 0%, #16213e 100%);
+    position: relative;
+    padding: 14px 24px 40px;
+    display: flex;
+    flex-direction: column;
+    color: #fff;
+  }
+  .login-status {
+    font-size: 15px;
+    font-weight: 600;
+    padding: 0 0 12px 4px;
+  }
+  .login-back {
+    position: absolute;
+    top: 48px;
+    left: 18px;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    color: #fff;
+    cursor: pointer;
+    z-index: 10;
+  }
+  .login-hero {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 24px;
+    padding-top: 40px;
+  }
+  .login-logo {
+    font-family: "Pacifico", cursive;
+    font-style: italic;
+    font-size: 56px;
+    color: #A5A6F6;
+    font-weight: 700;
+    letter-spacing: -1px;
+  }
+  .login-planet {
+    font-size: 140px;
+    filter: drop-shadow(0 0 50px rgba(74,222,128,0.4));
+    line-height: 1;
+  }
+  .login-tagline {
+    font-size: 15px;
+    color: rgba(165,166,246,0.85);
+    line-height: 1.5;
+    margin-top: 8px;
+  }
+  .login-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 20px;
+  }
+  .social-btn {
+    width: 100%;
+    padding: 16px;
+    border-radius: 14px;
+    border: none;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-family: inherit;
+    transition: opacity 0.2s, transform 0.1s;
+  }
+  .social-btn:hover { opacity: 0.92; }
+  .social-btn:active { transform: scale(0.98); }
+  .social-btn.kakao {
+    background: #FEE500;
+    color: #191919;
+  }
+  .social-btn.naver {
+    background: #03C75A;
+    color: #fff;
+  }
+  .social-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .login-footer {
+    text-align: center;
+    font-size: 11px;
+    color: rgba(255,255,255,0.4);
+    line-height: 1.6;
+    margin-top: 18px;
+  }
+  .login-link {
+    color: rgba(165,166,246,0.8);
+    text-decoration: underline;
+  }
+
+  /* 영수증 선택 화면 */
+  .receipt-picker {
+    width: 390px;
+    min-height: 844px;
+    background: #0A1130;
+    color: #fff;
+    padding: 14px 0 40px;
+    position: relative;
+  }
+  .rp-status {
+    font-size: 15px;
+    font-weight: 600;
+    padding: 0 24px 12px;
+  }
+  .rp-logo {
+    font-family: "Pacifico", cursive;
+    font-style: italic;
+    font-size: 28px;
+    color: #A5A6F6;
+    font-weight: 700;
+    padding: 0 24px;
+    margin-bottom: 12px;
+  }
+  .rp-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 24px 16px;
+  }
+  .rp-back {
+    font-size: 22px;
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+  }
+  .rp-title {
+    font-size: 17px;
+    font-weight: 600;
+  }
+  .rp-divider {
+    height: 1px;
+    background: rgba(255,255,255,0.08);
+    margin: 0;
+  }
+  .rp-intro {
+    padding: 24px 24px 16px;
+    text-align: center;
+  }
+  .rp-intro-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 6px;
+  }
+  .rp-intro-sub {
+    font-size: 12px;
+    color: rgba(165,166,246,0.7);
+  }
+  .rp-list {
+    padding: 8px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .rp-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(124,122,237,0.2);
+    border-radius: 14px;
+    padding: 14px 16px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .rp-card:hover {
+    background: rgba(124,122,237,0.12);
+    border-color: rgba(124,122,237,0.5);
+  }
+  .rp-card:active {
+    transform: scale(0.99);
+  }
+  .rp-thumb {
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+    background: rgba(124,122,237,0.12);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .rp-info {
+    flex: 1;
+    min-width: 0;
+  }
+  .rp-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 4px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .rp-meta {
+    font-size: 12px;
+    color: rgba(255,255,255,0.5);
+  }
+  .rp-arrow {
+    color: rgba(255,255,255,0.3);
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+  .rp-new-btn {
+    margin: 20px 24px 0;
+    padding: 16px;
+    background: rgba(124,122,237,0.15);
+    border: 1.5px dashed rgba(124,122,237,0.5);
+    border-radius: 14px;
+    color: #A5A6F6;
+    font-size: 14px;
+    font-weight: 600;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .rp-new-btn:hover {
+    background: rgba(124,122,237,0.25);
+    border-color: rgba(124,122,237,0.7);
+  }
+  .rp-plus {
+    font-size: 18px;
+    font-weight: 700;
+  }
+</style>
+</head>
+<body>
+
+<div class="title">Bilzy</div>
+<div class="subtitle">영수증 정산 앱 프로토타입 — 피그마 시안 기반</div>
+
+<div class="device">
+  <div class="notch"></div>
+  <div class="viewport" id="viewport">
+
+    <!-- 온보딩 (3장 스와이프) -->
+    <div class="screen active" data-screen="onboarding">
+      <div class="onboard-container" id="onboardContainer">
+        <div class="onboard-slide" id="onboardSlide">
+          <div class="onboard-pane"><img src="images/온보딩_1.png" alt="온보딩 1"></div>
+          <div class="onboard-pane"><img src="images/온보딩_2.png" alt="온보딩 2"></div>
+          <div class="onboard-pane"><img src="images/온보딩_3.png" alt="온보딩 3"></div>
+        </div>
+        <!-- 페이지 인디케이터 (클릭 가능) -->
+        <div class="onboard-dots">
+          <div class="onboard-dot active" onclick="setOnboardPage(0)"></div>
+          <div class="onboard-dot" onclick="setOnboardPage(1)"></div>
+          <div class="onboard-dot" onclick="setOnboardPage(2)"></div>
+        </div>
+        <!-- 로그인 링크 (이미 계정 있음) -->
+        <div class="onboard-login-link" onclick="goTo('login')">로그인</div>
+        <!-- 회원가입 버튼 (신규) -->
+        <div class="onboard-signup" onclick="goTo('signupMain')">회원가입</div>
+      </div>
+    </div>
+
+    <!-- 기존 사용자 로그인 (Social Login) -->
+    <div class="screen" data-screen="login">
+      <img src="images/login_existing.png" alt="로그인">
+      <!-- 카카오로 시작하기 -->
+      <div class="hotspot" data-goto="loginLoading" style="top: 450px; left: 30px; width: 330px; height: 58px;"></div>
+      <!-- 네이버로 시작하기 -->
+      <div class="hotspot" data-goto="loginLoading" style="top: 515px; left: 30px; width: 330px; height: 58px;"></div>
+    </div>
+
+    <!-- 회원가입 메인 -->
+    <div class="screen" data-screen="signupMain">
+      <img src="images/signup_main.png" alt="회원가입">
+      <!-- 카카오로 3초 만에 로그인 -->
+      <div class="hotspot" data-goto="signupKakaoTerms" style="top: 455px; left: 30px; width: 330px; height: 58px;"></div>
+      <!-- 네이버로 3초 만에 로그인 -->
+      <div class="hotspot" data-goto="signupNaverTerms" style="top: 525px; left: 30px; width: 330px; height: 58px;"></div>
+    </div>
+
+    <!-- 카카오 약관 동의 -->
+    <div class="screen" data-screen="signupKakaoTerms">
+      <img src="images/signup_kakao_terms.png" alt="카카오 약관">
+      <!-- 뒤로가기 -->
+      <div class="hotspot" data-goto="signupMain" style="top: 58px; left: 18px; width: 50px; height: 40px;"></div>
+      <!-- 동의하고 계속하기 -->
+      <div class="hotspot" data-goto="signupKakaoInfo" style="top: 755px; left: 30px; width: 330px; height: 58px;"></div>
+    </div>
+
+    <!-- 카카오 정보 동의 -->
+    <div class="screen" data-screen="signupKakaoInfo">
+      <img src="images/signup_kakao_info.png" alt="카카오 정보 동의">
+      <!-- 뒤로가기 -->
+      <div class="hotspot" data-goto="signupKakaoTerms" style="top: 58px; left: 18px; width: 50px; height: 40px;"></div>
+      <!-- 동의하고 계속하기 -->
+      <div class="hotspot" data-goto="loginLoading" style="top: 755px; left: 30px; width: 330px; height: 58px;"></div>
+    </div>
+
+    <!-- 네이버 약관 동의 -->
+    <div class="screen" data-screen="signupNaverTerms">
+      <img src="images/signup_naver_terms.png" alt="네이버 약관">
+      <!-- 뒤로가기 -->
+      <div class="hotspot" data-goto="signupMain" style="top: 58px; left: 18px; width: 50px; height: 40px;"></div>
+      <!-- 네이버로 시작하기 -->
+      <div class="hotspot" data-goto="signupNaverInfo" style="top: 755px; left: 30px; width: 330px; height: 58px;"></div>
+    </div>
+
+    <!-- 네이버 정보 동의 -->
+    <div class="screen" data-screen="signupNaverInfo">
+      <img src="images/signup_naver_info.png" alt="네이버 정보 동의">
+      <!-- 뒤로가기 -->
+      <div class="hotspot" data-goto="signupNaverTerms" style="top: 58px; left: 18px; width: 50px; height: 40px;"></div>
+      <!-- 네이버로 시작하기 -->
+      <div class="hotspot" data-goto="loginLoading" style="top: 755px; left: 30px; width: 330px; height: 58px;"></div>
+    </div>
+
+    <!-- 로그인 중 (자동 진행 → 홈) -->
+    <div class="screen" data-screen="loginLoading">
+      <img src="images/login_loading.png" alt="로그인 중">
+    </div>
+
+    <div class="screen" data-screen="home">
+      <img src="images/홈.png" alt="홈">
+      <div class="hotspot" data-goto="scanPermission" style="top: 250px; left: 22px; width: 170px; height: 190px;"></div>
+      <div class="hotspot" data-goto="qrScan" style="top: 250px; left: 198px; width: 170px; height: 190px;"></div>
+      <div class="hotspot" data-goto="scanHub" style="top: 790px; left: 108px; width: 80px; height: 50px;"></div>
+      <!-- 정산내역 탭 -->
+      <div class="hotspot" data-goto="historyList" style="top: 790px; left: 200px; width: 80px; height: 50px;"></div>
+      <!-- 마이페이지 탭 -->
+      <div class="hotspot" data-goto="myPage" style="top: 790px; left: 290px; width: 80px; height: 50px;"></div>
+    </div>
+
+    <!-- 정산내역 목록 (있을때) -->
+    <div class="screen" data-screen="historyList">
+      <img src="images/정산내역_있을때.png" alt="정산내역">
+      <!-- 회사 점심 약속 -->
+      <div class="hotspot" data-goto="historyDetail" style="top: 350px; left: 25px; width: 340px; height: 110px;"></div>
+      <!-- 동기 모임 -->
+      <div class="hotspot" data-goto="settlementResult" style="top: 475px; left: 25px; width: 340px; height: 110px;"></div>
+      <!-- 팀 빌딩 워크숍 -->
+      <div class="hotspot" data-goto="settlementResult" style="top: 600px; left: 25px; width: 340px; height: 110px;"></div>
+      <!-- 프로젝트 발표회 -->
+      <div class="hotspot" data-goto="settlementResult" style="top: 725px; left: 25px; width: 340px; height: 110px;"></div>
+      <!-- 정기 회의 -->
+      <div class="hotspot" data-goto="settlementResult" style="top: 850px; left: 25px; width: 340px; height: 110px;"></div>
+      <!-- 생일 파티 (과거) -->
+      <div class="hotspot" data-goto="settlementResult" style="top: 1030px; left: 25px; width: 340px; height: 110px;"></div>
+      <!-- 하단 탭바 -->
+      <div class="hotspot" data-goto="home" style="top: 1290px; left: 30px; width: 70px; height: 50px;"></div>
+      <div class="hotspot" data-goto="scanHub" style="top: 1290px; left: 108px; width: 80px; height: 50px;"></div>
+      <div class="hotspot" data-goto="myPage" style="top: 1290px; left: 290px; width: 80px; height: 50px;"></div>
+    </div>
+
+    <!-- 정산내역 목록 (없을때) -->
+    <div class="screen" data-screen="historyEmpty">
+      <img src="images/정산내역_없을때.png" alt="정산내역 없음">
+      <!-- 생일 파티 -->
+      <div class="hotspot" data-goto="settlementResult" style="top: 400px; left: 25px; width: 340px; height: 110px;"></div>
+      <!-- 하단 탭바 -->
+      <div class="hotspot" data-goto="home" style="top: 770px; left: 30px; width: 70px; height: 50px;"></div>
+      <div class="hotspot" data-goto="scanHub" style="top: 770px; left: 108px; width: 80px; height: 50px;"></div>
+      <div class="hotspot" data-goto="myPage" style="top: 770px; left: 290px; width: 80px; height: 50px;"></div>
+    </div>
+
+    <!-- 정산내역 상세 (회사 점심 약속 - 영수증 추가 전) -->
+    <div class="screen" data-screen="historyDetail">
+      <img src="images/정산내역_회사_점심_약속.png" alt="회사 점심 약속">
+      <!-- 뒤로가기 -->
+      <div class="hotspot" data-goto="historyList" style="top: 110px; left: 18px; width: 50px; height: 40px;"></div>
+      <!-- 영수증 사진 추가하기 (점선) → 영수증 선택 화면 -->
+      <div class="hotspot" data-goto="receiptPicker" style="top: 1145px; left: 25px; width: 340px; height: 110px;"></div>
+      <!-- 하단 탭바 -->
+      <div class="hotspot" data-goto="home" style="top: 1265px; left: 30px; width: 70px; height: 50px;"></div>
+      <div class="hotspot" data-goto="scanHub" style="top: 1265px; left: 108px; width: 80px; height: 50px;"></div>
+      <div class="hotspot" data-goto="historyList" style="top: 1265px; left: 200px; width: 80px; height: 50px;"></div>
+      <div class="hotspot" data-goto="myPage" style="top: 1265px; left: 290px; width: 80px; height: 50px;"></div>
+    </div>
+
+    <!-- 정산내역 상세 (영수증 추가됨) -->
+    <div class="screen" data-screen="historyDetailWithReceipt">
+      <img src="images/정산내역_영수증_추가.png" alt="영수증 추가됨">
+      <!-- 뒤로가기 -->
+      <div class="hotspot" data-goto="historyList" style="top: 110px; left: 18px; width: 50px; height: 40px;"></div>
+      <!-- 영수증 사진 추가하기 (점선) → 영수증 선택 화면 (또 추가 가능) -->
+      <div class="hotspot" data-goto="receiptPicker" style="top: 1275px; left: 25px; width: 340px; height: 100px;"></div>
+      <!-- 하단 탭바 -->
+      <div class="hotspot" data-goto="home" style="top: 1395px; left: 30px; width: 70px; height: 50px;"></div>
+      <div class="hotspot" data-goto="scanHub" style="top: 1395px; left: 108px; width: 80px; height: 50px;"></div>
+      <div class="hotspot" data-goto="historyList" style="top: 1395px; left: 200px; width: 80px; height: 50px;"></div>
+      <div class="hotspot" data-goto="myPage" style="top: 1395px; left: 290px; width: 80px; height: 50px;"></div>
+    </div>
+
+    <!-- 영수증 선택 (저장된 영수증 불러오기) -->
+    <div class="screen" data-screen="receiptPicker">
+      <div class="receipt-picker">
+        <div class="rp-status">15:00</div>
+        <div class="rp-logo">Bilzy</div>
+        <div class="rp-header">
+          <div class="rp-back" onclick="goTo('historyDetail')">←</div>
+          <div class="rp-title">영수증 선택</div>
+        </div>
+        <div class="rp-divider"></div>
+        <div class="rp-intro">
+          <div class="rp-intro-title">이 정산에 첨부할 영수증을 선택해주세요</div>
+          <div class="rp-intro-sub">저장된 영수증 중에서 골라 첨부할 수 있어요</div>
+        </div>
+        <div class="rp-list">
+          <!-- 영수증 카드들 -->
+          <div class="rp-card" onclick="goTo('historyDetailWithReceipt')">
+            <div class="rp-thumb">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#A5A6F6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 2v20l3-2 3 2 3-2 3 2 3-2 3 2V2l-3 2-3-2-3 2-3-2-3 2-3-2z"/>
+                <line x1="8" y1="9" x2="16" y2="9"/>
+                <line x1="8" y1="13" x2="16" y2="13"/>
+                <line x1="8" y1="17" x2="13" y2="17"/>
+              </svg>
+            </div>
+            <div class="rp-info">
+              <div class="rp-name">버거킹 강남점</div>
+              <div class="rp-meta">57,500원 · 2026.05.04</div>
+            </div>
+            <div class="rp-arrow">›</div>
+          </div>
+
+          <div class="rp-card" onclick="goTo('historyDetailWithReceipt')">
+            <div class="rp-thumb">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#A5A6F6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 2v20l3-2 3 2 3-2 3 2 3-2 3 2V2l-3 2-3-2-3 2-3-2-3 2-3-2z"/>
+                <line x1="8" y1="9" x2="16" y2="9"/>
+                <line x1="8" y1="13" x2="16" y2="13"/>
+                <line x1="8" y1="17" x2="13" y2="17"/>
+              </svg>
+            </div>
+            <div class="rp-info">
+              <div class="rp-name">정담 한식당</div>
+              <div class="rp-meta">70,000원 · 2026.05.03</div>
+            </div>
+            <div class="rp-arrow">›</div>
+          </div>
+
+          <div class="rp-card" onclick="goTo('historyDetailWithReceipt')">
+            <div class="rp-thumb">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#A5A6F6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 2v20l3-2 3 2 3-2 3 2 3-2 3 2V2l-3 2-3-2-3 2-3-2-3 2-3-2z"/>
+                <line x1="8" y1="9" x2="16" y2="9"/>
+                <line x1="8" y1="13" x2="16" y2="13"/>
+                <line x1="8" y1="17" x2="13" y2="17"/>
+              </svg>
+            </div>
+            <div class="rp-info">
+              <div class="rp-name">스타벅스 강남역점</div>
+              <div class="rp-meta">23,800원 · 2026.04.28</div>
+            </div>
+            <div class="rp-arrow">›</div>
+          </div>
+
+          <div class="rp-card" onclick="goTo('historyDetailWithReceipt')">
+            <div class="rp-thumb">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#A5A6F6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 2v20l3-2 3 2 3-2 3 2 3-2 3 2V2l-3 2-3-2-3 2-3-2-3 2-3-2z"/>
+                <line x1="8" y1="9" x2="16" y2="9"/>
+                <line x1="8" y1="13" x2="16" y2="13"/>
+                <line x1="8" y1="17" x2="13" y2="17"/>
+              </svg>
+            </div>
+            <div class="rp-info">
+              <div class="rp-name">교촌치킨 역삼점</div>
+              <div class="rp-meta">42,000원 · 2026.04.20</div>
+            </div>
+            <div class="rp-arrow">›</div>
+          </div>
+
+          <div class="rp-card" onclick="goTo('historyDetailWithReceipt')">
+            <div class="rp-thumb">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#A5A6F6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 2v20l3-2 3 2 3-2 3 2 3-2 3 2V2l-3 2-3-2-3 2-3-2-3 2-3-2z"/>
+                <line x1="8" y1="9" x2="16" y2="9"/>
+                <line x1="8" y1="13" x2="16" y2="13"/>
+                <line x1="8" y1="17" x2="13" y2="17"/>
+              </svg>
+            </div>
+            <div class="rp-info">
+              <div class="rp-name">올리브영 강남본점</div>
+              <div class="rp-meta">18,200원 · 2026.04.15</div>
+            </div>
+            <div class="rp-arrow">›</div>
+          </div>
+        </div>
+        <div class="rp-new-btn" onclick="goTo('scanHub')">
+          <span class="rp-plus">+</span>
+          새 영수증 스캔하기
+        </div>
+      </div>
+    </div>
+
+    <!-- 마이페이지 메인 -->
+    <div class="screen" data-screen="myPage">
+      <img src="images/마이페이지.png" alt="마이페이지">
+      <!-- 설정 -->
+      <div class="hotspot" data-goto="myPage" style="top: 275px; left: 22px; width: 345px; height: 40px;"></div>
+      <!-- 계좌 정보 관리 -->
+      <div class="hotspot" data-goto="myPageAccount" style="top: 340px; left: 22px; width: 345px; height: 40px;"></div>
+      <!-- 이메일 문의 -->
+      <div class="hotspot" data-goto="myPage" style="top: 405px; left: 22px; width: 345px; height: 40px;"></div>
+      <!-- 로그아웃 -->
+      <div class="hotspot" data-goto="onboarding" style="top: 470px; left: 22px; width: 345px; height: 40px;"></div>
+      <!-- 하단 탭바 -->
+      <div class="hotspot" data-goto="home" style="top: 770px; left: 30px; width: 70px; height: 50px;"></div>
+      <div class="hotspot" data-goto="scanHub" style="top: 770px; left: 108px; width: 80px; height: 50px;"></div>
+      <div class="hotspot" data-goto="historyList" style="top: 770px; left: 200px; width: 80px; height: 50px;"></div>
+    </div>
+
+    <!-- 계좌 정보 관리 -->
+    <div class="screen" data-screen="myPageAccount">
+      <img src="images/마이페이지_계좌정보관리.png" alt="계좌 정보 관리">
+      <!-- 뒤로가기 -->
+      <div class="hotspot" data-goto="myPage" style="top: 110px; left: 18px; width: 50px; height: 40px;"></div>
+      <!-- 저장하기 -->
+      <div class="hotspot" data-goto="myPage" style="top: 815px; left: 30px; width: 330px; height: 58px;"></div>
+    </div>
+
+    <!-- 스캔 허브 (영수증/QR 좌우 스와이프) -->
+    <div class="screen" data-screen="scanHub">
+      <div class="hub-container" id="hubContainer">
+        <div class="hub-slide" id="hubSlide">
+          <!-- 영수증 슬라이드 -->
+          <div class="hub-pane">
+            <img src="images/영수증_스캔_화면.png" alt="영수증 스캔">
+            <div class="hotspot" data-goto="home" style="top: 58px; left: 18px; width: 50px; height: 40px;"></div>
+            <div class="hotspot" data-goto="scanCameraModal" style="top: 710px; left: 28px; width: 50px; height: 50px;"></div>
+            <div class="hotspot" data-goto="scanCameraModal" style="top: 695px; left: 162px; width: 66px; height: 66px; border-radius: 50%;"></div>
+          </div>
+          <!-- QR 슬라이드 -->
+          <div class="hub-pane">
+            <img src="images/QR_스캔_화면.png" alt="QR 스캔">
+            <div class="hotspot" data-goto="home" style="top: 58px; left: 18px; width: 50px; height: 40px;"></div>
+            <div class="hotspot" data-goto="enteringRoom" style="top: 695px; left: 162px; width: 66px; height: 66px; border-radius: 50%;"></div>
+          </div>
+        </div>
+        <!-- 하단 라벨 탭 (모드 전환) -->
+        <div class="hub-tabs">
+          <div class="hub-tab" id="hubTabReceipt" onclick="setHubMode('receipt')">영수증 스캔</div>
+          <div class="hub-tab" id="hubTabQr" onclick="setHubMode('qr')">QR 스캔</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="screen" data-screen="scanPermission">
+      <img src="images/영수증_스캔_정산.png" alt="카메라 권한">
+      <div class="hotspot" data-goto="scanCamera" style="top: 610px; left: 30px; width: 330px; height: 60px;"></div>
+      <div class="hotspot" data-goto="manualInput" style="top: 680px; left: 30px; width: 330px; height: 60px;"></div>
+      <div class="hotspot" data-goto="home" style="top: 790px; left: 30px; width: 70px; height: 50px;"></div>
+      <!-- 정산내역 탭 -->
+      <div class="hotspot" data-goto="historyList" style="top: 790px; left: 200px; width: 80px; height: 50px;"></div>
+      <!-- 마이페이지 탭 -->
+      <div class="hotspot" data-goto="myPage" style="top: 790px; left: 290px; width: 80px; height: 50px;"></div>
+    </div>
+
+    <div class="screen" data-screen="scanCamera">
+      <img src="images/영수증_스캔_화면.png" alt="영수증 스캔">
+      <div class="hotspot" data-goto="scanPermission" style="top: 58px; left: 18px; width: 50px; height: 40px;"></div>
+      <div class="hotspot" data-goto="scanCameraModal" style="top: 710px; left: 28px; width: 50px; height: 50px;"></div>
+      <div class="hotspot" data-goto="scanCameraModal" style="top: 695px; left: 162px; width: 66px; height: 66px; border-radius: 50%;"></div>
+      <div class="hotspot" data-goto="qrScan" style="top: 788px; left: 58px; width: 80px; height: 30px;"></div>
+    </div>
+
+    <div class="screen" data-screen="scanCameraModal">
+      <img src="images/영수증_스캔_화면_사진_접근.png" alt="사진 접근">
+      <div class="hotspot" data-goto="recognizing1" style="top: 438px; left: 85px; width: 220px; height: 48px;"></div>
+      <div class="hotspot" data-goto="recognizing1" style="top: 488px; left: 85px; width: 220px; height: 48px;"></div>
+      <div class="hotspot" data-goto="scanCamera" style="top: 540px; left: 85px; width: 220px; height: 48px;"></div>
+    </div>
+
+    <div class="screen" data-screen="recognizing1">
+      <img src="images/영수증_스캔_화면_인식과정_영수증_인식.png" alt="영수증 인식 중">
+    </div>
+
+    <div class="screen" data-screen="recognizing2">
+      <img src="images/영수증_스캔_화면_인식과정_정보_추출.png" alt="정보 추출 중">
+    </div>
+
+    <div class="screen" data-screen="recognizing3">
+      <img src="images/영수증_스캔_화면_인식과정_내역_확인.png" alt="내역 확인">
+    </div>
+
+    <div class="screen" data-screen="receiptSave">
+      <img src="images/영수증_저장.png" alt="영수증 저장">
+      <div class="hotspot" data-goto="scanCamera" style="top: 740px; left: 30px; width: 155px; height: 60px;"></div>
+      <div class="hotspot" data-goto="receiptSaved" style="top: 740px; left: 205px; width: 155px; height: 60px;"></div>
+    </div>
+
+    <div class="screen" data-screen="receiptSaved">
+      <img src="images/영수증_저장완료.png" alt="영수증 저장 완료">
+      <div class="hotspot" data-goto="ocrResult" style="top: 755px; left: 30px; width: 330px; height: 55px;"></div>
+    </div>
+
+    <div class="screen" data-screen="ocrResult">
+      <img src="images/OCR_인식결과_입력됨_.png" alt="OCR 결과">
+      <div class="hotspot" data-goto="home" style="top: 110px; left: 18px; width: 50px; height: 40px;"></div>
+      <div class="hotspot" data-goto="addItem" style="top: 680px; left: 30px; width: 325px; height: 60px;"></div>
+      <div class="hotspot" data-goto="peopleCount" style="top: 865px; left: 30px; width: 330px; height: 60px;"></div>
+    </div>
+
+    <div class="screen" data-screen="ocrResultEmpty">
+      <img src="images/OCR_인식결과.png" alt="OCR 결과 빈 상태">
+      <div class="hotspot" data-goto="addItem" style="top: 565px; left: 30px; width: 325px; height: 55px;"></div>
+      <div class="hotspot" data-goto="peopleCount" style="top: 745px; left: 30px; width: 330px; height: 55px;"></div>
+    </div>
+
+    <div class="screen" data-screen="manualInput">
+      <img src="images/직접_입력_정산.png" alt="직접 입력">
+      <div class="hotspot" data-goto="scanPermission" style="top: 110px; left: 18px; width: 50px; height: 40px;"></div>
+      <div class="hotspot" data-goto="addItem" style="top: 755px; left: 30px; width: 325px; height: 55px;"></div>
+      <div class="hotspot" data-goto="peopleCount" style="top: 1005px; left: 30px; width: 330px; height: 55px;"></div>
+    </div>
+
+    <div class="screen" data-screen="addItem">
+      <img src="images/항목추가.png" alt="항목 추가">
+      <div class="hotspot" data-goto="ocrResult" style="top: 110px; left: 18px; width: 50px; height: 40px;"></div>
+      <div class="hotspot" data-goto="ocrResult" style="top: 755px; left: 30px; width: 330px; height: 55px;"></div>
+    </div>
+
+    <div class="screen" data-screen="peopleCount">
+      <img src="images/정산_인원_설정.png" alt="정산 인원 설정">
+      <div class="hotspot" data-goto="ocrResult" style="top: 110px; left: 18px; width: 50px; height: 40px;"></div>
+      <div class="hotspot" data-goto="participantInput" style="top: 755px; left: 30px; width: 330px; height: 55px;"></div>
+    </div>
+
+    <div class="screen" data-screen="participantInput">
+      <img src="images/정산_참여자_입력_입력전.png" alt="참여자 입력">
+      <div class="hotspot" data-goto="peopleCount" style="top: 110px; left: 18px; width: 50px; height: 40px;"></div>
+      <div class="hotspot" data-goto="participantInputFilled" style="top: 425px; left: 30px; width: 330px; height: 55px;"></div>
+    </div>
+
+    <div class="screen" data-screen="participantInputFilled">
+      <img src="images/정산_참여자_입력_입력후.png" alt="참여자 입력 완료">
+      <div class="hotspot" data-goto="participantInput" style="top: 110px; left: 18px; width: 50px; height: 40px;"></div>
+      <div class="hotspot" data-goto="qrInvite" style="top: 755px; left: 30px; width: 330px; height: 55px;"></div>
+    </div>
+
+    <div class="screen" data-screen="qrInvite">
+      <img src="images/참여자_초대_링크_및_QR_화면.png" alt="QR 초대">
+      <div class="hotspot" data-goto="participantInputFilled" style="top: 110px; left: 18px; width: 50px; height: 40px;"></div>
+      <div class="hotspot" data-goto="enteringRoom" style="top: 755px; left: 30px; width: 330px; height: 55px;"></div>
+    </div>
+
+    <div class="screen" data-screen="qrScan">
+      <img src="images/QR_스캔_화면.png" alt="QR 스캔">
+      <div class="hotspot" data-goto="home" style="top: 58px; left: 18px; width: 50px; height: 40px;"></div>
+      <div class="hotspot" data-goto="enteringRoom" style="top: 695px; left: 162px; width: 66px; height: 66px; border-radius: 50%;"></div>
+      <div class="hotspot" data-goto="scanCamera" style="top: 788px; left: 58px; width: 80px; height: 30px;"></div>
+    </div>
+
+    <div class="screen" data-screen="enteringRoom">
+      <img src="images/정산방_입장중.png" alt="정산방 입장중">
+    </div>
+
+    <div class="screen" data-screen="memberWaiting1">
+      <img src="images/정산_인원_대기_중.png" alt="멤버 대기">
+    </div>
+
+    <div class="screen" data-screen="memberWaitingDone">
+      <img src="images/정산_인원_대기_완료.png" alt="멤버 대기 완료">
+    </div>
+
+    <div class="screen" data-screen="amountAdjust1">
+      <img src="images/AI_특이사항_추천_항목선택전.png" alt="AI 특이사항">
+      <div class="hotspot" data-goto="memberWaitingDone" style="top: 110px; left: 18px; width: 50px; height: 40px;"></div>
+      <div class="hotspot" data-goto="amountAdjust2" style="top: 790px; left: 25px; width: 340px; height: 110px;"></div>
+      <div class="hotspot" data-goto="calculating" style="top: 1005px; left: 30px; width: 330px; height: 55px;"></div>
+    </div>
+
+    <div class="screen" data-screen="amountAdjust2">
+      <img src="images/AI_특이사항_추천_항목선택후.png" alt="AI 특이사항 선택 후">
+      <div class="hotspot" data-goto="memberWaitingDone" style="top: 110px; left: 18px; width: 50px; height: 40px;"></div>
+      <div class="hotspot" data-goto="amountAdjust1" style="top: 790px; left: 25px; width: 340px; height: 110px;"></div>
+      <div class="hotspot" data-goto="calculating" style="top: 1005px; left: 30px; width: 330px; height: 55px;"></div>
+    </div>
+
+    <div class="screen" data-screen="calculating">
+      <img src="images/계산중.png" alt="계산 중">
+    </div>
+
+    <div class="screen" data-screen="settlementResult">
+      <img src="images/정산_결과_요약.png" alt="정산 결과">
+      <div class="hotspot" data-goto="calculating" style="top: 110px; left: 18px; width: 50px; height: 40px;"></div>
+      <div class="hotspot" data-goto="settlementComplete" style="top: 1465px; left: 30px; width: 330px; height: 60px;"></div>
+    </div>
+
+    <div class="screen" data-screen="settlementComplete">
+      <img src="images/정산_완료.png" alt="정산 완료">
+      <div class="hotspot" data-action="copyAccount" style="top: 660px; left: 30px; width: 330px; height: 48px;"></div>
+      <div class="hotspot" data-goto="home" style="top: 755px; left: 30px; width: 330px; height: 55px;"></div>
+    </div>
+
+  </div>
+  <div class="toast" id="toast"></div>
+</div>
+
+<div class="controls">
+  <div class="label">화면 직접 이동</div>
+  <div class="control-row" id="navButtons"></div>
+  <div class="options">
+    <label class="toggle">
+      <input type="checkbox" id="debugToggle">
+      클릭 영역 표시
+    </label>
+    <span class="info">버튼을 정확히 눌러야 다음 화면으로 이동합니다</span>
+  </div>
+</div>
+
+<script>
+const screens = [
+  { id: 'onboarding', label: '0-1. 온보딩' },
+  { id: 'login', label: '0-2. 로그인' },
+  { id: 'signupMain', label: '0-3. 회원가입' },
+  { id: 'signupKakaoTerms', label: '0-4. 카카오 약관' },
+  { id: 'signupKakaoInfo', label: '0-5. 카카오 정보' },
+  { id: 'signupNaverTerms', label: '0-6. 네이버 약관' },
+  { id: 'signupNaverInfo', label: '0-7. 네이버 정보' },
+  { id: 'loginLoading', label: '0-8. 로그인 중' },
+  { id: 'home', label: '1. 홈' },
+  { id: 'historyList', label: '1-1. 정산내역' },
+  { id: 'historyEmpty', label: '1-2. 내역 없음' },
+  { id: 'historyDetail', label: '1-3. 내역 상세' },
+  { id: 'historyDetailWithReceipt', label: '1-4. 영수증 추가됨' },
+  { id: 'receiptPicker', label: '1-5. 영수증 선택' },
+  { id: 'myPage', label: '1-6. 마이페이지' },
+  { id: 'myPageAccount', label: '1-7. 계좌 정보' },
+  { id: 'scanHub', label: '2. 스캔 허브' },
+  { id: 'scanPermission', label: '3. 카메라 권한' },
+  { id: 'scanCamera', label: '4. 영수증 스캔' },
+  { id: 'scanCameraModal', label: '5. 사진 접근' },
+  { id: 'recognizing1', label: '6. 인식①' },
+  { id: 'recognizing2', label: '7. 인식②' },
+  { id: 'recognizing3', label: '8. 인식③' },
+  { id: 'receiptSave', label: '9. 영수증 저장' },
+  { id: 'receiptSaved', label: '10. 저장 완료' },
+  { id: 'ocrResult', label: '11. OCR 결과' },
+  { id: 'ocrResultEmpty', label: '12. OCR 빈' },
+  { id: 'manualInput', label: '13. 직접 입력' },
+  { id: 'addItem', label: '14. 항목 추가' },
+  { id: 'peopleCount', label: '15. 인원 설정' },
+  { id: 'participantInput', label: '16. 참여자' },
+  { id: 'participantInputFilled', label: '17. 참여자 후' },
+  { id: 'qrInvite', label: '18. QR 초대' },
+  { id: 'qrScan', label: '19. QR 스캔' },
+  { id: 'enteringRoom', label: '20. 입장 중' },
+  { id: 'memberWaiting1', label: '21. 멤버 대기' },
+  { id: 'memberWaitingDone', label: '22. 대기 완료' },
+  { id: 'amountAdjust1', label: '23. 금액 조정' },
+  { id: 'amountAdjust2', label: '24. 선택 후' },
+  { id: 'calculating', label: '25. 계산 중' },
+  { id: 'settlementResult', label: '26. 정산 결과' },
+  { id: 'settlementComplete', label: '27. 정산 완료' },
+];
+
+const autoProgress = {
+  'loginLoading': { next: 'home', delay: 2500 },
+  'recognizing1': { next: 'recognizing2', delay: 1500 },
+  'recognizing2': { next: 'recognizing3', delay: 1500 },
+  'recognizing3': { next: 'receiptSave', delay: 1500 },
+  'enteringRoom': { next: 'memberWaiting1', delay: 2000 },
+  'memberWaiting1': { next: 'memberWaitingDone', delay: 2500 },
+  'memberWaitingDone': { next: 'amountAdjust1', delay: 1500 },
+  'calculating': { next: 'settlementResult', delay: 2500 },
+};
+
+let currentTimer = null;
+
+function goTo(screenId) {
+  if (currentTimer) { clearTimeout(currentTimer); currentTimer = null; }
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const target = document.querySelector('[data-screen="' + screenId + '"]');
+  if (target) {
+    target.classList.add('active');
+    document.getElementById('viewport').scrollTop = 0;
+    document.querySelectorAll('#navButtons .btn').forEach(b => {
+      b.classList.toggle('active', b.dataset.screen === screenId);
+    });
+    // 스캔 허브 진입 시 영수증 모드로 초기화
+    if (screenId === 'scanHub') {
+      setHubMode('receipt');
+    }
+    // 온보딩 진입 시 첫 페이지로 초기화
+    if (screenId === 'onboarding') {
+      setOnboardPage(0);
+    }
+    if (autoProgress[screenId]) {
+      currentTimer = setTimeout(() => goTo(autoProgress[screenId].next), autoProgress[screenId].delay);
+    }
+  }
+}
+
+function showToast(message) {
+  const toast = document.getElementById('toast');
+  toast.textContent = '✓ ' + message;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 2000);
+}
+
+document.addEventListener('click', (e) => {
+  // 스캔 허브/온보딩에서 드래그 직후의 클릭은 무시
+  if (Math.abs(touchDeltaX) > 10 || Math.abs(obTouchDeltaX) > 10) return;
+  const hotspot = e.target.closest('.hotspot');
+  if (!hotspot) return;
+  if (hotspot.dataset.goto) {
+    goTo(hotspot.dataset.goto);
+  } else if (hotspot.dataset.action === 'copyAccount') {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText('신한 1101256784100 정민지');
+    }
+    showToast('계좌번호가 복사되었어요!');
+  }
+});
+
+const navContainer = document.getElementById('navButtons');
+screens.forEach(s => {
+  const btn = document.createElement('button');
+  btn.className = 'btn';
+  btn.textContent = s.label;
+  btn.dataset.screen = s.id;
+  btn.onclick = () => goTo(s.id);
+  navContainer.appendChild(btn);
+});
+
+document.getElementById('debugToggle').addEventListener('change', (e) => {
+  document.body.classList.toggle('debug', e.target.checked);
+});
+
+// === 스캔 허브 스와이프 ===
+let hubMode = 'receipt'; // 'receipt' or 'qr'
+let touchStartX = null;
+let touchDeltaX = 0;
+let isDragging = false;
+
+function setHubMode(mode) {
+  hubMode = mode;
+  const slide = document.getElementById('hubSlide');
+  const offset = mode === 'receipt' ? 0 : -390;
+  slide.style.transform = 'translateX(' + offset + 'px)';
+  document.getElementById('hubTabReceipt').classList.toggle('active', mode === 'receipt');
+  document.getElementById('hubTabQr').classList.toggle('active', mode === 'qr');
+}
+
+function handleStart(clientX) {
+  touchStartX = clientX;
+  isDragging = true;
+  document.getElementById('hubSlide').classList.add('dragging');
+}
+
+function handleMove(clientX) {
+  if (touchStartX === null || !isDragging) return;
+  touchDeltaX = clientX - touchStartX;
+  const baseOffset = hubMode === 'receipt' ? 0 : -390;
+  document.getElementById('hubSlide').style.transform = 'translateX(' + (baseOffset + touchDeltaX) + 'px)';
+}
+
+function handleEnd() {
+  if (touchStartX === null) return;
+  const slide = document.getElementById('hubSlide');
+  slide.classList.remove('dragging');
+  const threshold = 60;
+  if (touchDeltaX < -threshold && hubMode === 'receipt') {
+    setHubMode('qr');
+  } else if (touchDeltaX > threshold && hubMode === 'qr') {
+    setHubMode('receipt');
+  } else {
+    // 원위치로 스냅백
+    setHubMode(hubMode);
+  }
+  touchStartX = null;
+  touchDeltaX = 0;
+  isDragging = false;
+}
+
+// 허브 컨테이너에 이벤트 바인딩
+const hubContainer = document.getElementById('hubContainer');
+if (hubContainer) {
+  // 터치
+  hubContainer.addEventListener('touchstart', (e) => handleStart(e.touches[0].clientX), { passive: true });
+  hubContainer.addEventListener('touchmove', (e) => handleMove(e.touches[0].clientX), { passive: true });
+  hubContainer.addEventListener('touchend', handleEnd);
+  // 마우스
+  hubContainer.addEventListener('mousedown', (e) => {
+    // hotspot 클릭을 방해하지 않도록 약간 드래그가 시작된 후에만 인식
+    handleStart(e.clientX);
+  });
+  document.addEventListener('mousemove', (e) => {
+    if (isDragging) handleMove(e.clientX);
+  });
+  document.addEventListener('mouseup', () => {
+    if (isDragging) handleEnd();
+  });
+  // 셔터 같은 hotspot 클릭이 드래그로 오인되지 않도록 hotspot 클릭은 드래그 거리가 짧을 때만 통과
+  // (이미 click 이벤트가 위에 정의되어 있고, 작은 움직임은 click도 발생함)
+}
+
+// 초기 모드 설정
+setHubMode('receipt');
+
+// === 온보딩 스와이프 ===
+let onboardPage = 0;
+let obTouchStartX = null;
+let obTouchDeltaX = 0;
+let obIsDragging = false;
+
+function setOnboardPage(page) {
+  onboardPage = page;
+  const slide = document.getElementById('onboardSlide');
+  slide.style.transform = 'translateX(' + (-page * 390) + 'px)';
+  document.querySelectorAll('.onboard-dot').forEach((dot, i) => {
+    dot.classList.toggle('active', i === page);
+  });
+}
+
+function obHandleStart(clientX) {
+  obTouchStartX = clientX;
+  obIsDragging = true;
+  document.getElementById('onboardSlide').classList.add('dragging');
+}
+
+function obHandleMove(clientX) {
+  if (obTouchStartX === null || !obIsDragging) return;
+  obTouchDeltaX = clientX - obTouchStartX;
+  const baseOffset = -onboardPage * 390;
+  document.getElementById('onboardSlide').style.transform = 'translateX(' + (baseOffset + obTouchDeltaX) + 'px)';
+}
+
+function obHandleEnd() {
+  if (obTouchStartX === null) return;
+  document.getElementById('onboardSlide').classList.remove('dragging');
+  const threshold = 60;
+  if (obTouchDeltaX < -threshold && onboardPage < 2) {
+    setOnboardPage(onboardPage + 1);
+  } else if (obTouchDeltaX > threshold && onboardPage > 0) {
+    setOnboardPage(onboardPage - 1);
+  } else {
+    setOnboardPage(onboardPage);
+  }
+  obTouchStartX = null;
+  obTouchDeltaX = 0;
+  obIsDragging = false;
+}
+
+const onboardContainer = document.getElementById('onboardContainer');
+if (onboardContainer) {
+  onboardContainer.addEventListener('touchstart', (e) => obHandleStart(e.touches[0].clientX), { passive: true });
+  onboardContainer.addEventListener('touchmove', (e) => obHandleMove(e.touches[0].clientX), { passive: true });
+  onboardContainer.addEventListener('touchend', obHandleEnd);
+  onboardContainer.addEventListener('mousedown', (e) => {
+    // 클릭 가능한 요소(dots, 버튼)는 드래그 시작 안 함
+    if (e.target.classList.contains('onboard-dot') ||
+        e.target.classList.contains('onboard-login-link') ||
+        e.target.classList.contains('onboard-signup')) return;
+    obHandleStart(e.clientX);
+  });
+  document.addEventListener('mousemove', (e) => {
+    if (obIsDragging) obHandleMove(e.clientX);
+  });
+  document.addEventListener('mouseup', () => {
+    if (obIsDragging) obHandleEnd();
+  });
+}
+
+goTo('onboarding');
+</script>
+
+</body>
+</html>

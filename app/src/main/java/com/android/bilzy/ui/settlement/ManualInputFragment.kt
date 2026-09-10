@@ -17,6 +17,7 @@ import com.android.bilzy.databinding.FragmentManualInputBinding
 import com.android.bilzy.ui.scan.ScanFlowViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import java.text.NumberFormat
 
 /** 영수증 없이 항목을 직접 입력하는 경로. OCR 결과와 동일하게 confirm으로 확정한다. */
 @AndroidEntryPoint
@@ -26,7 +27,7 @@ class ManualInputFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val viewModel: ScanFlowViewModel by hiltNavGraphViewModels(R.id.nav_graph)
-    private lateinit var adapter: OcrItemAdapter
+    private lateinit var adapter: ManualItemAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -38,25 +39,37 @@ class ManualInputFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        adapter = OcrItemAdapter(onDelete = { index -> viewModel.removeItem(index) })
+        adapter = ManualItemAdapter(
+            onDelete = { index -> viewModel.removeItem(index) },
+            onChange = { index, item -> viewModel.updateItem(index, item) }
+        )
         binding.rvItems.layoutManager = LinearLayoutManager(requireContext())
         binding.rvItems.adapter = adapter
 
-        binding.btnBack.setOnClickListener { findNavController().navigateUp() }
-
-        binding.btnAddItem.setOnClickListener {
-            val name = binding.etItemName.text.toString().trim()
-            val price = binding.etItemPrice.text.toString().trim().toLongOrNull() ?: 0L
-            if (name.isEmpty() || price <= 0L) {
-                Toast.makeText(requireContext(), "항목명과 가격을 입력해주세요", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-            viewModel.addItem(name, price, 1)
-            binding.etItemName.text?.clear()
-            binding.etItemPrice.text?.clear()
+        if (viewModel.settlementTitle.isNotEmpty()) {
+            binding.etGroupName.setText(viewModel.settlementTitle)
         }
 
-        binding.btnStart.setOnClickListener { viewModel.confirm() }
+        // TODO: 가게 이름(etStoreName)은 현재 클라이언트에서만 표시되고 서버로 전송되지 않음
+        // (OcrResultFragment와 동일) — 도메인 모델/백엔드 계약에 필드 추가 필요.
+
+        binding.btnBack.setOnClickListener { findNavController().navigateUp() }
+
+        binding.btnAddItem.setOnClickListener { viewModel.addItem("", 0L, 1) }
+
+        binding.btnStart.setOnClickListener {
+            val title = binding.etGroupName.text.toString().trim()
+            if (title.isEmpty()) {
+                Toast.makeText(requireContext(), "모임 이름을 입력해주세요", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            val items = viewModel.items.value
+            if (items.isEmpty() || items.any { it.name.isBlank() || it.price <= 0L }) {
+                Toast.makeText(requireContext(), "모든 항목의 이름과 가격을 입력해주세요", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            viewModel.confirm(title)
+        }
 
         observeItems()
         observeConfirm()
@@ -65,10 +78,15 @@ class ManualInputFragment : Fragment() {
     private fun observeItems() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.items.collect { adapter.submit(it) }
+                viewModel.items.collect { items ->
+                    adapter.submit(items)
+                    binding.tvTotal.text = won(items.sumOf { it.subtotal })
+                }
             }
         }
     }
+
+    private fun won(value: Long) = NumberFormat.getInstance().format(value) + "원"
 
     private fun observeConfirm() {
         viewLifecycleOwner.lifecycleScope.launch {

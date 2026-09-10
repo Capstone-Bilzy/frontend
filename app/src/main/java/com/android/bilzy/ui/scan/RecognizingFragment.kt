@@ -5,8 +5,9 @@ import android.os.Handler
 import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
 import androidx.lifecycle.Lifecycle
@@ -64,6 +65,10 @@ class RecognizingFragment : Fragment() {
         pulseStep(0)
         handler.postDelayed(animTick, 1100L)
         observeScan()
+        binding.btnRetry.setOnClickListener { findNavController().navigateUp() }
+        binding.btnManualInput.setOnClickListener {
+            findNavController().navigate(R.id.action_recognizing_to_manualInput)
+        }
         // 화면 진입 시 업로드 시작 (Loading 가드로 중복 방지)
         if (viewModel.scanState.value !is ScanFlowViewModel.ScanState.Success) {
             viewModel.runScan()
@@ -81,9 +86,8 @@ class RecognizingFragment : Fragment() {
                         }
                         is ScanFlowViewModel.ScanState.Error -> {
                             handler.removeCallbacks(animTick)
-                            Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
                             viewModel.consumeScanState()
-                            findNavController().navigateUp()
+                            showFailed()
                         }
                         else -> Unit // Idle/Loading: 애니메이션 유지
                     }
@@ -106,6 +110,13 @@ class RecognizingFragment : Fragment() {
                 findNavController().navigate(R.id.action_recognizing_to_receiptSave)
             }
         }, 700L)
+    }
+
+    /** AI 인식 실패 → 진행 표시(scanFrame/tipCard)를 숨기고 재촬영/직접입력 선택 뷰를 보여준다. */
+    private fun showFailed() {
+        binding.scanFrame.visibility = GONE
+        binding.tipCard.visibility = GONE
+        binding.failedContainer.visibility = VISIBLE
     }
 
     private fun pulseStep(step: Int) {

@@ -188,20 +188,39 @@ class SettlementResultFragment : Fragment() {
             }
         })
         card.addView(row)
-        // AI 계산 사유(있을 때만) — 초록 아웃라인 칩
-        if (!reason.isNullOrBlank()) {
-            card.addView(TextView(ctx).apply {
-                text = reason
-                setTextColor(Color.parseColor("#7CE7A0"))
-                setTextSize(TypedValue.COMPLEX_UNIT_SP, 11f)
-                setBackgroundResource(R.drawable.bg_chip_green_outline)
-                setPadding(dp(10), dp(4), dp(10), dp(4))
-                layoutParams = LinearLayout.LayoutParams(
-                    ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
-                ).apply { topMargin = dp(8) }
-            })
-        }
+        // 다차 정산(n차) UI 뼈대: "1개짜리 리스트를 순회"하는 구조로 만들어 향후 실제 다차 데이터로
+        // 교체할 수 있게 한다. TODO(다차 정산): 지금은 항상 1차 데이터뿐이다.
+        val rounds = listOf("1차" to (reason ?: "1/N 정산"))
+        rounds.forEach { (round, tag) -> card.addView(roundTagRow(round, amount, tag)) }
         return card
+    }
+
+    /** 라운드별 "N차 - 금액" 텍스트 + 사유 태그 칩 한 행. */
+    private fun roundTagRow(round: String, amount: Long, tag: String): View {
+        val ctx = requireContext()
+        val row = LinearLayout(ctx).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = Gravity.CENTER_VERTICAL
+            layoutParams = LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT
+            ).apply { topMargin = dp(8) }
+        }
+        row.addView(TextView(ctx).apply {
+            text = "$round - ${nf.format(amount)}원"
+            setTextColor(Color.parseColor("#BEBEF7"))
+            setTextSize(TypedValue.COMPLEX_UNIT_SP, 13f)
+            layoutParams = LinearLayout.LayoutParams(
+                0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f
+            )
+        })
+        row.addView(TextView(ctx).apply {
+            text = tag
+            setTextColor(Color.parseColor("#7CE7A0"))
+            setTextSize(TypedValue.COMPLEX_UNIT_SP, 11f)
+            setBackgroundResource(R.drawable.bg_chip_green_outline)
+            setPadding(dp(10), dp(4), dp(10), dp(4))
+        })
+        return row
     }
 
     private fun dp(value: Int): Int =

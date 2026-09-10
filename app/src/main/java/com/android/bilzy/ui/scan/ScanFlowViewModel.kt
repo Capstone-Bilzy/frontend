@@ -29,6 +29,13 @@ class ScanFlowViewModel @Inject constructor(
     var settlementTitle: String = ""
         private set
 
+    /**
+     * OCR 결과 화면의 모임 이름 입력값(서버 confirm 여부와 무관하게 유지).
+     * "추가 스캔하기"는 confirm()을 호출하지 않아 settlementTitle이 안 채워지므로,
+     * 라운드가 넘어가도 화면 프리필이 유지되도록 별도로 들고 있는다.
+     */
+    var pendingGroupName: String = ""
+
     /** /ocr/scan 결과(사용자 확인·수정 대상) */
     var scannedReceipt: ScannedReceipt? = null
         private set
@@ -121,6 +128,11 @@ class ScanFlowViewModel @Inject constructor(
         _items.value = _items.value.toMutableList().also { if (index in it.indices) it.removeAt(index) }
     }
 
+    /** 직접 입력 화면의 인라인 편집(품목명/수량/가격)을 반영한다. */
+    fun updateItem(index: Int, item: ReceiptItemDraft) {
+        _items.value = _items.value.toMutableList().also { if (index in it.indices) it[index] = item }
+    }
+
     sealed interface ConfirmState {
         data object Idle : ConfirmState
         data object Loading : ConfirmState
@@ -159,6 +171,56 @@ class ScanFlowViewModel @Inject constructor(
 
     fun consumeConfirmState() {
         _confirmState.value = ConfirmState.Idle
+    }
+
+    // ── 다차 정산(n차) 화면 뼈대용 인메모리 상태 ─────────────────
+    // ⚠️ TODO(다차 정산): 백엔드는 현재 "정산방 1개 = 영수증 1장"만 지원한다
+    // (/ocr/confirm이 항목을 통째로 덮어씀). 아래 목록은 화면 표시용일 뿐,
+    // 서버에는 반영되지 않는다 — 실제로 confirm되는 건 마지막에 누른 한 건뿐이다.
+    // 서버가 정산방당 여러 영수증(라운드)을 지원하게 되면 이 부분을 실제 API 연동으로 교체해야 한다.
+
+    /** 화면 표시용 영수증 목록 항목(라운드/가게명/항목 스냅샷). 서버에는 저장되지 않는다. */
+    data class ReceiptListEntry(val round: Int, val store: String, val items: List<ReceiptItemDraft>) {
+        val total: Long get() = items.sumOf { it.subtotal }
+    }
+
+    private val _receiptDrafts = MutableStateFlow<List<ReceiptListEntry>>(emptyList())
+    val receiptDrafts = _receiptDrafts.asStateFlow()
+
+    fun currentRound(): Int = _receiptDrafts.value.size + 1
+
+    /** "추가 스캔하기"에서 현재 편집 중인 항목들을 표시용 목록에 쌓는다. confirm()은 호출하지 않는다. */
+    fun pushCurrentDraftToList(store: String) {
+        if (_items.value.isEmpty()) return
+        _receiptDrafts.value = _receiptDrafts.value + ReceiptListEntry(currentRound(), store, _items.value)
+    }
+
+    fun removeDraftFromList(round: Int) {
+        _receiptDrafts.value = _receiptDrafts.value.filterNot { it.round == round }
+    }
+
+    /** 다음 영수증을 스캔하기 전 현재 편집 화면 상태를 비운다. */
+    fun resetForNextScan() {
+        _items.value = emptyList()
+        scannedReceipt = null
+    }
+
+    /**
+     * 정산 완료 후 홈으로 돌아가거나 로그아웃할 때 호출해 이 ViewModel 전체를 초기 상태로 되돌린다.
+     * nav_graph 스코프(Activity 생명주기 동안 유지)라 리셋하지 않으면 settlementId 등 이전
+     * (완료됐거나 다른 사용자의) 정산방 상태가 다음 스캔에 그대로 재사용될 위험이 있다.
+     */
+    fun reset() {
+        settlementId = null
+        settlementTitle = ""
+        pendingGroupName = ""
+        scannedReceipt = null
+        pendingImage = null
+        capturedImage = null
+        _scanState.value = ScanState.Idle
+        _items.value = emptyList()
+        _confirmState.value = ConfirmState.Idle
+        _receiptDrafts.value = emptyList()
     }
 
     private companion object {

@@ -23,14 +23,19 @@ class OnboardingPagerAdapter : RecyclerView.Adapter<OnboardingPagerAdapter.PageV
             R.drawable.character_front
         ),
         OnboardingPage(
-            "AI가 분석하는\n우리만의 스마트한 정산 리포트",
-            "술 안 마신 친구, 늦게 온 친구까지 섬세하게 반영해요",
-            R.drawable.character_couple
+            "일일이 입력하지 않아도,\n정산이 쉬워져요",
+            "메뉴와 금액을 AI가 알아서 정리해\n복잡한 정산을 간편하게 시작할 수 있어요.",
+            R.drawable.character_front
+        ),
+        OnboardingPage(
+            "참여한 것만 골라서\n한 번에 정산해요",
+            "1차 식사부터 2차 카페, 3차 모임까지\n내가 참여한 정산만 선택하면 끝!",
+            R.drawable.character_front
         ),
         OnboardingPage(
             "모임이 끝났을 때,\n정산도 끝!",
             "모임 후 번거로운 정산 스트레스를 줄여보세요",
-            R.drawable.character_side
+            R.drawable.character_front
         )
     )
 

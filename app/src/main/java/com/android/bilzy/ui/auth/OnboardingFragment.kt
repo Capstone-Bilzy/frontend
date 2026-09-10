@@ -16,7 +16,7 @@ class OnboardingFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val dots by lazy {
-        listOf(binding.dot0, binding.dot1, binding.dot2)
+        listOf(binding.dot0, binding.dot1, binding.dot2, binding.dot3)
     }
 
     override fun onCreateView(
