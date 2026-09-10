@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#0A1130">
+    android:background="@color/bg_dark">
 
     <!-- Back + Title -->
     <ImageView
@@ -83,7 +83,7 @@
                     android:layout_width="22dp"
                     android:layout_height="22dp"
                     android:src="@drawable/ic_check"
-                    app:tint="#7C7AED"
+                    app:tint="@color/primary"
                     android:layout_marginEnd="12dp" />
 
                 <TextView
@@ -115,7 +115,7 @@
                     android:layout_width="22dp"
                     android:layout_height="22dp"
                     android:src="@drawable/ic_check"
-                    app:tint="#7C7AED"
+                    app:tint="@color/primary"
                     android:layout_marginEnd="12dp" />
 
                 <TextView
@@ -153,7 +153,7 @@
                     android:layout_width="22dp"
                     android:layout_height="22dp"
                     android:src="@drawable/ic_check"
-                    app:tint="#7C7AED"
+                    app:tint="@color/primary"
                     android:layout_marginEnd="12dp" />
 
                 <TextView
@@ -267,11 +267,19 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
+        <ImageView
+            android:id="@+id/ivConfirmIcon"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:layout_marginEnd="8dp"
+            android:src="@drawable/ic_kakao_logo"
+            android:contentDescription="@null" />
+
         <TextView
             android:id="@+id/tvConfirmText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="💬  동의하고 계속하기"
+            android:text="동의하고 계속하기"
             android:textColor="#191919"
             android:textSize="18sp"
             android:textStyle="bold" />

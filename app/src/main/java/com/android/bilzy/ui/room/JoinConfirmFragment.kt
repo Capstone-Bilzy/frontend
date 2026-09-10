@@ -72,7 +72,7 @@ class JoinConfirmFragment : Fragment() {
                             roomViewModel.expectedCount = 0  // 게스트: 인원 게이팅 없음
                             roomViewModel.setRoom(state.settlementId)
                             viewModel.consumeState()
-                            findNavController().navigate(R.id.action_joinConfirm_to_enteringRoom)
+                            findNavController().navigate(R.id.action_joinConfirm_to_roundPick)
                         }
                         is QrScanViewModel.JoinState.Error -> {
                             setLoading(false)

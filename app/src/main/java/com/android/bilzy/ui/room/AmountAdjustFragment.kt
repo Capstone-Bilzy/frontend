@@ -62,6 +62,21 @@ class AmountAdjustFragment : Fragment() {
         }
 
         observeRoom()
+        observePickedRounds()
+    }
+
+    /**
+     * 다차 정산(n차) UI 뼈대: 선택한 차수 수에 따라 버튼 문구만 바꾼다.
+     * TODO(다차 정산): 실제 차수 반복 네비게이션은 다음 단계 — 지금은 항상 1차뿐이라 분기만 존재.
+     */
+    private fun observePickedRounds() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                roomViewModel.pickedRounds.collect { picked ->
+                    binding.btnSettle.text = if (picked.size <= 1) "정산 시작하기" else "2차로 넘어가기"
+                }
+            }
+        }
     }
 
     private fun observeRoom() {

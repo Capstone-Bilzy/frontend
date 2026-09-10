@@ -54,14 +54,16 @@ class SignupTermsFragment : Fragment() {
 
         if (isKakao) {
             binding.tvTitle.text = "카카오"
-            binding.tvConfirmText.text = "💬  동의하고 계속하기"
+            binding.tvConfirmText.text = "동의하고 계속하기"
             binding.tvConfirmText.setTextColor(Color.parseColor("#191919"))
             binding.btnConfirm.setBackgroundResource(R.drawable.bg_button_kakao)
+            binding.ivConfirmIcon.setImageResource(R.drawable.ic_kakao_logo)
         } else {
             binding.tvTitle.text = "네이버"
-            binding.tvConfirmText.text = "N  네이버로 시작하기"
+            binding.tvConfirmText.text = "네이버로 시작하기"
             binding.tvConfirmText.setTextColor(Color.WHITE)
             binding.btnConfirm.setBackgroundResource(R.drawable.bg_button_naver)
+            binding.ivConfirmIcon.setImageResource(R.drawable.ic_naver_logo)
         }
 
         renderChecks()

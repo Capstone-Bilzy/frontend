@@ -72,6 +72,16 @@ class RoomViewModel @Inject constructor(
     /** 금액 조정 화면에서 만든 특이사항(칩 선택 등) → AI 계산에 전달. */
     var aiNote: String = ""
 
+    // ── 다차 정산(n차) UI 뼈대: RoundPick 선택 상태 ─────────────
+    // ⚠️ TODO(다차 정산): 클라이언트 전용 표시 상태. calculate()/markDone() 등 실제 계산 로직에는
+    // 아직 반영하지 않는다(서버가 정산방당 여러 라운드를 지원해야 다음 단계에서 연결 가능).
+    private val _pickedRounds = MutableStateFlow<Set<Int>>(emptySet())
+    val pickedRounds = _pickedRounds.asStateFlow()
+
+    fun togglePickedRound(round: Int) {
+        _pickedRounds.value = if (round in _pickedRounds.value) _pickedRounds.value - round else _pickedRounds.value + round
+    }
+
     /** true면 AI 계산이 적용된 멤버 금액(저장값), false면 클라이언트 엔빵으로 표시. */
     var aiApplied: Boolean = false
         private set
@@ -81,6 +91,10 @@ class RoomViewModel @Inject constructor(
         if (settlementId != id) {
             settlementId = id
             _settlement.value = null
+            // 다른 정산방으로 전환되는 경우 이전 방의 라운드 선택/AI 특이사항이 새 방에 새어들지 않도록 초기화
+            _pickedRounds.value = emptySet()
+            aiNote = ""
+            aiApplied = false
         }
         viewModelScope.launch {
             _myNickname.value = myNameOverride ?: tokenStore.currentNickname()
@@ -144,6 +158,24 @@ class RoomViewModel @Inject constructor(
                 userRepository.clearCache()
             }
             .isSuccess
+    }
+
+    /**
+     * 정산 완료 후 홈으로 돌아가거나 로그아웃할 때 호출해 이 ViewModel 전체를 초기 상태로 되돌린다.
+     * nav_graph 스코프라 리셋하지 않으면 다음 정산방 입장 시 이전(완료됐거나 다른 사용자의)
+     * settlementId·멤버 상태가 그대로 재사용될 위험이 있다.
+     */
+    fun reset() {
+        settlementId = null
+        expectedCount = 0
+        _settlement.value = null
+        _myNickname.value = null
+        _myAccount.value = null
+        myNameOverride = null
+        _suggestedName.value = null
+        aiNote = ""
+        _pickedRounds.value = emptySet()
+        aiApplied = false
     }
 
     companion object {

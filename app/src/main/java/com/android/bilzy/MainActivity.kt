@@ -89,7 +89,7 @@ class MainActivity : AppCompatActivity() {
                 ).show()
                 return@launch
             }
-            // 홈을 베이스로 깔고(뒤로가기 시 홈), 그 위에 입장 확인 화면을 띄운다.
+            // 홈을 베이스로 깔고(뒤로가기 시 홈), 그 위에 입장 확인 화면
             navigateToHome()
             navController.navigate(
                 R.id.joinConfirmFragment,

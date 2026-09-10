@@ -224,8 +224,6 @@
         tools:layout="@layout/fragment_scan_permission">
         <action android:id="@+id/action_scanPermission_to_scanCamera"
             app:destination="@id/scanCameraFragment" />
-        <action android:id="@+id/action_scanPermission_to_manualInput"
-            app:destination="@id/manualInputFragment" />
         <action android:id="@+id/action_scanPermission_to_home"
             app:destination="@id/homeFragment"
             app:popUpTo="@id/homeFragment"
@@ -280,6 +278,11 @@
             app:destination="@id/ocrResultFragment"
             app:popUpTo="@id/recognizingFragment"
             app:popUpToInclusive="true" />
+        <!-- AI 인식 실패 → 직접 입력 폴백 (촬영은 이미 거친 뒤이므로 스캔 건너뛰기 아님) -->
+        <action android:id="@+id/action_recognizing_to_manualInput"
+            app:destination="@id/manualInputFragment"
+            app:popUpTo="@id/recognizingFragment"
+            app:popUpToInclusive="true" />
     </fragment>
 
     <fragment
@@ -318,7 +321,21 @@
             app:popUpToInclusive="false" />
         <action android:id="@+id/action_ocrResult_to_addItem"
             app:destination="@id/addItemFragment" />
-        <action android:id="@+id/action_ocrResult_to_peopleCount"
+        <action android:id="@+id/action_ocrResult_to_receiptList"
+            app:destination="@id/receiptListFragment" />
+        <action android:id="@+id/action_ocrResult_to_scanCamera"
+            app:destination="@id/scanCameraFragment"
+            app:popUpTo="@id/ocrResultFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <!-- 다차 정산(n차) UI 뼈대: 스캔된 영수증(표시용) 목록. 서버엔 반영되지 않음(TODO 참고). -->
+    <fragment
+        android:id="@+id/receiptListFragment"
+        android:name="com.android.bilzy.ui.settlement.ReceiptListFragment"
+        android:label="ReceiptList"
+        tools:layout="@layout/fragment_receipt_list">
+        <action android:id="@+id/action_receiptList_to_peopleCount"
             app:destination="@id/peopleCountFragment" />
     </fragment>
 
@@ -331,8 +348,6 @@
             app:destination="@id/scanPermissionFragment"
             app:popUpTo="@id/scanPermissionFragment"
             app:popUpToInclusive="false" />
-        <action android:id="@+id/action_manualInput_to_addItem"
-            app:destination="@id/addItemFragment" />
         <action android:id="@+id/action_manualInput_to_peopleCount"
             app:destination="@id/peopleCountFragment" />
     </fragment>
@@ -394,8 +409,10 @@
             app:destination="@id/homeFragment"
             app:popUpTo="@id/homeFragment"
             app:popUpToInclusive="false" />
-        <action android:id="@+id/action_qrScan_to_enteringRoom"
-            app:destination="@id/enteringRoomFragment" />
+        <action android:id="@+id/action_qrScan_to_roundPick"
+            app:destination="@id/roundPickFragment"
+            app:popUpTo="@id/qrScanFragment"
+            app:popUpToInclusive="true" />
         <action android:id="@+id/action_qrScan_to_scanCamera"
             app:destination="@id/scanCameraFragment" />
     </fragment>
@@ -413,14 +430,25 @@
             app:argType="string"
             app:nullable="true"
             android:defaultValue="@null" />
-        <action android:id="@+id/action_joinConfirm_to_enteringRoom"
-            app:destination="@id/enteringRoomFragment"
+        <action android:id="@+id/action_joinConfirm_to_roundPick"
+            app:destination="@id/roundPickFragment"
             app:popUpTo="@id/joinConfirmFragment"
             app:popUpToInclusive="true" />
         <action android:id="@+id/action_joinConfirm_to_home"
             app:destination="@id/homeFragment"
             app:popUpTo="@id/joinConfirmFragment"
             app:popUpToInclusive="true" />
+    </fragment>
+
+    <!-- 다차 정산(n차) UI 뼈대: 게스트 참여 성공 직후 "나의 정산 목록"에서 참여한 차수만 고른다.
+         실제 다차 데이터는 없으므로 현재 정산 1건을 "1차" 토글 1개로 표시한다. 호스트 흐름은 미포함. -->
+    <fragment
+        android:id="@+id/roundPickFragment"
+        android:name="com.android.bilzy.ui.room.RoundPickFragment"
+        android:label="RoundPick"
+        tools:layout="@layout/fragment_round_pick">
+        <action android:id="@+id/action_roundPick_to_enteringRoom"
+            app:destination="@id/enteringRoomFragment" />
     </fragment>
 
     <fragment

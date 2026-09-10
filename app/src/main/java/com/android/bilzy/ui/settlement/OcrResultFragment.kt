@@ -1,7 +1,9 @@
 package com.android.bilzy.ui.settlement
 
 import android.os.Bundle
+import android.text.Editable
 import android.text.InputType
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -46,21 +48,43 @@ class OcrResultFragment : Fragment() {
         binding.rvItems.layoutManager = LinearLayoutManager(requireContext())
         binding.rvItems.adapter = adapter
 
-        if (viewModel.settlementTitle.isNotEmpty()) {
-            binding.etGroupName.setText(viewModel.settlementTitle)
+        val prefillName = viewModel.pendingGroupName.ifEmpty { viewModel.settlementTitle }
+        if (prefillName.isNotEmpty()) {
+            binding.etGroupName.setText(prefillName)
         }
+        binding.etGroupName.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) = Unit
+            override fun afterTextChanged(s: Editable?) {
+                viewModel.pendingGroupName = s?.toString().orEmpty()
+            }
+        })
 
         binding.btnBack.setOnClickListener {
             findNavController().navigate(R.id.action_ocrResult_to_home)
         }
         binding.btnAddItem.setOnClickListener { showAddItemDialog() }
-        binding.btnStart.setOnClickListener {
+        binding.btnComplete.setOnClickListener {
             val title = binding.etGroupName.text.toString().trim()
             if (title.isEmpty()) {
                 Toast.makeText(requireContext(), "모임 이름을 입력해주세요", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
             viewModel.confirm(title)
+        }
+        binding.btnMore.setOnClickListener {
+            val title = binding.etGroupName.text.toString().trim()
+            if (title.isEmpty()) {
+                Toast.makeText(requireContext(), "모임 이름을 입력해주세요", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            // 다차 정산(n차) UI 뼈대: 서버 confirm()은 호출하지 않는다. 서버는 정산방당 영수증
+            // 1장만 지원하므로(TODO 다차 정산), 실제 confirm은 마지막 "완료하기"에서만 일어난다.
+            // TODO: 가게 이름은 현재 클라이언트 표시용(ReceiptListEntry.store)으로만 쓰이고
+            // 서버로 전송되지 않는다 — 도메인 모델/백엔드 계약에 필드 추가 필요.
+            viewModel.pushCurrentDraftToList(binding.etStoreName.text.toString().trim())
+            viewModel.resetForNextScan()
+            findNavController().navigate(R.id.action_ocrResult_to_scanCamera)
         }
 
         observeItems()
@@ -83,18 +107,18 @@ class OcrResultFragment : Fragment() {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.confirmState.collect { state ->
                     when (state) {
-                        is ScanFlowViewModel.ConfirmState.Loading -> binding.btnStart.isEnabled = false
+                        is ScanFlowViewModel.ConfirmState.Loading -> binding.btnComplete.isEnabled = false
                         is ScanFlowViewModel.ConfirmState.Success -> {
-                            binding.btnStart.isEnabled = true
+                            binding.btnComplete.isEnabled = true
                             viewModel.consumeConfirmState()
-                            findNavController().navigate(R.id.action_ocrResult_to_peopleCount)
+                            findNavController().navigate(R.id.action_ocrResult_to_receiptList)
                         }
                         is ScanFlowViewModel.ConfirmState.Error -> {
-                            binding.btnStart.isEnabled = true
+                            binding.btnComplete.isEnabled = true
                             Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
                             viewModel.consumeConfirmState()
                         }
-                        is ScanFlowViewModel.ConfirmState.Idle -> binding.btnStart.isEnabled = true
+                        is ScanFlowViewModel.ConfirmState.Idle -> binding.btnComplete.isEnabled = true
                     }
                 }
             }
