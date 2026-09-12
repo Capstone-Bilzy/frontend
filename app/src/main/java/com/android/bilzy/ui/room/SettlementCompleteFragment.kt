@@ -17,6 +17,7 @@ import androidx.navigation.fragment.findNavController
 import com.android.bilzy.R
 import com.android.bilzy.databinding.FragmentSettlementCompleteBinding
 import com.android.bilzy.domain.model.Settlement
+import com.android.bilzy.domain.model.SettlementStatus
 import com.android.bilzy.ui.scan.ScanFlowViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -89,18 +90,26 @@ class SettlementCompleteFragment : Fragment() {
         binding.tvTotalAmount.text = "${nf.format(total)}원"
         binding.tvSubtitle.text = "${settlement.title.ifBlank { "정산" }} · ${members.size}명"
 
-        // 내 금액: 저장된 금액 있으면 사용, 없으면 엔빵 내 몫
+        // 계산 완료 여부는 금액 값(0원일 수도 있는 정상 결과)이 아니라 정산방 상태로 판단해야 한다 —
+        // 특정 라운드에 안 왔거나 그 라운드 항목을 전부 "안 먹음" 처리하면 정당하게 0원이 나올 수 있는데,
+        // 예전 로직(stored > 0)은 이걸 "아직 계산 안 됨"으로 오인해 엔빵 금액을 잘못 보여줬다.
+        val calculated = settlement.status == SettlementStatus.CALCULATED || settlement.status == SettlementStatus.DONE
+
+        // 내 금액: 계산 완료면 저장된 금액(0원이어도 신뢰), 아니면 엔빵 내 몫
         val myNick = roomViewModel.myNickname.value
         val shares = RoomViewModel.evenSplit(total, n)
         val myIndex = members.indexOfFirst { it.nickname == myNick }.takeIf { it >= 0 } ?: 0
-        val stored = members.getOrNull(myIndex)?.amount ?: 0L
-        val myAmount = if (stored > 0) stored else shares.getOrElse(myIndex) { 0L }
+        val myMember = members.getOrNull(myIndex)
+        val myAmount = if (calculated) (myMember?.amount ?: 0L) else shares.getOrElse(myIndex) { 0L }
         binding.tvMyAmount.text = "${nf.format(myAmount)}원"
 
-        // 다차 정산(n차) UI 뼈대: "1개짜리 리스트를 순회"하는 구조로 만들어 향후 실제 다차
-        // 데이터로 교체할 수 있게 한다. TODO(다차 정산): 지금은 항상 1차 데이터뿐이다.
-        val myReason = members.getOrNull(myIndex)?.reason?.takeIf { it.isNotBlank() }
-        val rounds = listOf("1차" to (myReason ?: "N분의 1 적용"))
+        val myRoundAmounts = if (calculated) myMember?.rounds.orEmpty() else emptyList()
+        val rounds: List<Pair<String, String>> = if (myRoundAmounts.isNotEmpty()) {
+            myRoundAmounts.map { "${it.round}차" to (it.reason?.takeIf(String::isNotBlank) ?: "N분의 1 적용") }
+        } else {
+            val myReason = myMember?.reason?.takeIf { it.isNotBlank() }
+            listOf("1차" to (myReason ?: "N분의 1 적용"))
+        }
         binding.roundsContainer.removeAllViews()
         rounds.forEach { (round, tag) -> binding.roundsContainer.addView(roundBadge(round, tag)) }
     }

@@ -73,6 +73,8 @@ class ScanCameraFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding.tvRoundBadge.text = "${viewModel.currentRound}차"
+
         binding.btnBack.setOnClickListener { findNavController().navigateUp() }
         binding.btnShutter.setOnClickListener { capture() }
         binding.btnGallery.setOnClickListener { pickImage.launch("image/*") }

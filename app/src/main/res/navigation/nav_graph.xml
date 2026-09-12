@@ -23,7 +23,23 @@
         android:name="com.android.bilzy.ui.auth.LoginFragment"
         android:label="Login"
         tools:layout="@layout/fragment_login">
-        <action android:id="@+id/action_login_to_loginLoading"
+        <!-- provider 선택 → 동의 항목 안내(요청 항목: 이름/프로필이미지/이메일) → 실제 OAuth -->
+        <action android:id="@+id/action_login_to_loginConsent"
+            app:destination="@id/loginConsentFragment" />
+    </fragment>
+
+    <!-- 로그인 흐름의 동의 항목 안내 화면. fragment-scope LoginViewModel을 직접 갖고
+         "동의하고 계속하기"에서 실제 loginWithKakao/loginWithNaver를 호출한다. -->
+    <fragment
+        android:id="@+id/loginConsentFragment"
+        android:name="com.android.bilzy.ui.auth.LoginConsentFragment"
+        android:label="LoginConsent"
+        tools:layout="@layout/fragment_consent">
+        <argument
+            android:name="provider"
+            app:argType="string"
+            android:defaultValue="kakao" />
+        <action android:id="@+id/action_loginConsent_to_loginLoading"
             app:destination="@id/loginLoadingFragment" />
     </fragment>
 
@@ -32,8 +48,23 @@
         android:name="com.android.bilzy.ui.auth.SignupFragment"
         android:label="Signup"
         tools:layout="@layout/fragment_signup">
-        <!-- 카카오 OAuth(데이터 제공 동의)를 먼저 끝낸 뒤 서비스 약관 동의로 진행 -->
-        <action android:id="@+id/action_signup_to_signupKakaoTerms"
+        <!-- provider 선택 → 동의 항목 안내 → 카카오/네이버 OAuth(데이터 제공 동의) → 서비스 약관 동의 -->
+        <action android:id="@+id/action_signup_to_signupConsent"
+            app:destination="@id/signupConsentFragment" />
+    </fragment>
+
+    <!-- 회원가입 흐름의 동의 항목 안내 화면. nav_graph 스코프 SignupViewModel을 재사용하고
+         "동의하고 계속하기"에서 startKakaoSignup/startNaverSignup(실제 OAuth)을 호출한다. -->
+    <fragment
+        android:id="@+id/signupConsentFragment"
+        android:name="com.android.bilzy.ui.auth.SignupConsentFragment"
+        android:label="SignupConsent"
+        tools:layout="@layout/fragment_consent">
+        <argument
+            android:name="provider"
+            app:argType="string"
+            android:defaultValue="kakao" />
+        <action android:id="@+id/action_signupConsent_to_signupKakaoTerms"
             app:destination="@id/signupKakaoTermsFragment" />
     </fragment>
 
@@ -337,7 +368,16 @@
         tools:layout="@layout/fragment_receipt_list">
         <action android:id="@+id/action_receiptList_to_peopleCount"
             app:destination="@id/peopleCountFragment" />
+        <action android:id="@+id/action_receiptList_to_saved"
+            app:destination="@id/receiptListSavedFragment" />
     </fragment>
+
+    <!-- "영수증 저장하기" 결과 화면 — 2.4초 후 자동으로 목록으로 복귀 -->
+    <fragment
+        android:id="@+id/receiptListSavedFragment"
+        android:name="com.android.bilzy.ui.settlement.ReceiptListSavedFragment"
+        android:label="ReceiptListSaved"
+        tools:layout="@layout/fragment_receipt_list_saved" />
 
     <fragment
         android:id="@+id/manualInputFragment"
@@ -348,8 +388,8 @@
             app:destination="@id/scanPermissionFragment"
             app:popUpTo="@id/scanPermissionFragment"
             app:popUpToInclusive="false" />
-        <action android:id="@+id/action_manualInput_to_peopleCount"
-            app:destination="@id/peopleCountFragment" />
+        <action android:id="@+id/action_manualInput_to_receiptList"
+            app:destination="@id/receiptListFragment" />
     </fragment>
 
     <fragment

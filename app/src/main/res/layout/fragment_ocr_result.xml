@@ -42,14 +42,46 @@
             android:focusable="true"
             app:tint="#FFFFFF" />
 
+        <!-- 프로토타입 .bz-brandbar-row>span:first-of-type{flex:1} — 타이틀이 남은 공간을 다 차지해
+             차수 배지를 행 맨 오른쪽으로 밀어낸다. -->
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:layout_marginStart="6dp"
             android:text="OCR 결과"
             android:textColor="#FFFFFF"
             android:textSize="19sp"
             android:textStyle="bold" />
+
+        <LinearLayout
+            android:id="@+id/roundBadgeContainer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:background="@drawable/bg_badge_green"
+            android:paddingStart="13dp"
+            android:paddingEnd="13dp"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp">
+
+            <View
+                android:layout_width="6dp"
+                android:layout_height="6dp"
+                android:layout_marginEnd="6dp"
+                android:background="@drawable/dot_green" />
+
+            <TextView
+                android:id="@+id/tvRoundBadge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="1차"
+                android:textColor="#7DE87D"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
 
     </LinearLayout>
 
@@ -72,26 +104,15 @@
             android:paddingEnd="20dp"
             android:paddingBottom="8dp">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="영수증을 인식했어요!\n잘못된 항목은 직접 수정해주세요."
-                android:textColor="#BEBEF7"
-                android:textSize="16sp"
-                android:gravity="center"
-                android:lineSpacingExtra="2dp"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginBottom="16dp" />
-
             <!-- 모임 이름 -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="모임 이름"
                 android:textColor="#FFFFFF"
-                android:textSize="16sp"
+                android:textSize="12sp"
                 android:textStyle="bold"
-                android:layout_marginBottom="6dp" />
+                android:layout_marginBottom="8dp" />
 
             <EditText
                 android:id="@+id/etGroupName"
@@ -105,7 +126,7 @@
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
                 android:inputType="text"
-                android:layout_marginBottom="14dp" />
+                android:layout_marginBottom="16dp" />
 
             <!-- 가게 이름 -->
             <!-- TODO: 현재 클라이언트 표시용(다차 정산 라운드 목록)으로만 쓰이고 서버로 전송되지 않는다. -->
@@ -114,9 +135,9 @@
                 android:layout_height="wrap_content"
                 android:text="가게 이름"
                 android:textColor="#FFFFFF"
-                android:textSize="16sp"
+                android:textSize="12sp"
                 android:textStyle="bold"
-                android:layout_marginBottom="6dp" />
+                android:layout_marginBottom="8dp" />
 
             <EditText
                 android:id="@+id/etStoreName"
@@ -130,7 +151,7 @@
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
                 android:inputType="text"
-                android:layout_marginBottom="14dp" />
+                android:layout_marginBottom="16dp" />
 
             <!-- 영수증 내역 label -->
             <TextView
@@ -138,56 +159,77 @@
                 android:layout_height="wrap_content"
                 android:text="영수증 내역"
                 android:textColor="#FFFFFF"
-                android:textSize="16sp"
+                android:textSize="12sp"
                 android:textStyle="bold"
-                android:layout_marginBottom="6dp" />
+                android:layout_marginBottom="8dp" />
 
-            <!-- Items RecyclerView -->
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvItems"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:nestedScrollingEnabled="false" />
-
-            <!-- Add item button (dashed) -->
-            <TextView
-                android:id="@+id/btnAddItem"
-                android:layout_width="match_parent"
-                android:layout_height="52dp"
-                android:layout_marginTop="8dp"
-                android:text="⊕  항목 추가"
-                android:textColor="#A5A6F6"
-                android:textSize="17sp"
-                android:textStyle="bold"
-                android:gravity="center"
-                android:background="@drawable/bg_dashed_border"
-                android:clickable="true"
-                android:focusable="true" />
-
-            <!-- Total row -->
+            <!-- 프로토타입 .bz-ocr-card: 품목 목록/항목 추가/합계를 하나의 카드로 묶는다 -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="end|center_vertical"
-                android:layout_marginTop="14dp">
+                android:orientation="vertical"
+                android:background="@drawable/bg_ocr_card"
+                android:paddingStart="16dp"
+                android:paddingEnd="12dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="16dp">
 
-                <TextView
-                    android:layout_width="wrap_content"
+                <!-- Items RecyclerView (인라인 편집 셀) -->
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvItems"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="총 합계"
-                    android:textColor="#BEBEF7"
-                    android:textSize="17sp"
-                    android:layout_marginEnd="10dp" />
+                    android:nestedScrollingEnabled="false" />
 
+                <!-- Add item button (dashed) -->
                 <TextView
-                    android:id="@+id/tvTotal"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/btnAddItem"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="10dp"
+                    android:text="⊕  항목 추가"
+                    android:textColor="#A5A6F6"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:background="@drawable/bg_dashed_border"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+                <!-- 합계 구분선 -->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#24FFFFFF" />
+
+                <!-- Total row -->
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="0원"
-                    android:textColor="#FFFFFF"
-                    android:textSize="22sp"
-                    android:textStyle="bold" />
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginTop="12dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="합계"
+                        android:textColor="#FFFFFF"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tvTotal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0원"
+                        android:textColor="#A9A2FF"
+                        android:textSize="17sp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
 
             </LinearLayout>
 
@@ -218,7 +260,7 @@
             android:textSize="17sp"
             android:textStyle="bold"
             android:gravity="center"
-            android:background="@drawable/bg_button_outline"
+            android:background="@drawable/bg_button_ghost"
             android:clickable="true"
             android:focusable="true" />
 

@@ -22,7 +22,8 @@ data class Settlement(
     val receiptImageUrl: String?,
     val createdAt: String?,
     val members: List<SettlementMember> = emptyList(),
-    val items: List<ReceiptItem> = emptyList()
+    val items: List<ReceiptItem> = emptyList(),
+    val receipts: List<Receipt> = emptyList()
 )
 
 data class SettlementMember(
@@ -31,7 +32,10 @@ data class SettlementMember(
     val userId: String,
     val nickname: String,
     val amount: Long,
-    val reason: String?
+    val reason: String?,
+    val profileImageUrl: String? = null,
+    val ready: Boolean = false,
+    val rounds: List<MemberRoundAmount> = emptyList()
 )
 
 data class ReceiptItem(
@@ -40,4 +44,25 @@ data class ReceiptItem(
     val name: String,
     val price: Long,
     val quantity: Int
+)
+
+/** 라운드(영수증) 1건 — 다차 정산의 실제 데이터. */
+data class Receipt(
+    val id: String,
+    val settlementId: String,
+    val round: Int,
+    val storeName: String?,
+    val receiptImageUrl: String?,
+    val totalAmount: Long,
+    val items: List<ReceiptItem> = emptyList()
+)
+
+/** 멤버가 특정 라운드에 참여한 내역(제외 항목·라운드별 금액·사유). */
+data class MemberRoundAmount(
+    val id: String,
+    val settlementMemberId: String,
+    val round: Int,
+    val excludedItemNames: List<String> = emptyList(),
+    val amount: Long,
+    val reason: String?
 )

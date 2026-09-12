@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 프로토타입 .bz-ocr-card: border-radius:16px; border:1.4px solid rgba(140,130,255,.45);
+     background:rgba(30,30,80,.35) -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="#591E1E50" />
+    <stroke android:width="1.4dp" android:color="#728C82FF" />
+    <corners android:radius="16dp" />
+</shape>

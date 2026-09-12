@@ -3,6 +3,8 @@ package com.android.bilzy.data.repository
 import com.android.bilzy.data.remote.BilzyApi
 import com.android.bilzy.data.remote.dto.AddMemberRequest
 import com.android.bilzy.data.remote.dto.CreateSettlementRequest
+import com.android.bilzy.data.remote.dto.SetMemberRoundsRequest
+import com.android.bilzy.data.remote.dto.SetRoundAdjustmentRequest
 import com.android.bilzy.data.remote.dto.UpdateSettlementRequest
 import com.android.bilzy.data.remote.dto.UpdateStatusRequest
 import com.android.bilzy.data.remote.dto.toDomain
@@ -32,8 +34,20 @@ class SettlementRepositoryImpl @Inject constructor(
     override suspend fun deleteSettlement(id: String) =
         api.deleteSettlement(id)
 
-    override suspend fun deleteReceiptImage(id: String) =
-        api.deleteSettlementReceipt(id)
+    override suspend fun deleteReceiptImage(id: String, round: Int) =
+        api.deleteSettlementReceipt(id, round)
+
+    override suspend fun setMyRounds(id: String, rounds: List<Int>) {
+        api.setMyRounds(id, SetMemberRoundsRequest(rounds))
+    }
+
+    override suspend fun setMyRoundAdjustment(id: String, round: Int, excludedItemNames: List<String>) {
+        api.setMyRoundAdjustment(id, round, SetRoundAdjustmentRequest(excludedItemNames))
+    }
+
+    override suspend fun markReady(id: String) {
+        api.setMyReady(id)
+    }
 
     override suspend fun joinByQr(id: String, nickname: String) {
         api.joinSettlement(id, AddMemberRequest(nickname))

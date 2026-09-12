@@ -50,6 +50,7 @@
 
                 <!-- Profile icon -->
                 <ImageView
+                    android:id="@+id/ivProfileAvatar"
                     android:layout_width="64dp"
                     android:layout_height="64dp"
                     android:src="@drawable/character_smile"

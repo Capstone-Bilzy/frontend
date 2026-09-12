@@ -17,6 +17,7 @@ data class OcrItemDto(
 @Serializable
 data class OcrScanResponse(
     @SerialName("settlement_id") val settlementId: String = "",
+    val round: Int = 1,
     @SerialName("image_url") val imageUrl: String? = null,
     val items: List<OcrItemDto> = emptyList(),
     val total: Long = 0,
@@ -27,13 +28,17 @@ data class OcrScanResponse(
 @Serializable
 data class OcrConfirmRequest(
     @SerialName("settlement_id") val settlementId: String,
+    val round: Int = 1,
+    @SerialName("store_name") val storeName: String = "",
     val items: List<OcrItemDto>
 )
 
 /** POST /ocr/confirm 응답 */
 @Serializable
 data class OcrConfirmResponse(
+    val round: Int = 1,
     @SerialName("total_amount") val totalAmount: Long = 0,
+    @SerialName("settlement_total_amount") val settlementTotalAmount: Long = 0,
     val items: List<OcrItemDto> = emptyList()
 )
 
@@ -41,6 +46,7 @@ data class OcrConfirmResponse(
 @Serializable
 data class AddItemRequest(
     @SerialName("settlement_id") val settlementId: String,
+    val round: Int = 1,
     val name: String,
     val price: Long,
     val quantity: Int
@@ -52,6 +58,7 @@ fun ReceiptItemDraft.toDto() = OcrItemDto(name = name, price = price, quantity =
 
 fun OcrScanResponse.toDomain() = ScannedReceipt(
     settlementId = settlementId,
+    round = round,
     imageUrl = imageUrl,
     items = items.map { it.toDraft() },
     total = total

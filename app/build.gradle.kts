@@ -11,10 +11,17 @@ plugins {
 
 // local.properties 에서 카카오 네이티브 앱키를 읽는다 (VCS에 커밋하지 않음).
 // 예) KAKAO_NATIVE_APP_KEY=xxxxxxxxxxxxxxxx
-val kakaoNativeAppKey: String = Properties().apply {
+val localProperties: Properties = Properties().apply {
     val f = rootProject.file("local.properties")
     if (f.exists()) f.inputStream().use { load(it) }
-}.getProperty("KAKAO_NATIVE_APP_KEY", "")
+}
+val kakaoNativeAppKey: String = localProperties.getProperty("KAKAO_NATIVE_APP_KEY", "")
+
+// local.properties 에서 네이버 로그인 클라이언트 정보를 읽는다 (VCS에 커밋하지 않음).
+// 예) NAVER_CLIENT_ID=xxxx / NAVER_CLIENT_SECRET=xxxx / NAVER_CLIENT_NAME=Bilzy
+val naverClientId: String = localProperties.getProperty("NAVER_CLIENT_ID", "")
+val naverClientSecret: String = localProperties.getProperty("NAVER_CLIENT_SECRET", "")
+val naverClientName: String = localProperties.getProperty("NAVER_CLIENT_NAME", "Bilzy")
 
 android {
     namespace = "com.android.bilzy"
@@ -31,6 +38,11 @@ android {
         // 카카오 로그인: SDK 초기화용 키 + 리다이렉트 scheme(kakao{앱키})용 placeholder
         buildConfigField("String", "KAKAO_NATIVE_APP_KEY", "\"$kakaoNativeAppKey\"")
         manifestPlaceholders["kakaoNativeAppKey"] = kakaoNativeAppKey
+
+        // 네이버 로그인: SDK 초기화용 클라이언트 정보 (없으면 빈 문자열 — 초기화 스킵)
+        buildConfigField("String", "NAVER_CLIENT_ID", "\"$naverClientId\"")
+        buildConfigField("String", "NAVER_CLIENT_SECRET", "\"$naverClientSecret\"")
+        buildConfigField("String", "NAVER_CLIENT_NAME", "\"$naverClientName\"")
     }
 
     buildTypes {
@@ -113,6 +125,9 @@ dependencies {
     implementation(libs.kakao.user)
     // Kakao 공유(카카오톡 메시지 보내기)
     implementation(libs.kakao.share)
+
+    // Naver 로그인 SDK
+    implementation(libs.naver.login.oauth)
 
     // Hilt Navigation (hiltNavGraphViewModels)
     implementation(libs.androidx.hilt.navigation.fragment)

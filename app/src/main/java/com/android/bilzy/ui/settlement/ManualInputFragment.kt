@@ -27,7 +27,7 @@ class ManualInputFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val viewModel: ScanFlowViewModel by hiltNavGraphViewModels(R.id.nav_graph)
-    private lateinit var adapter: ManualItemAdapter
+    private lateinit var adapter: OcrItemAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -39,7 +39,7 @@ class ManualInputFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        adapter = ManualItemAdapter(
+        adapter = OcrItemAdapter(
             onDelete = { index -> viewModel.removeItem(index) },
             onChange = { index, item -> viewModel.updateItem(index, item) }
         )
@@ -50,29 +50,32 @@ class ManualInputFragment : Fragment() {
             binding.etGroupName.setText(viewModel.settlementTitle)
         }
 
-        // TODO: 가게 이름(etStoreName)은 현재 클라이언트에서만 표시되고 서버로 전송되지 않음
-        // (OcrResultFragment와 동일) — 도메인 모델/백엔드 계약에 필드 추가 필요.
+        binding.tvRoundBadge.text = "${viewModel.currentRound}차"
 
         binding.btnBack.setOnClickListener { findNavController().navigateUp() }
 
         binding.btnAddItem.setOnClickListener { viewModel.addItem("", 0L, 1) }
 
-        binding.btnStart.setOnClickListener {
-            val title = binding.etGroupName.text.toString().trim()
-            if (title.isEmpty()) {
-                Toast.makeText(requireContext(), "모임 이름을 입력해주세요", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-            val items = viewModel.items.value
-            if (items.isEmpty() || items.any { it.name.isBlank() || it.price <= 0L }) {
-                Toast.makeText(requireContext(), "모든 항목의 이름과 가격을 입력해주세요", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-            viewModel.confirm(title)
-        }
+        binding.btnComplete.setOnClickListener { onSubmit(isFinalRound = true) }
+        binding.btnMore.setOnClickListener { onSubmit(isFinalRound = false) }
 
         observeItems()
         observeConfirm()
+    }
+
+    private fun onSubmit(isFinalRound: Boolean) {
+        val title = binding.etGroupName.text.toString().trim()
+        if (title.isEmpty()) {
+            Toast.makeText(requireContext(), "모임 이름을 입력해주세요", Toast.LENGTH_SHORT).show()
+            return
+        }
+        val items = viewModel.items.value
+        if (items.isEmpty() || items.any { it.name.isBlank() || it.price <= 0L }) {
+            Toast.makeText(requireContext(), "모든 항목의 이름과 가격을 입력해주세요", Toast.LENGTH_SHORT).show()
+            return
+        }
+        val storeName = binding.etStoreName.text.toString().trim()
+        viewModel.confirm(title, storeName, isFinalRound)
     }
 
     private fun observeItems() {
@@ -93,22 +96,35 @@ class ManualInputFragment : Fragment() {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.confirmState.collect { state ->
                     when (state) {
-                        is ScanFlowViewModel.ConfirmState.Loading -> binding.btnStart.isEnabled = false
+                        is ScanFlowViewModel.ConfirmState.Loading -> setButtonsEnabled(false)
                         is ScanFlowViewModel.ConfirmState.Success -> {
-                            binding.btnStart.isEnabled = true
+                            setButtonsEnabled(true)
                             viewModel.consumeConfirmState()
-                            findNavController().navigate(R.id.action_manualInput_to_peopleCount)
+                            if (viewModel.lastConfirmWasFinalRound) {
+                                findNavController().navigate(R.id.action_manualInput_to_receiptList)
+                            } else {
+                                // 프로토타입과 동일: 직접입력은 다음 라운드로 넘어갈 때 화면 이동 없이
+                                // 같은 화면에서 입력값만 비운다(카메라로 돌아갈 필요가 없음).
+                                viewModel.advanceToNextRound()
+                                binding.etStoreName.text?.clear()
+                                binding.tvRoundBadge.text = "${viewModel.currentRound}차"
+                            }
                         }
                         is ScanFlowViewModel.ConfirmState.Error -> {
-                            binding.btnStart.isEnabled = true
+                            setButtonsEnabled(true)
                             Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
                             viewModel.consumeConfirmState()
                         }
-                        is ScanFlowViewModel.ConfirmState.Idle -> binding.btnStart.isEnabled = true
+                        is ScanFlowViewModel.ConfirmState.Idle -> setButtonsEnabled(true)
                     }
                 }
             }
         }
+    }
+
+    private fun setButtonsEnabled(enabled: Boolean) {
+        binding.btnComplete.isEnabled = enabled
+        binding.btnMore.isEnabled = enabled
     }
 
     override fun onDestroyView() {
