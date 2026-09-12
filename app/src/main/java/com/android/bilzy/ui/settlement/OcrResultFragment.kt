@@ -44,9 +44,14 @@ class OcrResultFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        adapter = OcrItemAdapter(onDelete = { index -> viewModel.removeItem(index) })
+        adapter = OcrItemAdapter(
+            onDelete = { index -> viewModel.removeItem(index) },
+            onChange = { index, item -> viewModel.updateItem(index, item) }
+        )
         binding.rvItems.layoutManager = LinearLayoutManager(requireContext())
         binding.rvItems.adapter = adapter
+
+        binding.tvRoundBadge.text = "${viewModel.currentRound}차"
 
         val prefillName = viewModel.pendingGroupName.ifEmpty { viewModel.settlementTitle }
         if (prefillName.isNotEmpty()) {
@@ -70,7 +75,8 @@ class OcrResultFragment : Fragment() {
                 Toast.makeText(requireContext(), "모임 이름을 입력해주세요", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-            viewModel.confirm(title)
+            val storeName = binding.etStoreName.text.toString().trim()
+            viewModel.confirm(title, storeName, isFinalRound = true)
         }
         binding.btnMore.setOnClickListener {
             val title = binding.etGroupName.text.toString().trim()
@@ -78,13 +84,9 @@ class OcrResultFragment : Fragment() {
                 Toast.makeText(requireContext(), "모임 이름을 입력해주세요", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-            // 다차 정산(n차) UI 뼈대: 서버 confirm()은 호출하지 않는다. 서버는 정산방당 영수증
-            // 1장만 지원하므로(TODO 다차 정산), 실제 confirm은 마지막 "완료하기"에서만 일어난다.
-            // TODO: 가게 이름은 현재 클라이언트 표시용(ReceiptListEntry.store)으로만 쓰이고
-            // 서버로 전송되지 않는다 — 도메인 모델/백엔드 계약에 필드 추가 필요.
-            viewModel.pushCurrentDraftToList(binding.etStoreName.text.toString().trim())
-            viewModel.resetForNextScan()
-            findNavController().navigate(R.id.action_ocrResult_to_scanCamera)
+            // 이 라운드를 서버에 confirm으로 실제 반영한 뒤(성공 콜백에서) 다음 라운드로 넘어간다.
+            val storeName = binding.etStoreName.text.toString().trim()
+            viewModel.confirm(title, storeName, isFinalRound = false)
         }
 
         observeItems()
@@ -107,22 +109,32 @@ class OcrResultFragment : Fragment() {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.confirmState.collect { state ->
                     when (state) {
-                        is ScanFlowViewModel.ConfirmState.Loading -> binding.btnComplete.isEnabled = false
+                        is ScanFlowViewModel.ConfirmState.Loading -> setButtonsEnabled(false)
                         is ScanFlowViewModel.ConfirmState.Success -> {
-                            binding.btnComplete.isEnabled = true
+                            setButtonsEnabled(true)
                             viewModel.consumeConfirmState()
-                            findNavController().navigate(R.id.action_ocrResult_to_receiptList)
+                            if (viewModel.lastConfirmWasFinalRound) {
+                                findNavController().navigate(R.id.action_ocrResult_to_receiptList)
+                            } else {
+                                viewModel.advanceToNextRound()
+                                findNavController().navigate(R.id.action_ocrResult_to_scanCamera)
+                            }
                         }
                         is ScanFlowViewModel.ConfirmState.Error -> {
-                            binding.btnComplete.isEnabled = true
+                            setButtonsEnabled(true)
                             Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
                             viewModel.consumeConfirmState()
                         }
-                        is ScanFlowViewModel.ConfirmState.Idle -> binding.btnComplete.isEnabled = true
+                        is ScanFlowViewModel.ConfirmState.Idle -> setButtonsEnabled(true)
                     }
                 }
             }
         }
+    }
+
+    private fun setButtonsEnabled(enabled: Boolean) {
+        binding.btnComplete.isEnabled = enabled
+        binding.btnMore.isEnabled = enabled
     }
 
     private fun showAddItemDialog() {

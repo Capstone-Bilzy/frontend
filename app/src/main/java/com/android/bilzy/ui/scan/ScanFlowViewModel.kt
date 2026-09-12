@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.bilzy.domain.model.ReceiptItemDraft
 import com.android.bilzy.domain.model.ScannedReceipt
+import com.android.bilzy.domain.model.Settlement
+import com.android.bilzy.domain.model.SettlementStatus
 import com.android.bilzy.domain.repository.OcrRepository
 import com.android.bilzy.domain.repository.SettlementRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -40,6 +42,10 @@ class ScanFlowViewModel @Inject constructor(
     var scannedReceipt: ScannedReceipt? = null
         private set
 
+    /** 현재 스캔/확정 대상 라운드(영수증). "추가 스캔하기"로 넘어갈 때마다 1씩 증가한다. */
+    var currentRound: Int = 1
+        private set
+
     // ── 정산방 지연 생성 ──────────────────────────────────
     /**
      * 정산방이 아직 없으면 임시 제목으로 생성하고 id를 반환한다.
@@ -72,7 +78,7 @@ class ScanFlowViewModel @Inject constructor(
      */
     fun discardReceiptImage() {
         val id = settlementId ?: return
-        viewModelScope.launch { runCatching { settlementRepository.deleteReceiptImage(id) } }
+        viewModelScope.launch { runCatching { settlementRepository.deleteReceiptImage(id, currentRound) } }
     }
 
     sealed interface ScanState {
@@ -97,7 +103,7 @@ class ScanFlowViewModel @Inject constructor(
             _scanState.value = ScanState.Loading
             runCatching {
                 val sid = ensureSettlementId()
-                ocrRepository.scan(sid, image.first, image.second)
+                ocrRepository.scan(sid, currentRound, image.first, image.second)
             }
                 .onSuccess {
                     scannedReceipt = it
@@ -143,11 +149,17 @@ class ScanFlowViewModel @Inject constructor(
     private val _confirmState = MutableStateFlow<ConfirmState>(ConfirmState.Idle)
     val confirmState = _confirmState.asStateFlow()
 
+    /** 마지막 confirm() 호출이 최종 라운드였는지 — 화면이 성공 후 분기(라운드 이동 vs 목록 이동)에 사용. */
+    var lastConfirmWasFinalRound: Boolean = true
+        private set
+
     /**
-     * 수정된 항목을 /ocr/confirm으로 확정한다(status=waiting).
+     * 수정된 항목을 /ocr/confirm으로 이 라운드(receipt)에 확정한다. 다른 라운드는 건드리지 않는다.
      * title이 비어있지 않으면 정산방 제목으로 저장(PATCH)한다.
+     * isFinalRound=true면 확정 후 정산방 상태를 waiting으로 넘겨 스캔 단계를 마감한다
+     * (/ocr/confirm은 더 이상 자동으로 status를 바꾸지 않으므로 여러 라운드를 계속 스캔할 수 있다).
      */
-    fun confirm(title: String = "") {
+    fun confirm(title: String = "", storeName: String = "", isFinalRound: Boolean = true) {
         if (_confirmState.value == ConfirmState.Loading) return
         if (_items.value.isEmpty()) {
             _confirmState.value = ConfirmState.Error("항목이 최소 1개는 필요해요")
@@ -155,6 +167,7 @@ class ScanFlowViewModel @Inject constructor(
         }
         viewModelScope.launch {
             _confirmState.value = ConfirmState.Loading
+            lastConfirmWasFinalRound = isFinalRound
             runCatching {
                 val sid = ensureSettlementId()
                 val cleanTitle = title.trim()
@@ -162,7 +175,10 @@ class ScanFlowViewModel @Inject constructor(
                     settlementRepository.updateTitle(sid, cleanTitle)
                     settlementTitle = cleanTitle
                 }
-                ocrRepository.confirm(sid, _items.value)
+                ocrRepository.confirm(sid, currentRound, storeName.trim(), _items.value)
+                if (isFinalRound) {
+                    settlementRepository.updateStatus(sid, SettlementStatus.WAITING)
+                }
             }
                 .onSuccess { _confirmState.value = ConfirmState.Success }
                 .onFailure { _confirmState.value = ConfirmState.Error(it.message ?: "확정에 실패했습니다") }
@@ -173,36 +189,32 @@ class ScanFlowViewModel @Inject constructor(
         _confirmState.value = ConfirmState.Idle
     }
 
-    // ── 다차 정산(n차) 화면 뼈대용 인메모리 상태 ─────────────────
-    // ⚠️ TODO(다차 정산): 백엔드는 현재 "정산방 1개 = 영수증 1장"만 지원한다
-    // (/ocr/confirm이 항목을 통째로 덮어씀). 아래 목록은 화면 표시용일 뿐,
-    // 서버에는 반영되지 않는다 — 실제로 confirm되는 건 마지막에 누른 한 건뿐이다.
-    // 서버가 정산방당 여러 영수증(라운드)을 지원하게 되면 이 부분을 실제 API 연동으로 교체해야 한다.
-
-    /** 화면 표시용 영수증 목록 항목(라운드/가게명/항목 스냅샷). 서버에는 저장되지 않는다. */
-    data class ReceiptListEntry(val round: Int, val store: String, val items: List<ReceiptItemDraft>) {
-        val total: Long get() = items.sumOf { it.subtotal }
-    }
-
-    private val _receiptDrafts = MutableStateFlow<List<ReceiptListEntry>>(emptyList())
-    val receiptDrafts = _receiptDrafts.asStateFlow()
-
-    fun currentRound(): Int = _receiptDrafts.value.size + 1
-
-    /** "추가 스캔하기"에서 현재 편집 중인 항목들을 표시용 목록에 쌓는다. confirm()은 호출하지 않는다. */
-    fun pushCurrentDraftToList(store: String) {
-        if (_items.value.isEmpty()) return
-        _receiptDrafts.value = _receiptDrafts.value + ReceiptListEntry(currentRound(), store, _items.value)
-    }
-
-    fun removeDraftFromList(round: Int) {
-        _receiptDrafts.value = _receiptDrafts.value.filterNot { it.round == round }
-    }
-
     /** 다음 영수증을 스캔하기 전 현재 편집 화면 상태를 비운다. */
     fun resetForNextScan() {
         _items.value = emptyList()
         scannedReceipt = null
+    }
+
+    /** "추가 스캔하기": 이번 라운드는 이미 confirm()으로 서버에 반영됐다는 전제하에 다음 라운드로 넘어간다. */
+    fun advanceToNextRound() {
+        currentRound += 1
+        resetForNextScan()
+    }
+
+    // ── 다차 정산(n차) 영수증 목록 화면용 ────────────────────
+    private val _settlement = MutableStateFlow<Settlement?>(null)
+    val settlement = _settlement.asStateFlow()
+
+    /** 다차 정산 영수증 목록 화면의 "영수증 저장하기" 완료 여부(서버 호출 없는 순수 표시 상태). */
+    var receiptListSaved: Boolean = false
+
+    /** ReceiptListFragment 진입 시 정산방 상세(receipts 포함)를 다시 불러온다. */
+    fun loadSettlement() {
+        val id = settlementId ?: return
+        viewModelScope.launch {
+            runCatching { settlementRepository.getSettlement(id) }
+                .onSuccess { _settlement.value = it }
+        }
     }
 
     /**
@@ -215,12 +227,15 @@ class ScanFlowViewModel @Inject constructor(
         settlementTitle = ""
         pendingGroupName = ""
         scannedReceipt = null
+        currentRound = 1
         pendingImage = null
         capturedImage = null
         _scanState.value = ScanState.Idle
         _items.value = emptyList()
         _confirmState.value = ConfirmState.Idle
-        _receiptDrafts.value = emptyList()
+        lastConfirmWasFinalRound = true
+        _settlement.value = null
+        receiptListSaved = false
     }
 
     private companion object {

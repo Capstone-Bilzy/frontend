@@ -59,10 +59,34 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingTop="150dp"
+            android:paddingTop="30dp"
             android:paddingStart="20dp"
             android:paddingEnd="20dp"
             android:paddingBottom="20dp">
+
+            <!-- 프로토타입 .bz-terms-head: 로고 + 안내 문구. 예전엔 이 블록이 통째로 없이 빈 여백(150dp)만 있었다. -->
+            <TextView
+                android:id="@+id/tvLogo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="Bilzy"
+                android:textColor="#A5A6F6"
+                android:textStyle="bold|italic"
+                android:textSize="34sp"
+                android:fontFamily="sans-serif-black"
+                android:letterSpacing="-0.02" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="26dp"
+                android:text="Bilzy 이용을 위한\n필수 약관에 동의해주세요"
+                android:textColor="#CFCAF7"
+                android:textSize="14sp"
+                android:gravity="center"
+                android:lineSpacingExtra="4dp" />
 
             <!-- 모두 동의 -->
             <LinearLayout

@@ -153,7 +153,7 @@
             android:textSize="18sp"
             android:textStyle="bold"
             android:gravity="center"
-            android:background="@drawable/bg_button_dark"
+            android:background="@drawable/bg_button_primary"
             android:clickable="true"
             android:focusable="true"
             android:layout_marginStart="8dp" />

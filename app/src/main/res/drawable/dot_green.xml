@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 프로토타입 .bz-round-badge i: 6x6 원, background #7DE87D + glow -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="oval">
+    <solid android:color="#7DE87D" />
+</shape>

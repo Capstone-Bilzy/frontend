@@ -21,24 +21,24 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <!-- 일러스트 + 텍스트 묶음 (로고와 버튼 사이 세로 중앙) -->
+    <!-- 일러스트 + 텍스트 묶음 (화면 세로 중앙) -->
     <LinearLayout
         android:id="@+id/centerGroup"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:gravity="center_horizontal"
-        app:layout_constraintTop_toBottomOf="@id/tvLogo"
-        app:layout_constraintBottom_toTopOf="@id/btnStart"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
         <ImageView
             android:id="@+id/illustrationArea"
-            android:layout_width="305dp"
-            android:layout_height="match_parent"
+            android:layout_width="220dp"
+            android:layout_height="220dp"
             android:scaleType="fitCenter"
-            android:src="@drawable/ic_bill_3d" />
+            android:src="@drawable/character_front" />
 
         <TextView
             android:id="@+id/tvTitle"
@@ -62,25 +62,5 @@
             android:layout_marginTop="8dp" />
 
     </LinearLayout>
-
-    <!-- Bottom button -->
-    <TextView
-        android:id="@+id/btnStart"
-        android:layout_width="0dp"
-        android:layout_height="56dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginBottom="36dp"
-        android:text="정산내역으로 돌아가기"
-        android:textColor="#FFFFFF"
-        android:textSize="19sp"
-        android:textStyle="bold"
-        android:gravity="center"
-        android:background="@drawable/bg_button_outline"
-        android:clickable="true"
-        android:focusable="true"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

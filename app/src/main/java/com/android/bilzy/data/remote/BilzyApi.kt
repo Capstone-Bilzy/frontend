@@ -12,6 +12,10 @@ import com.android.bilzy.data.remote.dto.ReceiptItemDto
 import com.android.bilzy.data.remote.dto.RefreshRequest
 import com.android.bilzy.data.remote.dto.SettlementDto
 import com.android.bilzy.data.remote.dto.SettlementMemberDto
+import com.android.bilzy.data.remote.dto.SettlementMemberRoundDto
+import com.android.bilzy.data.remote.dto.SetMemberRoundsRequest
+import com.android.bilzy.data.remote.dto.SetMemberRoundsResponse
+import com.android.bilzy.data.remote.dto.SetRoundAdjustmentRequest
 import com.android.bilzy.data.remote.dto.SocialLoginRequest
 import com.android.bilzy.data.remote.dto.UpdateSettlementRequest
 import com.android.bilzy.data.remote.dto.UserDto
@@ -102,12 +106,32 @@ interface BilzyApi {
     @POST("settlements/{id}/done")
     suspend fun markSettlementDone(@Path("id") id: String): SettlementDto
 
+    /** 본인이 참여한 라운드 집합을 통째로 교체(토글 결과 전체 전송, 서버가 diff 적용). */
+    @PATCH("settlements/{id}/members/me/rounds")
+    suspend fun setMyRounds(
+        @Path("id") id: String,
+        @Body body: SetMemberRoundsRequest
+    ): SetMemberRoundsResponse
+
+    /** 본인이 그 라운드에서 안 먹은 항목(항목명)을 통째로 교체. */
+    @PATCH("settlements/{id}/members/me/rounds/{round}")
+    suspend fun setMyRoundAdjustment(
+        @Path("id") id: String,
+        @Path("round") round: Int,
+        @Body body: SetRoundAdjustmentRequest
+    ): SettlementMemberRoundDto
+
+    /** 본인이 금액 조정을 마치고 "정산 시작하기"를 눌렀음을 표시(CalculatingFragment 실시간 표시용). */
+    @PATCH("settlements/{id}/members/me/ready")
+    suspend fun setMyReady(@Path("id") id: String): SettlementMemberDto
+
     // ── OCR ──────────────────────────────────────────────
-    /** 영수증 이미지 업로드 → 서버(Gemini)가 OCR. settlement_id는 쿼리 파라미터. */
+    /** 영수증 이미지 업로드 → 서버(Gemini)가 OCR. settlement_id·round는 쿼리 파라미터. */
     @Multipart
     @POST("ocr/scan")
     suspend fun scanReceipt(
         @Query("settlement_id") settlementId: String,
+        @Query("round") round: Int,
         @Part file: MultipartBody.Part
     ): OcrScanResponse
 
@@ -118,10 +142,11 @@ interface BilzyApi {
     suspend fun addItem(@Body body: AddItemRequest): ReceiptItemDto
 
     /**
-     * 정산건에 붙은 영수증 이미지 삭제(저장 안 함 선택 시).
-     * 스캔 때 /ocr/scan이 이미지를 정산건에 저장하므로, 사용자가 보관을 원치 않으면 이걸로 지운다.
-     * TODO(backend): 별도 저장소에 DELETE /settlements/{id}/receipt 엔드포인트 추가 필요.
+     * 정산건의 특정 라운드에 붙은 영수증 이미지 삭제(저장 안 함 선택 시). round 기본값 1.
      */
     @DELETE("settlements/{id}/receipt")
-    suspend fun deleteSettlementReceipt(@Path("id") id: String)
+    suspend fun deleteSettlementReceipt(
+        @Path("id") id: String,
+        @Query("round") round: Int = 1
+    )
 }

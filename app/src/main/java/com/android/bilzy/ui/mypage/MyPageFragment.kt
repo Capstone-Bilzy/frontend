@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
@@ -11,6 +12,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import coil.load
+import coil.transform.CircleCropTransformation
 import com.android.bilzy.R
 import com.android.bilzy.databinding.FragmentMyPageBinding
 import com.android.bilzy.ui.room.RoomViewModel
@@ -74,9 +77,33 @@ class MyPageFragment : Fragment() {
                     p ?: return@collect
                     binding.tvUserName.text = p.nickname
                     if (p.loginType.isNotBlank()) binding.tvLoginType.text = p.loginType
+                    renderAvatar(p.profileImageUrl)
                 }
             }
         }
+    }
+
+    /** 프로필 이미지가 있으면 원형으로 채워 로드, 없으면(또는 로드 실패 시) 기존 캐릭터 아이콘 플레이스홀더 유지. */
+    private fun renderAvatar(url: String) {
+        if (url.isBlank()) {
+            resetAvatarToPlaceholder()
+            return
+        }
+        binding.ivProfileAvatar.scaleType = ImageView.ScaleType.CENTER_CROP
+        binding.ivProfileAvatar.setPadding(0, 0, 0, 0)
+        binding.ivProfileAvatar.load(url) {
+            crossfade(true)
+            transformations(CircleCropTransformation())
+            placeholder(R.drawable.character_smile)
+            listener(onError = { _, _ -> resetAvatarToPlaceholder() })
+        }
+    }
+
+    private fun resetAvatarToPlaceholder() {
+        binding.ivProfileAvatar.scaleType = ImageView.ScaleType.FIT_CENTER
+        val padding = (6 * resources.displayMetrics.density).toInt()
+        binding.ivProfileAvatar.setPadding(padding, padding, padding, padding)
+        binding.ivProfileAvatar.setImageResource(R.drawable.character_smile)
     }
 
     private fun observeLogout() {

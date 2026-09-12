@@ -18,17 +18,13 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.android.bilzy.R
 import com.android.bilzy.databinding.FragmentReceiptListBinding
+import com.android.bilzy.domain.model.Receipt
 import com.android.bilzy.ui.scan.ScanFlowViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.text.NumberFormat
 
-/**
- * 다차 정산(n차) UI 뼈대: 스캔된 영수증들을 표시하는 목록 화면.
- * ⚠️ TODO(다차 정산): 여기 쌓이는 목록은 [ScanFlowViewModel.receiptDrafts]의 클라이언트 인메모리
- * 상태일 뿐, 서버는 정산방당 영수증 1장만 지원한다(/ocr/confirm이 항목을 통째로 덮어씀).
- * 실제로 서버에 반영되는 건 마지막에 "완료하기"를 눌러 confirm된 한 건뿐이다.
- */
+/** 다차 정산(n차): 지금까지 확정된 라운드(영수증)들을 서버 데이터([ScanFlowViewModel.settlement.receipts])로 표시한다. */
 @AndroidEntryPoint
 class ReceiptListFragment : Fragment() {
 
@@ -37,9 +33,6 @@ class ReceiptListFragment : Fragment() {
 
     private val viewModel: ScanFlowViewModel by hiltNavGraphViewModels(R.id.nav_graph)
     private val nf = NumberFormat.getInstance()
-
-    /** 영수증 이미지 보관 기능과 무관한 순수 표시용 토글(서버 호출 없음). */
-    private var savedToggled = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -53,36 +46,45 @@ class ReceiptListFragment : Fragment() {
 
         binding.btnBack.setOnClickListener { findNavController().navigateUp() }
 
-        binding.btnSaveToggle.setOnClickListener {
-            savedToggled = !savedToggled
-            binding.btnSaveToggle.text = if (savedToggled) "확인 완료" else "목록 확인했어요"
+        binding.btnSave.setOnClickListener {
+            viewModel.receiptListSaved = true
+            findNavController().navigate(R.id.action_receiptList_to_saved)
         }
 
         binding.btnPeople.setOnClickListener {
             findNavController().navigate(R.id.action_receiptList_to_peopleCount)
         }
 
-        observeDrafts()
+        renderSaveButton()
+        observeSettlement()
+        viewModel.loadSettlement()
     }
 
-    private fun observeDrafts() {
+    /** "저장 완료" 화면에서 자동 복귀한 뒤에도 버튼 상태가 유지되도록 매번 다시 그린다. */
+    private fun renderSaveButton() {
+        binding.btnSave.text = if (viewModel.receiptListSaved) "저장 완료" else "영수증 저장하기"
+    }
+
+    private fun observeSettlement() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.receiptDrafts.collect { drafts -> render(drafts) }
+                viewModel.settlement.collect { settlement ->
+                    render(settlement?.receipts.orEmpty())
+                }
             }
         }
     }
 
-    private fun render(drafts: List<ScanFlowViewModel.ReceiptListEntry>) {
+    private fun render(receipts: List<Receipt>) {
         binding.receiptListContainer.removeAllViews()
-        drafts.forEach { entry ->
-            binding.receiptListContainer.addView(receiptRow(entry))
+        receipts.forEach { receipt ->
+            binding.receiptListContainer.addView(receiptRow(receipt))
         }
-        binding.tvCountLabel.text = "영수증 총 ${drafts.size}건"
-        binding.tvGrandTotal.text = won(drafts.sumOf { it.total })
+        binding.tvCountLabel.text = "영수증 총 ${receipts.size}건"
+        binding.tvGrandTotal.text = won(receipts.sumOf { it.totalAmount })
     }
 
-    private fun receiptRow(entry: ScanFlowViewModel.ReceiptListEntry): View {
+    private fun receiptRow(receipt: Receipt): View {
         val ctx = requireContext()
         val row = LinearLayout(ctx).apply {
             orientation = LinearLayout.HORIZONTAL
@@ -95,7 +97,7 @@ class ReceiptListFragment : Fragment() {
         }
 
         row.addView(TextView(ctx).apply {
-            text = "${entry.round}차"
+            text = "${receipt.round}차"
             setTextColor(Color.parseColor("#BEBEF7"))
             setTextSize(TypedValue.COMPLEX_UNIT_SP, 13f)
             setBackgroundResource(R.drawable.bg_chip_purple)
@@ -106,7 +108,7 @@ class ReceiptListFragment : Fragment() {
         })
 
         row.addView(TextView(ctx).apply {
-            text = entry.store.ifBlank { "이름 없는 영수증" }
+            text = receipt.storeName?.ifBlank { "이름 없는 영수증" } ?: "이름 없는 영수증"
             setTextColor(Color.WHITE)
             setTextSize(TypedValue.COMPLEX_UNIT_SP, 15f)
             setTypeface(typeface, Typeface.BOLD)
@@ -116,24 +118,13 @@ class ReceiptListFragment : Fragment() {
         })
 
         row.addView(TextView(ctx).apply {
-            text = won(entry.total)
+            text = won(receipt.totalAmount)
             setTextColor(Color.WHITE)
             setTextSize(TypedValue.COMPLEX_UNIT_SP, 15f)
             setTypeface(typeface, Typeface.BOLD)
             layoutParams = LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
-            ).apply { marginEnd = dp(10) }
-        })
-
-        row.addView(TextView(ctx).apply {
-            text = "✕"
-            setTextColor(Color.parseColor("#B0B0C4"))
-            setTextSize(TypedValue.COMPLEX_UNIT_SP, 17f)
-            gravity = Gravity.CENTER
-            isClickable = true
-            isFocusable = true
-            layoutParams = LinearLayout.LayoutParams(dp(28), dp(28))
-            setOnClickListener { viewModel.removeDraftFromList(entry.round) }
+            )
         })
 
         return row

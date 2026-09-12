@@ -1,58 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- 프로토타입 .bz-items li / .bz-cell: 카드 배경 없이 투명한 인라인 편집 셀 3개(품목/수량/가격)+삭제.
+     바깥 bg_ocr_card가 카드 배경/테두리를 담당하므로 행 자체는 배경이 없어야 한다. -->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:gravity="center_vertical"
-    android:padding="14dp"
-    android:background="@drawable/bg_input_white"
-    android:layout_marginBottom="8dp">
+    android:paddingTop="5dp"
+    android:paddingBottom="5dp">
 
-    <LinearLayout
+    <EditText
+        android:id="@+id/etName"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:orientation="vertical">
+        android:hint="품목"
+        android:textColorHint="#66FFFFFF"
+        android:textColor="#FFFFFF"
+        android:textSize="14.5sp"
+        android:background="@null"
+        android:paddingStart="4dp"
+        android:paddingEnd="4dp"
+        android:inputType="text"
+        android:maxLines="1" />
 
-        <TextView
-            android:id="@+id/tvName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="항목명"
-            android:textColor="#1A1F3E"
-            android:textSize="17sp"
-            android:textStyle="bold" />
+    <EditText
+        android:id="@+id/etQty"
+        android:layout_width="34dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textColor="#D9D9FF"
+        android:textSize="14.5sp"
+        android:background="@null"
+        android:inputType="number"
+        android:maxLines="1" />
 
-        <TextView
-            android:id="@+id/tvQty"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
-            android:text="1,000원 × 1"
-            android:textColor="#8888AA"
-            android:textSize="14sp" />
-
-    </LinearLayout>
+    <EditText
+        android:id="@+id/etPrice"
+        android:layout_width="74dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="6dp"
+        android:gravity="end"
+        android:textColor="#FFFFFF"
+        android:textSize="14.5sp"
+        android:textStyle="bold"
+        android:background="@null"
+        android:inputType="number"
+        android:maxLines="1" />
 
     <TextView
-        android:id="@+id/tvPrice"
+        android:id="@+id/tvWon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="0원"
-        android:textColor="#FF4D2E"
-        android:textSize="17sp"
-        android:textStyle="bold" />
+        android:layout_marginStart="2dp"
+        android:text="원"
+        android:textColor="#FFFFFF"
+        android:textSize="14.5sp" />
 
     <TextView
         android:id="@+id/btnDelete"
         android:layout_width="32dp"
         android:layout_height="32dp"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="4dp"
         android:text="✕"
         android:gravity="center"
-        android:textColor="#B0B0C4"
-        android:textSize="19sp"
+        android:textColor="#99FFFFFF"
+        android:textSize="16sp"
         android:clickable="true"
         android:focusable="true" />
 

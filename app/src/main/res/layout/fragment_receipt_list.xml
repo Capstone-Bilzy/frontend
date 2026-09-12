@@ -136,15 +136,15 @@
         app:layout_constraintEnd_toEndOf="parent">
 
         <TextView
-            android:id="@+id/btnSaveToggle"
+            android:id="@+id/btnSave"
             android:layout_width="match_parent"
             android:layout_height="52dp"
-            android:text="목록 확인했어요"
+            android:text="영수증 저장하기"
             android:textColor="#A5A6F6"
             android:textSize="17sp"
             android:textStyle="bold"
             android:gravity="center"
-            android:background="@drawable/bg_button_outline"
+            android:background="@drawable/bg_button_ghost"
             android:clickable="true"
             android:focusable="true"
             android:layout_marginBottom="10dp" />
@@ -158,7 +158,7 @@
             android:textSize="19sp"
             android:textStyle="bold"
             android:gravity="center"
-            android:background="@drawable/bg_button_dark"
+            android:background="@drawable/bg_button_primary"
             android:clickable="true"
             android:focusable="true" />
 

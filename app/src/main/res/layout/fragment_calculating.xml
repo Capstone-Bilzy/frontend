@@ -102,6 +102,17 @@
             android:orientation="horizontal"
             android:layout_marginBottom="16dp" />
 
+        <!-- 준비 안 된 멤버 안내(동적으로 채워짐, 프로토타입 .bz-pending) -->
+        <LinearLayout
+            android:id="@+id/pendingContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/bg_history_card"
+            android:padding="14dp"
+            android:layout_marginBottom="16dp"
+            android:visibility="gone" />
+
         <!-- Info box -->
         <LinearLayout
             android:layout_width="match_parent"

@@ -72,14 +72,45 @@ class RoomViewModel @Inject constructor(
     /** 금액 조정 화면에서 만든 특이사항(칩 선택 등) → AI 계산에 전달. */
     var aiNote: String = ""
 
-    // ── 다차 정산(n차) UI 뼈대: RoundPick 선택 상태 ─────────────
-    // ⚠️ TODO(다차 정산): 클라이언트 전용 표시 상태. calculate()/markDone() 등 실제 계산 로직에는
-    // 아직 반영하지 않는다(서버가 정산방당 여러 라운드를 지원해야 다음 단계에서 연결 가능).
+    // ── 다차 정산(n차): 내가 참여한 라운드 선택/조정 상태 ─────────────
     private val _pickedRounds = MutableStateFlow<Set<Int>>(emptySet())
     val pickedRounds = _pickedRounds.asStateFlow()
 
     fun togglePickedRound(round: Int) {
         _pickedRounds.value = if (round in _pickedRounds.value) _pickedRounds.value - round else _pickedRounds.value + round
+    }
+
+    /** RoundPick "선택 완료": 고른 라운드 집합을 서버에 반영하고 상세를 다시 불러온다. */
+    suspend fun submitPickedRounds(): Boolean {
+        val id = settlementId ?: return false
+        return runCatching { settlementRepository.setMyRounds(id, _pickedRounds.value.toList()) }
+            .onSuccess { load() }
+            .isSuccess
+    }
+
+    /** AmountAdjust 화면에서 지금 보고 있는 라운드 인덱스(pickedReceipts 기준). 라운드 넘어갈 때마다 증가. */
+    var adjIdx: Int = 0
+
+    /** AmountAdjust "다음"/"정산 시작하기": 이 라운드에서 안 먹은 항목을 서버에 반영한다. */
+    suspend fun submitRoundAdjustment(round: Int, excludedItemNames: List<String>): Boolean {
+        val id = settlementId ?: return false
+        return runCatching { settlementRepository.setMyRoundAdjustment(id, round, excludedItemNames) }
+            .isSuccess
+    }
+
+    /** AmountAdjust 마지막 라운드 제출 성공 시 호출 — 실패해도 흐름은 막지 않는다(runCatching). */
+    suspend fun submitReady(): Boolean {
+        val id = settlementId ?: return false
+        return runCatching { settlementRepository.markReady(id) }.isSuccess
+    }
+
+    /** 현재 로그인한 유저가 이 정산방의 방장(생성자)인지. 프로필 조회 실패 시 false로 안전하게 처리. */
+    suspend fun isOwner(): Boolean {
+        val createdBy = _settlement.value?.createdBy ?: return false
+        val myId = userRepository.cachedProfile()?.id
+            ?: runCatching { userRepository.getMyProfile() }.getOrNull()?.id
+            ?: return false
+        return myId == createdBy
     }
 
     /** true면 AI 계산이 적용된 멤버 금액(저장값), false면 클라이언트 엔빵으로 표시. */
@@ -95,6 +126,7 @@ class RoomViewModel @Inject constructor(
             _pickedRounds.value = emptySet()
             aiNote = ""
             aiApplied = false
+            adjIdx = 0
         }
         viewModelScope.launch {
             _myNickname.value = myNameOverride ?: tokenStore.currentNickname()
@@ -176,6 +208,7 @@ class RoomViewModel @Inject constructor(
         aiNote = ""
         _pickedRounds.value = emptySet()
         aiApplied = false
+        adjIdx = 0
     }
 
     companion object {

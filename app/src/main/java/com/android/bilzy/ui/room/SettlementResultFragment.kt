@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import android.widget.TextView
@@ -18,9 +19,13 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import coil.load
+import coil.transform.CircleCropTransformation
 import com.android.bilzy.R
 import com.android.bilzy.databinding.FragmentSettlementResultBinding
+import com.android.bilzy.domain.model.MemberRoundAmount
 import com.android.bilzy.domain.model.Settlement
+import com.android.bilzy.domain.model.SettlementMember
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.text.NumberFormat
@@ -79,7 +84,7 @@ class SettlementResultFragment : Fragment() {
         binding.tvRoomTitle.text = settlement.title.ifBlank { "정산" }
         binding.tvTotalAmount.text = "${nf.format(total)}원"
         binding.tvDate.text = formatDate(settlement.createdAt)
-        renderAvatars(members.map { it.nickname })
+        renderAvatars(members)
 
         // 저장된 금액이 있으면 사용, 없으면 엔빵
         val hasStored = members.any { it.amount > 0 }
@@ -91,16 +96,17 @@ class SettlementResultFragment : Fragment() {
         members.forEachIndexed { i, m ->
             val amount = if (hasStored) m.amount else shares.getOrElse(i) { 0L }
             val reason = m.reason?.takeIf { hasStored && it.isNotBlank() }
-            container.addView(personCard(m.nickname, amount, m.nickname == myNick, reason))
+            val roundAmounts = if (hasStored) m.rounds else emptyList()
+            container.addView(personCard(m.nickname, amount, m.nickname == myNick, reason, roundAmounts))
         }
     }
 
-    private fun renderAvatars(nicknames: List<String>) {
+    private fun renderAvatars(members: List<SettlementMember>) {
         val row = binding.avatarRow
         row.removeAllViews()
-        val visible = nicknames.take(3)
-        val overflow = nicknames.size - visible.size
-        visible.forEachIndexed { i, nick ->
+        val visible = members.take(3)
+        val overflow = members.size - visible.size
+        visible.forEachIndexed { i, member ->
             val circle = FrameLayout(requireContext()).apply {
                 setBackgroundResource(R.drawable.bg_role_chip)
                 val size = dp(28)
@@ -109,7 +115,7 @@ class SettlementResultFragment : Fragment() {
                 }
             }
             circle.addView(TextView(requireContext()).apply {
-                text = nick.take(1)
+                text = member.nickname.take(1)
                 setTextColor(Color.WHITE)
                 setTextSize(TypedValue.COMPLEX_UNIT_SP, 11f)
                 gravity = Gravity.CENTER
@@ -117,6 +123,22 @@ class SettlementResultFragment : Fragment() {
                     ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT
                 )
             })
+            val url = member.profileImageUrl
+            if (!url.isNullOrBlank()) {
+                val avatarImage = ImageView(requireContext()).apply {
+                    layoutParams = FrameLayout.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT
+                    )
+                    scaleType = ImageView.ScaleType.CENTER_CROP
+                }
+                circle.addView(avatarImage)
+                // 이니셜을 아래 레이어로 남겨두고, 이미지 로드 실패 시 이 뷰만 숨겨 자연스럽게 폴백한다.
+                avatarImage.load(url) {
+                    crossfade(true)
+                    transformations(CircleCropTransformation())
+                    listener(onError = { _, _ -> avatarImage.visibility = View.GONE })
+                }
+            }
             row.addView(circle)
         }
         if (overflow > 0) {
@@ -132,7 +154,13 @@ class SettlementResultFragment : Fragment() {
         }
     }
 
-    private fun personCard(name: String, amount: Long, isMe: Boolean, reason: String?): View {
+    private fun personCard(
+        name: String,
+        amount: Long,
+        isMe: Boolean,
+        reason: String?,
+        roundAmounts: List<MemberRoundAmount> = emptyList()
+    ): View {
         val ctx = requireContext()
         val card = LinearLayout(ctx).apply {
             orientation = LinearLayout.VERTICAL
@@ -188,10 +216,12 @@ class SettlementResultFragment : Fragment() {
             }
         })
         card.addView(row)
-        // 다차 정산(n차) UI 뼈대: "1개짜리 리스트를 순회"하는 구조로 만들어 향후 실제 다차 데이터로
-        // 교체할 수 있게 한다. TODO(다차 정산): 지금은 항상 1차 데이터뿐이다.
-        val rounds = listOf("1차" to (reason ?: "1/N 정산"))
-        rounds.forEach { (round, tag) -> card.addView(roundTagRow(round, amount, tag)) }
+        val rounds: List<Triple<String, Long, String>> = if (roundAmounts.isNotEmpty()) {
+            roundAmounts.map { Triple("${it.round}차", it.amount, it.reason?.takeIf(String::isNotBlank) ?: "1/N 정산") }
+        } else {
+            listOf(Triple("1차", amount, reason ?: "1/N 정산"))
+        }
+        rounds.forEach { (round, roundAmount, tag) -> card.addView(roundTagRow(round, roundAmount, tag)) }
         return card
     }
 

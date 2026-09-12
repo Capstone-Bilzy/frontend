@@ -7,6 +7,7 @@
 역할별 세부 지침은 `.claude/agents/planner.md`, `.claude/agents/developer.md`, `.claude/agents/reviewer.md`, `.claude/agents/security.md` 참고.
 - planner/developer는 사용자가 명시적으로 요청할 때만 호출한다.
 - **developer가 새 기능(단순 버그 수정/오탈자 제외) 구현을 마치면 reviewer와 security를 함께 자동 호출한다** — 사용자에게 매번 다시 요청받지 않아도 됨. 두 에이전트는 역할이 겹치지 않는다: reviewer는 정확성/제품결정/아키텍처만, security는 인증·인가·시크릿·입력검증 등 보안만 본다(백엔드 저장소도 포함해서 봄).
+- **서브에이전트 비용/토큰 절감 규칙**: `developer`/`planner`/`reviewer`/`security`는 판단·품질이 중요해 `model: sonnet`으로 고정돼 있다(메인 세션이 다른 모델이어도 자동으로 물려받지 않음) — 낮추지 말 것. 반대로 "이 함수 어디서 호출돼?", "이 파일 어디 있어?" 같은 판단이 필요 없는 단순 탐색은 `lookup`(haiku 고정) 에이전트를 쓴다. 코드 작성/리뷰/보안 판단/기획 판단이 조금이라도 섞이면 lookup이 아니라 해당 역할 에이전트를 쓴다. 컨텍스트를 많이 차지하는 조사(파일 여러 개 훑기 등)는 fork를 우선 고려해 메인 대화 컨텍스트에 원본 tool 출력이 쌓이지 않게 한다.
 
 ## 기술 스택
 - Kotlin, ViewBinding, Material 3, Navigation Component (단일 Activity + Fragment)
@@ -65,4 +66,6 @@ adb install -r app/build/outputs/apk/debug/app-debug.apk
 ## 현재 진행 상황 (스냅샷 — 최신 상태는 코드로 재확인할 것)
 **완료**: 카카오 로그인+토큰 자동 리프레시, 홈/마이페이지/계좌관리, 스캔→OCR→항목수정→확정, QR 생성/스캔/딥링크 입장, 정산방 흐름 전체(입장~완료), AI 정산 연동, 정산내역 목록/상세, 이미지 압축 + 인메모리 캐시(SWR) 응답속도 최적화, 보안 감사(IDOR/CORS/rate limit/이미지 검증) 1회 완료.
 **2026-09-09 추가**: 새 프로토타입(`prototype_ver2/bilzy-prototype.jsx`) 반영 — ① OCR 인식 실패 시 "다시 촬영하기"/"직접 입력할게요" 폴백(ManualInputFragment 재연결, 스캔 필수 통과 조건 유지), ② 다차 정산(n차) UI 뼈대: 온보딩 4슬라이드, `ReceiptListFragment`/`RoundPickFragment` 신규, OcrResult "완료하기"/"추가 스캔하기" 분기, 금액조정/결과화면 라운드별 표시 구조. **주의**: 다차 정산은 UI만 완성됨 — 백엔드가 "정산방 1개=영수증 1장"만 지원해서 실제로는 마지막 영수증만 서버에 confirm됨(코드에 TODO로 명시). 실사용 가능한 기능화는 백엔드 재설계 필요(기존 확정 설계 `meetups` 테이블/스테퍼 방식과 새 프로토타입의 "누적 후 선택" 흐름이 서로 달라 재조율 필요, `feature-multi-round-settlement` 메모리 참고).
-**미완**: 네이버 로그인, 초대 링크의 서명·만료 토큰화(현재 UUID 추측불가성에만 의존), 카카오 닉네임 미동의 유저 폴백("사용자") 개선 여지, 다차 정산 백엔드 연동(위 참고).
+**2026-09-11 추가**: 네이버 로그인 연동 완료(`NaverLoginManager` 신규, `LoginViewModel`/`SignupViewModel`/`SignupFragment` 카카오와 대칭 구조로 연결, `SignupTermsFragment`의 기존 네이버 분기 UI 재사용). 백엔드는 이미 완성돼 있었음. **실제 동작하려면 `local.properties`에 `NAVER_CLIENT_ID`/`NAVER_CLIENT_SECRET`(백엔드 `.env`와 동일 값)/`NAVER_CLIENT_NAME`을 사용자가 직접 추가해야 함**(값 없으면 로그인 버튼이 크래시 없이 안전하게 실패만 함, 검증됨).
+**2026-09-11 추가**: 프로필 사진 표시 기능 완료 — 마이페이지/정산방 대기화면/정산결과화면에서 카카오·네이버 프로필 사진 표시(없으면 닉네임 이니셜 폴백). 백엔드 `get_settlement()`이 `users` 테이블 join으로 복호화된 `profile_image_url`을 멤버마다 내려주도록 수정(리뷰+보안점검 완료, 이슈 없음).
+**미완**: 초대 링크의 서명·만료 토큰화(현재 UUID 추측불가성에만 의존), 카카오 닉네임 미동의 유저 폴백("사용자") 개선 여지, 다차 정산 백엔드 연동(위 참고), 네이버 로그인 실기기 크리덴셜 테스트(사용자가 local.properties 설정 후 확인 필요), `GET /settlements/{id}/result` 엔드포인트는 프로필 이미지 join 안 됨(현재 클라이언트 미사용이라 안전, 죽은 엔드포인트 정리 또는 join 로직 공용화 검토 여지).

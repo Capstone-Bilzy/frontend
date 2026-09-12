@@ -20,7 +20,7 @@ class MyPageViewModel @Inject constructor(
     private val tokenStore: TokenStore
 ) : ViewModel() {
 
-    data class ProfileUi(val nickname: String, val loginType: String)
+    data class ProfileUi(val nickname: String, val loginType: String, val profileImageUrl: String = "")
 
     private val _profile = MutableStateFlow<ProfileUi?>(null)
     val profile = _profile.asStateFlow()
@@ -46,20 +46,22 @@ class MyPageViewModel @Inject constructor(
     fun load() {
         // 캐시가 있으면 먼저 즉시 표시(재진입 깜빡임 제거) 후 네트워크로 갱신.
         userRepository.cachedProfile()?.let {
-            _profile.value = ProfileUi(it.nickname.ifBlank { "사용자" }, loginTypeText(it.provider))
+            _profile.value = ProfileUi(it.nickname.ifBlank { "사용자" }, loginTypeText(it.provider), it.profileImageUrl)
         }
         viewModelScope.launch {
             runCatching { userRepository.getMyProfile() }
                 .onSuccess {
                     _profile.value = ProfileUi(
                         nickname = it.nickname.ifBlank { "사용자" },
-                        loginType = loginTypeText(it.provider)
+                        loginType = loginTypeText(it.provider),
+                        profileImageUrl = it.profileImageUrl
                     )
                 }
                 .onFailure {
-                    // 네트워크 실패 시 로그인 때 저장해둔 닉네임으로 폴백.
+                    // 네트워크 실패 시 로그인 때 저장해둔 닉네임으로 폴백. 캐시된 프로필 사진은 유지.
                     val nickname = tokenStore.currentNickname()?.takeIf { it.isNotBlank() } ?: "사용자"
-                    _profile.value = ProfileUi(nickname, "")
+                    val current = _profile.value ?: ProfileUi(nickname, "")
+                    _profile.value = current.copy(nickname = nickname)
                 }
         }
     }

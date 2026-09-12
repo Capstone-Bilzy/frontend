@@ -17,8 +17,17 @@ interface SettlementRepository {
 
     suspend fun deleteSettlement(id: String)
 
-    /** 정산건에 붙은 영수증 이미지 삭제(사용자가 '저장 안 함'/'다시 찍기' 선택 시). */
-    suspend fun deleteReceiptImage(id: String)
+    /** 정산건의 특정 라운드에 붙은 영수증 이미지 삭제(사용자가 '저장 안 함'/'다시 찍기' 선택 시). */
+    suspend fun deleteReceiptImage(id: String, round: Int = 1)
+
+    /** 본인이 참여한 라운드 집합을 설정(토글 결과 전체를 한 번에 보냄). */
+    suspend fun setMyRounds(id: String, rounds: List<Int>)
+
+    /** 본인이 그 라운드에서 안 먹은 항목(항목명)을 통째로 교체. */
+    suspend fun setMyRoundAdjustment(id: String, round: Int, excludedItemNames: List<String>)
+
+    /** 본인이 금액 조정을 마치고 "정산 시작하기"를 눌렀음을 표시(다른 멤버가 실시간으로 확인). */
+    suspend fun markReady(id: String)
 
     /** QR로 인식한 정산방에 내 닉네임으로 참여. */
     suspend fun joinByQr(id: String, nickname: String)

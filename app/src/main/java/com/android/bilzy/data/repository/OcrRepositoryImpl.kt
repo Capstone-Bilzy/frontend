@@ -5,6 +5,7 @@ import com.android.bilzy.data.remote.dto.AddItemRequest
 import com.android.bilzy.data.remote.dto.OcrConfirmRequest
 import com.android.bilzy.data.remote.dto.toDomain
 import com.android.bilzy.data.remote.dto.toDto
+import com.android.bilzy.domain.model.OcrConfirmResult
 import com.android.bilzy.domain.model.ReceiptItem
 import com.android.bilzy.domain.model.ReceiptItemDraft
 import com.android.bilzy.domain.model.ScannedReceipt
@@ -22,6 +23,7 @@ class OcrRepositoryImpl @Inject constructor(
 
     override suspend fun scan(
         settlementId: String,
+        round: Int,
         imageBytes: ByteArray,
         mimeType: String
     ): ScannedReceipt {
@@ -31,17 +33,36 @@ class OcrRepositoryImpl @Inject constructor(
             filename = "receipt.$ext",
             body = imageBytes.toRequestBody(mimeType.toMediaType())
         )
-        return api.scanReceipt(settlementId, part).toDomain()
+        return api.scanReceipt(settlementId, round, part).toDomain()
     }
 
-    override suspend fun confirm(settlementId: String, items: List<ReceiptItemDraft>): Long =
-        api.confirmOcr(OcrConfirmRequest(settlementId, items.map { it.toDto() })).totalAmount
+    override suspend fun confirm(
+        settlementId: String,
+        round: Int,
+        storeName: String,
+        items: List<ReceiptItemDraft>
+    ): OcrConfirmResult {
+        val response = api.confirmOcr(
+            OcrConfirmRequest(
+                settlementId = settlementId,
+                round = round,
+                storeName = storeName,
+                items = items.map { it.toDto() }
+            )
+        )
+        return OcrConfirmResult(
+            round = response.round,
+            totalAmount = response.totalAmount,
+            settlementTotalAmount = response.settlementTotalAmount
+        )
+    }
 
     override suspend fun addItem(
         settlementId: String,
+        round: Int,
         name: String,
         price: Long,
         quantity: Int
     ): ReceiptItem =
-        api.addItem(AddItemRequest(settlementId, name, price, quantity)).toDomain()
+        api.addItem(AddItemRequest(settlementId, round, name, price, quantity)).toDomain()
 }

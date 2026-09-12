@@ -61,6 +61,7 @@ class RecognizingFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.tvRoundBadge.text = "${viewModel.currentRound}차"
         updateStep(0)
         pulseStep(0)
         handler.postDelayed(animTick, 1100L)
@@ -106,8 +107,9 @@ class RecognizingFragment : Fragment() {
         pulseStep(2)
         handler.postDelayed({
             if (isAdded && _binding != null) {
-                // 인식 완료 → 영수증 저장 확인(9) → 저장 완료(10) → OCR 결과 순으로 이동
-                findNavController().navigate(R.id.action_recognizing_to_receiptSave)
+                // 프로토타입(bilzy-prototype.jsx Processing.onDone)과 동일: 인식 완료 → 곧바로 OCR 결과.
+                // "영수증 저장할까요" 중간 화면은 다차 정산 리디자인에서 빠졌다(이미지는 스캔 때 서버에 저장됨).
+                findNavController().navigate(R.id.recognizing_to_ocrResult)
             }
         }, 700L)
     }

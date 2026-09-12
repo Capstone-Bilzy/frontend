@@ -29,13 +29,43 @@
             app:tint="#FFFFFF" />
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:layout_marginStart="10dp"
             android:text="스캔"
             android:textColor="#FFFFFF"
             android:textSize="22sp"
             android:textStyle="bold" />
+
+        <LinearLayout
+            android:id="@+id/roundBadgeContainer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:background="@drawable/bg_badge_green"
+            android:paddingStart="13dp"
+            android:paddingEnd="13dp"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp">
+
+            <View
+                android:layout_width="6dp"
+                android:layout_height="6dp"
+                android:layout_marginEnd="6dp"
+                android:background="@drawable/dot_green" />
+
+            <TextView
+                android:id="@+id/tvRoundBadge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="1차"
+                android:textColor="#7DE87D"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
 
     </LinearLayout>
 

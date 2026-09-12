@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.view.setMargins
@@ -19,6 +20,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import coil.load
+import coil.transform.CircleCropTransformation
 import com.android.bilzy.R
 import com.android.bilzy.databinding.FragmentMemberWaitingBinding
 import com.android.bilzy.domain.model.SettlementMember
@@ -107,11 +110,11 @@ class MemberWaitingFragment : Fragment() {
         row.weightSum = members.size.toFloat()
         val myNick = roomViewModel.myNickname.value
         members.forEach { member ->
-            row.addView(avatarTile(member.nickname, member.nickname == myNick))
+            row.addView(avatarTile(member.nickname, member.nickname == myNick, member.profileImageUrl))
         }
     }
 
-    private fun avatarTile(name: String, isMe: Boolean): View {
+    private fun avatarTile(name: String, isMe: Boolean, profileImageUrl: String?): View {
         val ctx = requireContext()
         val tile = LinearLayout(ctx).apply {
             orientation = LinearLayout.VERTICAL
@@ -132,6 +135,21 @@ class MemberWaitingFragment : Fragment() {
             )
         }
         circle.addView(initial)
+        if (!profileImageUrl.isNullOrBlank()) {
+            val avatarImage = ImageView(ctx).apply {
+                layoutParams = FrameLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT
+                )
+                scaleType = ImageView.ScaleType.CENTER_CROP
+            }
+            circle.addView(avatarImage)
+            // 이니셜을 아래 레이어로 남겨두고, 이미지 로드 실패 시 이 뷰만 숨겨 자연스럽게 폴백한다.
+            avatarImage.load(profileImageUrl) {
+                crossfade(true)
+                transformations(CircleCropTransformation())
+                listener(onError = { _, _ -> avatarImage.visibility = View.GONE })
+            }
+        }
         val label = TextView(ctx).apply {
             text = if (isMe) "$name(나)" else name
             setTextColor(Color.WHITE)

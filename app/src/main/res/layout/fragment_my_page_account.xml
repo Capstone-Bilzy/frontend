@@ -124,14 +124,22 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
+                    android:gravity="center_vertical"
                     android:layout_marginBottom="8dp">
 
                     <TextView
-                        android:layout_width="wrap_content"
+                        android:layout_width="56dp"
                         android:layout_height="wrap_content"
-                        android:text="대표 계좌  |  "
-                        android:textColor="#80FFFFFF"
-                        android:textSize="16sp" />
+                        android:text="대표 계좌"
+                        android:textColor="#99FFFFFF"
+                        android:textSize="13.5sp" />
+
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="14dp"
+                        android:layout_marginStart="12dp"
+                        android:layout_marginEnd="12dp"
+                        android:background="#47FFFFFF" />
 
                     <TextView
                         android:id="@+id/tvCurrentBank"
@@ -147,14 +155,22 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
+                    android:gravity="center_vertical"
                     android:layout_marginBottom="8dp">
 
                     <TextView
-                        android:layout_width="wrap_content"
+                        android:layout_width="56dp"
                         android:layout_height="wrap_content"
-                        android:text="계좌 번호  |  "
-                        android:textColor="#80FFFFFF"
-                        android:textSize="16sp" />
+                        android:text="계좌 번호"
+                        android:textColor="#99FFFFFF"
+                        android:textSize="13.5sp" />
+
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="14dp"
+                        android:layout_marginStart="12dp"
+                        android:layout_marginEnd="12dp"
+                        android:background="#47FFFFFF" />
 
                     <TextView
                         android:id="@+id/tvCurrentNumber"
@@ -169,14 +185,22 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
 
                     <TextView
-                        android:layout_width="wrap_content"
+                        android:layout_width="56dp"
                         android:layout_height="wrap_content"
-                        android:text="계좌 명의  |  "
-                        android:textColor="#80FFFFFF"
-                        android:textSize="16sp" />
+                        android:text="계좌 명의"
+                        android:textColor="#99FFFFFF"
+                        android:textSize="13.5sp" />
+
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="14dp"
+                        android:layout_marginStart="12dp"
+                        android:layout_marginEnd="12dp"
+                        android:background="#47FFFFFF" />
 
                     <TextView
                         android:id="@+id/tvCurrentName"
@@ -198,14 +222,28 @@
                 android:textSize="16sp"
                 android:layout_marginBottom="8dp" />
 
-            <Spinner
-                android:id="@+id/spinnerBank"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="52dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
                 android:background="@drawable/bg_input_field"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
-                android:layout_marginBottom="20dp" />
+                android:layout_marginBottom="20dp">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_bank"
+                    android:layout_marginEnd="10dp" />
+
+                <Spinner
+                    android:id="@+id/spinnerBank"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1" />
+            </LinearLayout>
 
             <!-- 계좌 번호 -->
             <TextView
@@ -226,12 +264,11 @@
                 android:paddingEnd="16dp"
                 android:layout_marginBottom="20dp">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="#  "
-                    android:textColor="#A5A6F6"
-                    android:textSize="18sp" />
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_account_number"
+                    android:layout_marginEnd="10dp" />
 
                 <EditText
                     android:id="@+id/etAccountNumber"
@@ -239,7 +276,7 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:background="@android:color/transparent"
-                    android:hint="계좌번호 입력"
+                    android:hint="계좌번호를 입력해주세요"
                     android:textColorHint="#4DFFFFFF"
                     android:textColor="#FFFFFF"
                     android:textSize="18sp"
