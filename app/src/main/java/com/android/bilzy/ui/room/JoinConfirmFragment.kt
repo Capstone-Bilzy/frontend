@@ -36,6 +36,7 @@ class JoinConfirmFragment : Fragment() {
     private val roomViewModel: RoomViewModel by hiltNavGraphViewModels(R.id.nav_graph)
 
     private val settlementId: String? by lazy { arguments?.getString(ARG_SETTLEMENT_ID) }
+    private val token: String? by lazy { arguments?.getString(ARG_TOKEN) }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -59,7 +60,19 @@ class JoinConfirmFragment : Fragment() {
         binding.btnCancel.setOnClickListener { goHome() }
         binding.btnJoin.setOnClickListener {
             setLoading(true)
-            viewModel.join(settlementId!!)   // 사용자가 명시적으로 동의한 순간에만 join
+            viewLifecycleOwner.lifecycleScope.launch {
+                if (viewModel.needsNicknamePrompt()) {
+                    findNavController().navigate(
+                        R.id.action_joinConfirm_to_participantInput,
+                        androidx.core.os.bundleOf(
+                            "pendingSettlementId" to settlementId,
+                            "pendingToken" to token
+                        )
+                    )
+                } else {
+                    viewModel.join(settlementId!!, token)   // 사용자가 명시적으로 동의한 순간에만 join
+                }
+            }
         }
     }
 
@@ -102,5 +115,6 @@ class JoinConfirmFragment : Fragment() {
 
     companion object {
         const val ARG_SETTLEMENT_ID = "settlementId"
+        const val ARG_TOKEN = "token"
     }
 }

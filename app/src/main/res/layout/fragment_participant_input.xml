@@ -109,7 +109,8 @@
             android:textColor="#FFFFFF"
             android:textSize="18sp"
             android:background="@android:color/transparent"
-            android:inputType="text" />
+            android:inputType="text"
+            android:maxLength="20" />
 
         <TextView
             android:id="@+id/btnClearName"

@@ -5,6 +5,7 @@ import com.android.bilzy.data.remote.dto.AddMemberRequest
 import com.android.bilzy.data.remote.dto.AuthResponse
 import com.android.bilzy.data.remote.dto.CreateSettlementRequest
 import com.android.bilzy.data.remote.dto.HistoryDto
+import com.android.bilzy.data.remote.dto.InviteTokenDto
 import com.android.bilzy.data.remote.dto.OcrConfirmRequest
 import com.android.bilzy.data.remote.dto.OcrConfirmResponse
 import com.android.bilzy.data.remote.dto.OcrScanResponse
@@ -94,6 +95,13 @@ interface BilzyApi {
         @Path("id") id: String,
         @Body body: AddMemberRequest
     ): SettlementMemberDto
+
+    /** 서명+24시간 만료 초대 토큰 발급(owner만 가능). regenerate=true면 기존 토큰을 전부 무효화하고 새로 발급. */
+    @POST("settlements/{id}/invite-token")
+    suspend fun createInviteToken(
+        @Path("id") id: String,
+        @Query("regenerate") regenerate: Boolean = false
+    ): InviteTokenDto
 
     /** AI(Gemini) 정산 계산. 멤버별 금액·사유는 서버에 저장되고, 이후 GET 상세로 받는다. */
     @POST("settlements/{id}/calculate")

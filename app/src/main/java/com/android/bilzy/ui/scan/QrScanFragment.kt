@@ -184,21 +184,29 @@ class QrScanFragment : Fragment() {
             }
     }
 
-    /** 인식한 QR 문자열에서 settlement_id를 추출해 참여를 시도. */
+    /** 인식한 QR 문자열에서 settlement_id·token을 추출해 참여를 시도. */
     private fun onQrDetected(raw: String) {
-        val id = parseSettlementId(raw)
-        if (id == null) {
+        val invite = com.android.bilzy.util.JoinLink.parse(raw)
+        if (invite == null) {
             Toast.makeText(requireContext(), "Bilzy 정산방 QR이 아니에요", Toast.LENGTH_SHORT).show()
             return
         }
         if (handled) return
         handled = true
-        viewModel.join(id)
+        viewLifecycleOwner.lifecycleScope.launch {
+            if (viewModel.needsNicknamePrompt()) {
+                findNavController().navigate(
+                    R.id.action_qrScan_to_participantInput,
+                    androidx.core.os.bundleOf(
+                        "pendingSettlementId" to invite.settlementId,
+                        "pendingToken" to invite.token
+                    )
+                )
+            } else {
+                viewModel.join(invite.settlementId, invite.token)
+            }
+        }
     }
-
-    /** `bilzy://join/{settlement_id}` → settlement_id (UUID 검증 포함) */
-    private fun parseSettlementId(raw: String): String? =
-        com.android.bilzy.util.JoinLink.parse(raw)
 
     private fun hasCameraPermission() =
         ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) ==

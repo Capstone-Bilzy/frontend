@@ -188,7 +188,7 @@
                     android:layout_height="48dp"
                     android:layout_marginTop="8dp"
                     android:layout_marginBottom="10dp"
-                    android:text="⊕  항목 추가"
+                    android:text="⊕  품목 추가"
                     android:textColor="#A5A6F6"
                     android:textSize="15sp"
                     android:textStyle="bold"
@@ -256,11 +256,11 @@
             android:layout_weight="1"
             android:layout_marginEnd="8dp"
             android:text="완료하기"
-            android:textColor="#A5A6F6"
+            android:textColor="#FFFFFF"
             android:textSize="17sp"
             android:textStyle="bold"
             android:gravity="center"
-            android:background="@drawable/bg_button_ghost"
+            android:background="@drawable/bg_button_glass"
             android:clickable="true"
             android:focusable="true" />
 
@@ -275,7 +275,7 @@
             android:textSize="17sp"
             android:textStyle="bold"
             android:gravity="center"
-            android:background="@drawable/bg_button_primary"
+            android:background="@drawable/bg_button_glass"
             android:clickable="true"
             android:focusable="true" />
 

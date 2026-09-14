@@ -12,6 +12,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
 import javax.inject.Inject
 
 /**
@@ -147,6 +148,24 @@ class RoomViewModel @Inject constructor(
             runCatching { settlementRepository.getSettlement(id) }
                 .onSuccess { _settlement.value = it }
         }
+    }
+
+    /**
+     * ensureMyMembership()의 suspend 버전. 호출 완료(멤버십 생성 또는 이미 멤버 확인)를 기다려야 하는
+     * 곳(RoundPick 진입 전)에서 사용한다. 네트워크 오류 등 진짜 실패면 false — 호출 측은 다음 화면으로
+     * 넘어가면 안 된다(안 그러면 RoundPick의 라운드 선택 저장이 멤버십 없음(404)으로 실패한다).
+     */
+    suspend fun ensureMyMembershipAndAwait(): Boolean {
+        val id = settlementId ?: return false
+        val nick = myNameOverride
+            ?: tokenStore.currentNickname()?.takeIf { it.isNotBlank() }
+            ?: "참여자"
+        val result = runCatching { settlementRepository.joinByQr(id, nick) }
+        val ok = result.isSuccess || (result.exceptionOrNull() as? HttpException)?.code() == 409
+        if (ok) {
+            runCatching { settlementRepository.getSettlement(id) }.onSuccess { _settlement.value = it }
+        }
+        return ok
     }
 
     /** 정산방 상세를 다시 불러온다(멤버·항목·총액 포함). 멤버 대기 폴링에도 사용. */

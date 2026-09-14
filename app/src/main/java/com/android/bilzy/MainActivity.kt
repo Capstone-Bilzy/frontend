@@ -40,9 +40,9 @@ class MainActivity : AppCompatActivity() {
 
         if (savedInstanceState == null) {
             // 초대 딥링크로 진입했으면 그쪽 흐름으로, 아니면 일반 진입 게이트.
-            val joinId = pendingJoinId()
-            if (joinId != null) {
-                routeToJoin(joinId)
+            val invite = pendingJoinInvite()
+            if (invite != null) {
+                routeToJoin(invite)
             } else {
                 lifecycleScope.launch {
                     if (tokenStore.isLoggedIn()) navigateToHome()
@@ -55,31 +55,30 @@ class MainActivity : AppCompatActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         setIntent(intent)
-        pendingJoinId()?.let { routeToJoin(it) }
+        pendingJoinInvite()?.let { routeToJoin(it) }
     }
 
     /**
-     * 현재 인텐트가 유효한 초대 딥링크면 settlement_id(UUID)를 반환하고 인텐트를 소비한다.
+     * 현재 인텐트가 유효한 초대 딥링크면 파싱 결과를 반환하고 인텐트를 소비한다.
      * 스킴/호스트가 다르거나 id가 UUID가 아니면 null(잘못된 링크는 조용히 무시).
      */
-    private fun pendingJoinId(): String? {
+    private fun pendingJoinInvite(): JoinLink.ParsedInvite? {
         val data = intent?.data ?: return null
-        if (data.scheme != JoinLink.SCHEME || data.host != JoinLink.HOST) return null
-        val id = data.lastPathSegment
+        val invite = JoinLink.parse(data.toString())
         // 재처리(회전/재진입) 방지: 한 번 읽으면 소비
         intent.data = null
-        if (!JoinLink.isValidId(id)) {
+        if (invite == null) {
             Toast.makeText(this, "유효하지 않은 초대 링크예요", Toast.LENGTH_SHORT).show()
             return null
         }
-        return id
+        return invite
     }
 
     /**
      * 초대 딥링크 라우팅. 로그인돼 있으면 입장 '확인' 화면으로(자동 가입 금지),
      * 아니면 로그인을 먼저 하도록 안내(가입은 로그인 사용자만).
      */
-    private fun routeToJoin(settlementId: String) {
+    private fun routeToJoin(invite: JoinLink.ParsedInvite) {
         lifecycleScope.launch {
             if (!tokenStore.isLoggedIn()) {
                 Toast.makeText(
@@ -93,7 +92,7 @@ class MainActivity : AppCompatActivity() {
             navigateToHome()
             navController.navigate(
                 R.id.joinConfirmFragment,
-                bundleOf("settlementId" to settlementId)
+                bundleOf("settlementId" to invite.settlementId, "token" to invite.token)
             )
         }
     }

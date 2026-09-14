@@ -66,3 +66,11 @@ data class MemberRoundAmount(
     val amount: Long,
     val reason: String?
 )
+
+/** 서명+만료(24시간) 초대 토큰. 딥링크/QR에 담아 신규 참여자 인가에 쓴다. */
+data class InviteToken(
+    val token: String,
+    val deepLink: String,
+    val expiresAt: String,
+    val expiresIn: Long
+)

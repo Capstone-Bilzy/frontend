@@ -1,5 +1,6 @@
 package com.android.bilzy.data.remote.dto
 
+import com.android.bilzy.domain.model.InviteToken
 import com.android.bilzy.domain.model.MemberRoundAmount
 import com.android.bilzy.domain.model.Receipt
 import com.android.bilzy.domain.model.ReceiptItem
@@ -21,7 +22,10 @@ data class UpdateStatusRequest(val status: String)
 
 /** POST /settlements/{id}/join, /members 요청 바디. */
 @Serializable
-data class AddMemberRequest(val nickname: String)
+data class AddMemberRequest(
+    val nickname: String,
+    @SerialName("invite_token") val inviteToken: String? = null
+)
 
 /** PATCH /settlements/{id}/members/me/rounds 요청 바디. */
 @Serializable
@@ -49,6 +53,15 @@ data class CalculateRequest(@SerialName("ai_note") val aiNote: String = "")
 data class CalculateResultDto(
     val summary: String? = null,
     @SerialName("ai_disclaimer") val aiDisclaimer: String? = null
+)
+
+/** POST /settlements/{id}/invite-token 응답. */
+@Serializable
+data class InviteTokenDto(
+    val token: String = "",
+    @SerialName("deep_link") val deepLink: String = "",
+    @SerialName("expires_at") val expiresAt: String = "",
+    @SerialName("expires_in") val expiresIn: Long = 0
 )
 
 // ── 응답 ─────────────────────────────────────────────
@@ -161,6 +174,13 @@ fun ReceiptDto.toDomain() = Receipt(
     receiptImageUrl = receiptImageUrl,
     totalAmount = totalAmount,
     items = items.map { it.toDomain() }
+)
+
+fun InviteTokenDto.toDomain() = InviteToken(
+    token = token,
+    deepLink = deepLink,
+    expiresAt = expiresAt,
+    expiresIn = expiresIn
 )
 
 fun SettlementMemberRoundDto.toDomain() = MemberRoundAmount(

@@ -157,13 +157,14 @@
 
         </LinearLayout>
 
-        <!-- 스텝 진행 행: 프로토타입(.bz-steps top:52%, justify-content:center)처럼 화면 중간에
-             셋이 한 덩어리로 모여 있어야 한다 — 하단 고정 + 전체 너비로 늘어뜨리면 안 됨. -->
+        <!-- 스텝 진행 행: 실제 프로토타입 스크린샷(영수증_스캔_화면_인식과정_정보_추출.png) 기준으로
+             화면 중간이 아니라 뷰파인더 하단, TIP 카드 바로 위에 위치해야 한다. -->
         <LinearLayout
             android:id="@+id/stepRow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            android:layout_gravity="bottom|center_horizontal"
+            android:layout_marginBottom="28dp"
             android:orientation="horizontal"
             android:gravity="center_vertical">
 

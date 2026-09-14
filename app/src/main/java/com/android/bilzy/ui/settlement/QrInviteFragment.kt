@@ -14,14 +14,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.android.bilzy.R
 import com.android.bilzy.databinding.FragmentQrInviteBinding
+import com.android.bilzy.domain.repository.SettlementRepository
 import com.android.bilzy.ui.room.RoomViewModel
 import com.android.bilzy.ui.scan.ScanFlowViewModel
 import com.android.bilzy.util.QrGenerator
@@ -29,8 +32,10 @@ import com.kakao.sdk.share.ShareClient
 import com.kakao.sdk.template.model.Link
 import com.kakao.sdk.template.model.TextTemplate
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileOutputStream
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class QrInviteFragment : Fragment() {
@@ -40,6 +45,8 @@ class QrInviteFragment : Fragment() {
 
     private val scanViewModel: ScanFlowViewModel by hiltNavGraphViewModels(R.id.nav_graph)
     private val roomViewModel: RoomViewModel by hiltNavGraphViewModels(R.id.nav_graph)
+
+    @Inject lateinit var settlementRepository: SettlementRepository
 
     /** 표시 중인 QR 비트맵 (저장/공유에 재사용) */
     private var qrBitmap: Bitmap? = null
@@ -82,14 +89,32 @@ class QrInviteFragment : Fragment() {
 
         binding.btnKakaoShare.setOnClickListener { shareViaKakao() }
 
+        binding.btnRegenerateQr.setOnClickListener { confirmRegenerateQr() }
+
         binding.btnEnter.setOnClickListener {
             roomViewModel.setRoom(scanViewModel.settlementId)
-            findNavController().navigate(R.id.action_qrInvite_to_enteringRoom)
+            binding.btnEnter.isEnabled = false
+            viewLifecycleOwner.lifecycleScope.launch {
+                val ok = roomViewModel.ensureMyMembershipAndAwait()
+                if (!isAdded || _binding == null) return@launch
+                binding.btnEnter.isEnabled = true
+                if (ok) {
+                    findNavController().navigate(R.id.action_qrInvite_to_roundPick)
+                } else {
+                    toast("정산방 입장에 실패했어요. 다시 시도해주세요")
+                }
+            }
         }
     }
 
-    /** 정산방 딥링크(bilzy://join/{id})를 QR로 만들어 표시. QrScanFragment가 이 형식을 읽는다. */
-    private fun showQr() {
+    /**
+     * 서버에서 서명+24시간 만료 초대 토큰이 담긴 딥링크(bilzy://join/{id}?token=...)를 받아
+     * QR로 만들어 표시. QrScanFragment/MainActivity가 이 형식을 읽는다.
+     *
+     * regenerate=false(기본, 화면 진입/회전마다 호출) — 절대 기존 토큰을 무효화하면 안 된다.
+     * 이미 공유된 QR이 화면 회전만으로 깨지는 회귀를 막기 위해 서버에도 동일한 기본값을 둔다.
+     */
+    private fun showQr(regenerate: Boolean = false) {
         val title = scanViewModel.settlementTitle.ifBlank { "정산방" }
         binding.tvRoomTitle.text = title
 
@@ -99,20 +124,64 @@ class QrInviteFragment : Fragment() {
             return
         }
 
-        val link = "bilzy://join/$id"
-        joinLink = link
-        runCatching { QrGenerator.encode(link, size = 512) }
-            .onSuccess { bitmap ->
-                qrBitmap = bitmap
-                binding.ivQr.setImageBitmap(bitmap)
-                binding.ivQr.imageTintList = null   // 생성된 QR은 원본 색 그대로
-                binding.ivQr.setPadding(0, 0, 0, 0)
-                binding.tvRoomCode.text =
-                    java.time.LocalDate.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyy.MM.dd"))
-            }
-            .onFailure {
-                binding.tvRoomCode.text = "QR 생성에 실패했어요"
-            }
+        viewLifecycleOwner.lifecycleScope.launch {
+            runCatching { settlementRepository.createInviteToken(id, regenerate) }
+                .onSuccess { invite ->
+                    if (_binding == null) return@onSuccess
+                    joinLink = invite.deepLink
+                    runCatching { QrGenerator.encode(invite.deepLink, size = 512) }
+                        .onSuccess { bitmap -> drawQr(bitmap) }
+                        .onFailure {
+                            binding.tvRoomCode.text = "QR 생성에 실패했어요"
+                        }
+                }
+                .onFailure {
+                    if (_binding == null) return@onFailure
+                    binding.tvRoomCode.text = "QR 생성에 실패했어요"
+                }
+        }
+    }
+
+    private fun drawQr(bitmap: Bitmap) {
+        qrBitmap = bitmap
+        binding.ivQr.setImageBitmap(bitmap)
+        binding.ivQr.imageTintList = null   // 생성된 QR은 원본 색 그대로
+        binding.ivQr.setPadding(0, 0, 0, 0)
+        binding.tvRoomCode.text = java.time.LocalDate.now()
+            .format(java.time.format.DateTimeFormatter.ofPattern("yyyy.MM.dd"))
+        binding.tvTokenExpiry.visibility = View.VISIBLE
+    }
+
+    /** "QR 다시 만들기" 확인 다이얼로그 — 확인하면 기존에 뿌려진 초대 링크/QR을 전부 무효화하고 새로 발급한다. */
+    private fun confirmRegenerateQr() {
+        val id = scanViewModel.settlementId
+        if (id.isNullOrBlank()) return
+
+        AlertDialog.Builder(requireContext())
+            .setTitle("QR 다시 만들기")
+            .setMessage("기존 초대 링크는 더 이상 사용할 수 없게 돼요. 새로 만들까요?")
+            .setNegativeButton("취소", null)
+            .setPositiveButton("확인") { _, _ -> regenerateQr(id) }
+            .show()
+    }
+
+    private fun regenerateQr(id: String) {
+        binding.btnRegenerateQr.isEnabled = false
+        viewLifecycleOwner.lifecycleScope.launch {
+            runCatching { settlementRepository.createInviteToken(id, regenerate = true) }
+                .onSuccess { invite ->
+                    if (_binding == null) return@onSuccess
+                    joinLink = invite.deepLink
+                    runCatching { QrGenerator.encode(invite.deepLink, size = 512) }
+                        .onSuccess { bitmap -> drawQr(bitmap) }
+                        .onFailure { toast("다시 만들기에 실패했어요") }
+                }
+                .onFailure {
+                    if (_binding == null) return@onFailure
+                    toast("다시 만들기에 실패했어요")
+                }
+            if (_binding != null) binding.btnRegenerateQr.isEnabled = true
+        }
     }
 
     /** QR 비트맵을 기기 갤러리(Pictures/Bilzy)에 PNG로 저장. */

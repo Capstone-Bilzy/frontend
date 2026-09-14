@@ -39,8 +39,9 @@ class AmountAdjustFragment : Fragment() {
     private val selectedChips = mutableSetOf<Int>()
     private val nf = NumberFormat.getInstance()
 
-    /** 참여한 라운드(영수증) 목록(round 오름차순). 호스트처럼 RoundPick을 거치지 않아 선택이 비어 있으면
-     * 전체 라운드를 참여한 것으로 간주한다. */
+    /** 참여한 라운드(영수증) 목록(round 오름차순). 정상 경로에서는 호스트/게스트 모두 RoundPick에서
+     * 최소 1개 라운드를 골라야 다음으로 넘어갈 수 있다(빈 값이면 버튼 비활성화). 그럼에도 선택이 비어 있으면
+     * 방어적으로 전체 라운드를 참여한 것으로 간주한다. */
     private var pickedReceipts: List<Receipt> = emptyList()
     private var memberCount = 1
 
@@ -121,7 +122,7 @@ class AmountAdjustFragment : Fragment() {
         memberCount = settlement.members.size.coerceAtLeast(1)
         val picked = roomViewModel.pickedRounds.value
         val allReceipts = settlement.receipts.sortedBy { it.round }
-        // 호스트는 RoundPick을 거치지 않아 pickedRounds가 비어 있을 수 있다 — 이 경우 전체 라운드를 참여한 것으로 본다.
+        // 정상 경로에서는 RoundPick에서 최소 1개를 골라야 넘어올 수 있지만, 방어적으로 비어 있으면 전체 라운드를 참여한 것으로 본다.
         pickedReceipts = if (picked.isEmpty()) allReceipts else allReceipts.filter { it.round in picked }
         if (pickedReceipts.isEmpty() && settlement.items.isNotEmpty()) {
             // receipts가 아직 안 내려온 과거 데이터 방어: 평면 items로라도 표시

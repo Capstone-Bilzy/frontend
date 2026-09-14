@@ -8,6 +8,7 @@ import com.android.bilzy.data.remote.dto.SetRoundAdjustmentRequest
 import com.android.bilzy.data.remote.dto.UpdateSettlementRequest
 import com.android.bilzy.data.remote.dto.UpdateStatusRequest
 import com.android.bilzy.data.remote.dto.toDomain
+import com.android.bilzy.domain.model.InviteToken
 import com.android.bilzy.domain.model.Settlement
 import com.android.bilzy.domain.model.SettlementStatus
 import com.android.bilzy.domain.repository.SettlementRepository
@@ -49,9 +50,12 @@ class SettlementRepositoryImpl @Inject constructor(
         api.setMyReady(id)
     }
 
-    override suspend fun joinByQr(id: String, nickname: String) {
-        api.joinSettlement(id, AddMemberRequest(nickname))
+    override suspend fun joinByQr(id: String, nickname: String, inviteToken: String?) {
+        api.joinSettlement(id, AddMemberRequest(nickname, inviteToken))
     }
+
+    override suspend fun createInviteToken(id: String, regenerate: Boolean): InviteToken =
+        api.createInviteToken(id, regenerate).toDomain()
 
     override suspend fun markDone(id: String): Settlement =
         api.markSettlementDone(id).toDomain()
