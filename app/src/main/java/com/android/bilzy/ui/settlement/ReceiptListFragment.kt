@@ -81,7 +81,7 @@ class ReceiptListFragment : Fragment() {
             binding.receiptListContainer.addView(receiptRow(receipt))
         }
         binding.tvCountLabel.text = "영수증 총 ${receipts.size}건"
-        binding.tvGrandTotal.text = won(receipts.sumOf { it.totalAmount })
+        binding.tvGrandTotal.text = nf.format(receipts.sumOf { it.totalAmount })
     }
 
     private fun receiptRow(receipt: Receipt): View {
@@ -98,9 +98,9 @@ class ReceiptListFragment : Fragment() {
 
         row.addView(TextView(ctx).apply {
             text = "${receipt.round}차"
-            setTextColor(Color.parseColor("#BEBEF7"))
+            setTextColor(Color.parseColor("#7DE87D"))
             setTextSize(TypedValue.COMPLEX_UNIT_SP, 13f)
-            setBackgroundResource(R.drawable.bg_chip_purple)
+            setBackgroundResource(R.drawable.bg_chip_round_outline_green)
             setPadding(dp(10), dp(4), dp(10), dp(4))
             layoutParams = LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT

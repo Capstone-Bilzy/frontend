@@ -21,7 +21,8 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 /**
- * QR 스캔/딥링크 참여 성공 직후, EnteringRoom 진입 전에 삽입되는 "나의 정산 목록" 화면.
+ * 정산방 참여 확정 직후(호스트: QR 초대 화면에서 "입장하기", 게스트: QR 스캔/딥링크 참여 직후),
+ * EnteringRoom 진입 전에 거치는 "나의 정산 목록" 화면.
  * 정산방의 실제 라운드(receipts) 개수만큼 토글 칩을 동적으로 만든다.
  */
 @AndroidEntryPoint

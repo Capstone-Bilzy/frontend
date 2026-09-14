@@ -150,6 +150,30 @@
             android:textSize="14sp"
             android:gravity="center" />
 
+        <TextView
+            android:id="@+id/tvTokenExpiry"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="이 QR은 24시간 동안 유효해요"
+            android:textColor="#8A8BC4"
+            android:textSize="12sp"
+            android:gravity="center"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/btnRegenerateQr"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="QR 다시 만들기"
+            android:textColor="#BEBEF7"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:clickable="true"
+            android:focusable="true" />
+
         <!-- 이미지 저장 / 공유 버튼 행 -->
         <LinearLayout
             android:layout_width="match_parent"

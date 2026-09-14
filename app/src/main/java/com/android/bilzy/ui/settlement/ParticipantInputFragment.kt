@@ -6,12 +6,16 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.android.bilzy.R
 import com.android.bilzy.databinding.FragmentParticipantInputBinding
 import com.android.bilzy.ui.room.RoomViewModel
+import com.android.bilzy.ui.scan.QrScanViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -22,6 +26,11 @@ class ParticipantInputFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val roomViewModel: RoomViewModel by hiltNavGraphViewModels(R.id.nav_graph)
+    private val qrScanViewModel: QrScanViewModel by viewModels()
+
+    // 게스트(QR/딥링크) 흐름에서만 채워짐. null이면 기존 호스트 흐름 그대로 동작.
+    private val pendingSettlementId: String? get() = arguments?.getString("pendingSettlementId")
+    private val pendingToken: String? get() = arguments?.getString("pendingToken")
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -47,6 +56,8 @@ class ParticipantInputFragment : Fragment() {
             }
         }
 
+        observeJoin()
+
         binding.btnNext.setOnClickListener {
             val name = binding.etName.text?.toString()?.trim().orEmpty()
             if (name.isEmpty()) {
@@ -55,7 +66,37 @@ class ParticipantInputFragment : Fragment() {
             }
             // 입력한 이름을 표시 이름으로 저장(이후 입장에도 재사용됨)
             roomViewModel.setMyName(name)
-            findNavController().navigate(R.id.action_participantInput_to_qrInvite)
+            val pendingId = pendingSettlementId
+            if (pendingId != null) {
+                // 게스트 흐름: 이 화면에서 입력받은 이름으로 곧바로 join API 호출
+                binding.btnNext.isEnabled = false
+                qrScanViewModel.join(pendingId, pendingToken, nickname = name)
+            } else {
+                findNavController().navigate(R.id.action_participantInput_to_qrInvite)
+            }
+        }
+    }
+
+    private fun observeJoin() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                qrScanViewModel.joinState.collect { state ->
+                    when (state) {
+                        is QrScanViewModel.JoinState.Success -> {
+                            roomViewModel.expectedCount = 0 // 게스트: 인원 게이팅 없음
+                            roomViewModel.setRoom(state.settlementId)
+                            qrScanViewModel.consumeState()
+                            findNavController().navigate(R.id.action_participantInput_to_roundPick)
+                        }
+                        is QrScanViewModel.JoinState.Error -> {
+                            binding.btnNext.isEnabled = true
+                            Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
+                            qrScanViewModel.consumeState()
+                        }
+                        else -> Unit
+                    }
+                }
+            }
         }
     }
 

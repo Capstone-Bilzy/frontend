@@ -1,5 +1,6 @@
 package com.android.bilzy.domain.repository
 
+import com.android.bilzy.domain.model.InviteToken
 import com.android.bilzy.domain.model.Settlement
 import com.android.bilzy.domain.model.SettlementStatus
 
@@ -29,8 +30,11 @@ interface SettlementRepository {
     /** 본인이 금액 조정을 마치고 "정산 시작하기"를 눌렀음을 표시(다른 멤버가 실시간으로 확인). */
     suspend fun markReady(id: String)
 
-    /** QR로 인식한 정산방에 내 닉네임으로 참여. */
-    suspend fun joinByQr(id: String, nickname: String)
+    /** QR로 인식한 정산방에 내 닉네임으로 참여. inviteToken은 신규 참여자에게만 필요(owner/기존 멤버는 무시됨). */
+    suspend fun joinByQr(id: String, nickname: String, inviteToken: String? = null)
+
+    /** 서명+24시간 만료 초대 토큰 발급(owner만 가능). regenerate=true면 기존 토큰을 전부 무효화하고 새로 발급. */
+    suspend fun createInviteToken(id: String, regenerate: Boolean = false): InviteToken
 
     /** 정산 완료 처리(status=done, 내역 기록). */
     suspend fun markDone(id: String): Settlement

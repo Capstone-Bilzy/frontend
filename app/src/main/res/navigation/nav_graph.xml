@@ -360,7 +360,9 @@
             app:popUpToInclusive="true" />
     </fragment>
 
-    <!-- 다차 정산(n차) UI 뼈대: 스캔된 영수증(표시용) 목록. 서버엔 반영되지 않음(TODO 참고). -->
+    <!-- 다차 정산(n차): 지금까지 스캔·확정한 라운드(영수증)를 서버 데이터(ScanFlowViewModel.settlement.receipts)로
+         보여준다. "저장하기"는 이 화면 안의 확인 애니메이션일 뿐 별도 서버 저장은 없고, "인원 설정하기"로 넘어가면
+         다음 라운드 인원 확정 절차로 이어진다. -->
     <fragment
         android:id="@+id/receiptListFragment"
         android:name="com.android.bilzy.ui.settlement.ReceiptListFragment"
@@ -419,12 +421,26 @@
         android:name="com.android.bilzy.ui.settlement.ParticipantInputFragment"
         android:label="ParticipantInput"
         tools:layout="@layout/fragment_participant_input">
+        <argument
+            android:name="pendingSettlementId"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null" />
+        <argument
+            android:name="pendingToken"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null" />
         <action android:id="@+id/action_participantInput_to_back"
             app:destination="@id/peopleCountFragment"
             app:popUpTo="@id/peopleCountFragment"
             app:popUpToInclusive="false" />
         <action android:id="@+id/action_participantInput_to_qrInvite"
             app:destination="@id/qrInviteFragment" />
+        <action android:id="@+id/action_participantInput_to_roundPick"
+            app:destination="@id/roundPickFragment"
+            app:popUpTo="@id/participantInputFragment"
+            app:popUpToInclusive="true" />
     </fragment>
 
     <fragment
@@ -436,8 +452,10 @@
             app:destination="@id/participantInputFragment"
             app:popUpTo="@id/participantInputFragment"
             app:popUpToInclusive="false" />
-        <action android:id="@+id/action_qrInvite_to_enteringRoom"
-            app:destination="@id/enteringRoomFragment" />
+        <action android:id="@+id/action_qrInvite_to_roundPick"
+            app:destination="@id/roundPickFragment"
+            app:popUpTo="@id/qrInviteFragment"
+            app:popUpToInclusive="true" />
     </fragment>
 
     <fragment
@@ -455,6 +473,10 @@
             app:popUpToInclusive="true" />
         <action android:id="@+id/action_qrScan_to_scanCamera"
             app:destination="@id/scanCameraFragment" />
+        <action android:id="@+id/action_qrScan_to_participantInput"
+            app:destination="@id/participantInputFragment"
+            app:popUpTo="@id/qrScanFragment"
+            app:popUpToInclusive="true" />
     </fragment>
 
     <!-- ==================== ROOM ==================== -->
@@ -470,6 +492,11 @@
             app:argType="string"
             app:nullable="true"
             android:defaultValue="@null" />
+        <argument
+            android:name="token"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null" />
         <action android:id="@+id/action_joinConfirm_to_roundPick"
             app:destination="@id/roundPickFragment"
             app:popUpTo="@id/joinConfirmFragment"
@@ -478,10 +505,15 @@
             app:destination="@id/homeFragment"
             app:popUpTo="@id/joinConfirmFragment"
             app:popUpToInclusive="true" />
+        <action android:id="@+id/action_joinConfirm_to_participantInput"
+            app:destination="@id/participantInputFragment"
+            app:popUpTo="@id/joinConfirmFragment"
+            app:popUpToInclusive="true" />
     </fragment>
 
-    <!-- 다차 정산(n차) UI 뼈대: 게스트 참여 성공 직후 "나의 정산 목록"에서 참여한 차수만 고른다.
-         실제 다차 데이터는 없으므로 현재 정산 1건을 "1차" 토글 1개로 표시한다. 호스트 흐름은 미포함. -->
+    <!-- 정산방 참여 확정 직후(호스트: QR 초대 화면 "입장하기", 게스트: QR 스캔/딥링크 참여)
+         EnteringRoom 진입 전에 거치는 "나의 정산 목록" 화면. 정산방의 실제 라운드(receipts) 개수만큼
+         토글 칩을 동적으로 렌더링한다. -->
     <fragment
         android:id="@+id/roundPickFragment"
         android:name="com.android.bilzy.ui.room.RoundPickFragment"
