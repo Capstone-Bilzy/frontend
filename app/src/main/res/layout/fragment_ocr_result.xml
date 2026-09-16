@@ -236,7 +236,7 @@
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
-    <!-- Bottom buttons: 완료하기(outline) / 추가 스캔하기(purple) -->
+    <!-- Bottom buttons: 완료하기(ghost glass) / 추가 스캔하기(purple glass) -->
     <LinearLayout
         android:id="@+id/bottomButtonsRow"
         android:layout_width="0dp"
@@ -260,7 +260,7 @@
             android:textSize="17sp"
             android:textStyle="bold"
             android:gravity="center"
-            android:background="@drawable/bg_button_glass"
+            android:background="@drawable/bg_button_ghost"
             android:clickable="true"
             android:focusable="true" />
 
@@ -275,7 +275,7 @@
             android:textSize="17sp"
             android:textStyle="bold"
             android:gravity="center"
-            android:background="@drawable/bg_button_glass"
+            android:background="@drawable/bg_btn_violet"
             android:clickable="true"
             android:focusable="true" />
 
