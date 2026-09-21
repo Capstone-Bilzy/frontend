@@ -242,8 +242,8 @@
             app:destination="@id/homeFragment"
             app:popUpTo="@id/homeFragment"
             app:popUpToInclusive="false" />
-        <action android:id="@+id/action_scanHub_to_scanCameraModal"
-            app:destination="@id/scanCameraModalFragment" />
+        <action android:id="@+id/action_scanHub_to_scanCamera"
+            app:destination="@id/scanCameraFragment" />
         <action android:id="@+id/action_scanHub_to_enteringRoom"
             app:destination="@id/enteringRoomFragment" />
     </fragment>
@@ -274,25 +274,9 @@
             app:destination="@id/scanPermissionFragment"
             app:popUpTo="@id/scanPermissionFragment"
             app:popUpToInclusive="false" />
-        <action android:id="@+id/action_scanCamera_to_modal"
-            app:destination="@id/scanCameraModalFragment" />
         <action android:id="@+id/action_scanCamera_to_qrScan"
             app:destination="@id/qrScanFragment" />
     </fragment>
-
-    <dialog
-        android:id="@+id/scanCameraModalFragment"
-        android:name="com.android.bilzy.ui.scan.ScanCameraModalFragment"
-        android:label="ScanCameraModal"
-        tools:layout="@layout/fragment_scan_camera_modal">
-        <action android:id="@+id/action_modal_to_recognizing"
-            app:destination="@id/recognizingFragment"
-            app:popUpTo="@id/scanCameraFragment"
-            app:popUpToInclusive="false" />
-        <action android:id="@+id/action_modal_dismiss"
-            app:popUpTo="@id/scanCameraFragment"
-            app:popUpToInclusive="false" />
-    </dialog>
 
     <fragment
         android:id="@+id/recognizingFragment"
@@ -412,10 +396,12 @@
         <action android:id="@+id/action_peopleCount_to_back"
             app:popUpTo="@id/ocrResultFragment"
             app:popUpToInclusive="false" />
-        <action android:id="@+id/action_peopleCount_to_participantInput"
-            app:destination="@id/participantInputFragment" />
+        <action android:id="@+id/action_peopleCount_to_qrInvite"
+            app:destination="@id/qrInviteFragment" />
     </fragment>
 
+    <!-- 프로토타입 순서: 인원설정 → QR초대(정산방 만들기) → 이름 입력(입장하기) → 나의 정산 목록.
+         참여자 입력(이름)은 게스트(pendingSettlementId 있음)뿐 아니라 호스트(없음)도 QR초대 다음에 거친다. -->
     <fragment
         android:id="@+id/participantInputFragment"
         android:name="com.android.bilzy.ui.settlement.ParticipantInputFragment"
@@ -431,12 +417,6 @@
             app:argType="string"
             app:nullable="true"
             android:defaultValue="@null" />
-        <action android:id="@+id/action_participantInput_to_back"
-            app:destination="@id/peopleCountFragment"
-            app:popUpTo="@id/peopleCountFragment"
-            app:popUpToInclusive="false" />
-        <action android:id="@+id/action_participantInput_to_qrInvite"
-            app:destination="@id/qrInviteFragment" />
         <action android:id="@+id/action_participantInput_to_roundPick"
             app:destination="@id/roundPickFragment"
             app:popUpTo="@id/participantInputFragment"
@@ -448,14 +428,8 @@
         android:name="com.android.bilzy.ui.settlement.QrInviteFragment"
         android:label="QrInvite"
         tools:layout="@layout/fragment_qr_invite">
-        <action android:id="@+id/action_qrInvite_to_back"
-            app:destination="@id/participantInputFragment"
-            app:popUpTo="@id/participantInputFragment"
-            app:popUpToInclusive="false" />
-        <action android:id="@+id/action_qrInvite_to_roundPick"
-            app:destination="@id/roundPickFragment"
-            app:popUpTo="@id/qrInviteFragment"
-            app:popUpToInclusive="true" />
+        <action android:id="@+id/action_qrInvite_to_participantInput"
+            app:destination="@id/participantInputFragment" />
     </fragment>
 
     <fragment

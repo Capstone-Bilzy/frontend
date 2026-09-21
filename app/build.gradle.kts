@@ -144,6 +144,9 @@ dependencies {
     // ZXing (QR 코드 생성)
     implementation("com.google.zxing:core:3.5.3")
 
+    // BlurView (모달/바텀시트 배경 실시간 블러)
+    implementation("com.github.Dimezis:BlurView:version-3.2.0")
+
     implementation("androidx.core:core-ktx:1.13.1")
     implementation("androidx.appcompat:appcompat:1.7.0")
     implementation("com.google.android.material:material:1.12.0")

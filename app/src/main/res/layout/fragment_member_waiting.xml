@@ -21,6 +21,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
+
     <!-- Character -->
     <ImageView
         android:id="@+id/ivCharacter"
@@ -86,8 +87,7 @@
                 android:layout_alignParentStart="true"
                 android:text="모인 멤버"
                 android:textColor="#FFFFFF"
-                android:textSize="17sp"
-                android:textStyle="bold" />
+                android:textSize="15sp" />
 
             <TextView
                 android:id="@+id/tvStatus"
@@ -95,8 +95,8 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:text=""
-                android:textColor="#A5A6F6"
-                android:textSize="17sp"
+                android:textColor="#C7C1FF"
+                android:textSize="15sp"
                 android:textStyle="bold" />
 
         </RelativeLayout>

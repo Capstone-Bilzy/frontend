@@ -21,6 +21,8 @@ dependencyResolutionManagement {
         mavenCentral()
         // Kakao SDK
         maven("https://devrepo.kakao.com/nexus/content/groups/public/")
+        // BlurView
+        maven("https://jitpack.io")
     }
 }
 

@@ -1,6 +1,7 @@
 package com.android.bilzy.ui.scan
 
 import android.Manifest
+import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -23,7 +24,21 @@ import com.android.bilzy.R
 import com.android.bilzy.databinding.FragmentScanCameraBinding
 import com.android.bilzy.util.ImageCompressor
 import dagger.hilt.android.AndroidEntryPoint
+import androidx.core.content.edit
 import kotlinx.coroutines.launch
+
+/** 사진 접근 모달("Bilzy가 사진에 접근하도록 허용하시겠습니까?")을 한 번 통과했는지 로컬에 기억해서 다음부턴 건너뛴다. */
+internal object PhotoAccessPrefs {
+    private const val PREFS_NAME = "bilzy_prefs"
+    private const val KEY_ALLOWED = "photo_access_allowed"
+
+    fun isAllowed(context: Context): Boolean =
+        context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).getBoolean(KEY_ALLOWED, false)
+
+    fun setAllowed(context: Context) {
+        context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit { putBoolean(KEY_ALLOWED, true) }
+    }
+}
 
 @AndroidEntryPoint
 class ScanCameraFragment : Fragment() {
@@ -77,10 +92,18 @@ class ScanCameraFragment : Fragment() {
 
         binding.btnBack.setOnClickListener { findNavController().navigateUp() }
         binding.btnShutter.setOnClickListener { capture() }
-        binding.btnGallery.setOnClickListener { pickImage.launch("image/*") }
+        binding.btnGallery.setOnClickListener {
+            if (PhotoAccessPrefs.isAllowed(requireContext())) {
+                pickImage.launch("image/*")
+            } else {
+                showPhotoAccessOverlay()
+            }
+        }
         binding.tabQr.setOnClickListener {
             findNavController().navigate(R.id.action_scanCamera_to_qrScan)
         }
+
+        setupPhotoAccessOverlay()
 
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA)
             == PackageManager.PERMISSION_GRANTED
@@ -89,6 +112,38 @@ class ScanCameraFragment : Fragment() {
         } else {
             requestCameraPermission.launch(Manifest.permission.CAMERA)
         }
+    }
+
+    /** "사진 선택..."/"모든 사진에 접근 허용"/"허용 안 함" 클릭 처리. */
+    private fun setupPhotoAccessOverlay() {
+        binding.blurView.setupWith(binding.blurTarget)
+            .setBlurRadius(16f)
+        binding.blurView.setOverlayColor(0x66000000)
+
+        // 프로토타입: "사진 선택..."/"모든 사진에 접근 허용" 둘 다 같은 동작(사진 선택기 열기).
+        // 한 번 허용하면 다음부턴 이 오버레이를 건너뛰도록 기억해 둔다.
+        binding.btnPhotoLibrary.setOnClickListener {
+            PhotoAccessPrefs.setAllowed(requireContext())
+            hidePhotoAccessOverlay()
+            pickImage.launch("image/*")
+        }
+        binding.btnFile.setOnClickListener {
+            PhotoAccessPrefs.setAllowed(requireContext())
+            hidePhotoAccessOverlay()
+            pickImage.launch("image/*")
+        }
+        binding.btnCancel.setOnClickListener {
+            Toast.makeText(requireContext(), "사진 접근을 허용하지 않았어요", Toast.LENGTH_SHORT).show()
+            hidePhotoAccessOverlay()
+        }
+    }
+
+    private fun showPhotoAccessOverlay() {
+        binding.photoAccessOverlay.visibility = View.VISIBLE
+    }
+
+    private fun hidePhotoAccessOverlay() {
+        binding.photoAccessOverlay.visibility = View.GONE
     }
 
     private fun startCamera() {

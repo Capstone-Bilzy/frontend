@@ -45,7 +45,7 @@ class PeopleCountFragment : Fragment() {
 
         binding.btnNext.setOnClickListener {
             roomViewModel.expectedCount = count
-            findNavController().navigate(R.id.action_peopleCount_to_participantInput)
+            findNavController().navigate(R.id.action_peopleCount_to_qrInvite)
         }
     }
 

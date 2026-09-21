@@ -72,7 +72,18 @@ class ParticipantInputFragment : Fragment() {
                 binding.btnNext.isEnabled = false
                 qrScanViewModel.join(pendingId, pendingToken, nickname = name)
             } else {
-                findNavController().navigate(R.id.action_participantInput_to_qrInvite)
+                // 호스트 흐름(QR초대 화면에서 넘어옴): 방금 확정한 이름으로 멤버십을 생성한다.
+                binding.btnNext.isEnabled = false
+                viewLifecycleOwner.lifecycleScope.launch {
+                    val ok = roomViewModel.ensureMyMembershipAndAwait()
+                    if (!isAdded || _binding == null) return@launch
+                    binding.btnNext.isEnabled = true
+                    if (ok) {
+                        findNavController().navigate(R.id.action_participantInput_to_roundPick)
+                    } else {
+                        Toast.makeText(requireContext(), "정산방 입장에 실패했어요. 다시 시도해주세요", Toast.LENGTH_SHORT).show()
+                    }
+                }
             }
         }
     }

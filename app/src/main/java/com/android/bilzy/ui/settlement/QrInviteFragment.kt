@@ -92,18 +92,10 @@ class QrInviteFragment : Fragment() {
         binding.btnRegenerateQr.setOnClickListener { confirmRegenerateQr() }
 
         binding.btnEnter.setOnClickListener {
+            // 실제 멤버십 생성(join)은 다음 화면(참여자 입력)에서 이름을 확정한 뒤 이뤄진다
+            // (여기서 먼저 join하면 이름 입력 전에 OAuth 닉네임 폴백으로 멤버가 생성될 수 있음).
             roomViewModel.setRoom(scanViewModel.settlementId)
-            binding.btnEnter.isEnabled = false
-            viewLifecycleOwner.lifecycleScope.launch {
-                val ok = roomViewModel.ensureMyMembershipAndAwait()
-                if (!isAdded || _binding == null) return@launch
-                binding.btnEnter.isEnabled = true
-                if (ok) {
-                    findNavController().navigate(R.id.action_qrInvite_to_roundPick)
-                } else {
-                    toast("정산방 입장에 실패했어요. 다시 시도해주세요")
-                }
-            }
+            findNavController().navigate(R.id.action_qrInvite_to_participantInput)
         }
     }
 

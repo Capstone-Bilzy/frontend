@@ -124,6 +124,8 @@ class MemberWaitingFragment : Fragment() {
         val circle = FrameLayout(ctx).apply {
             layoutParams = LinearLayout.LayoutParams(dp(44), dp(44))
             setBackgroundResource(R.drawable.bg_role_chip)
+            clipChildren = false
+            clipToPadding = false
         }
         val initial = TextView(ctx).apply {
             text = name.take(1)
@@ -150,9 +152,23 @@ class MemberWaitingFragment : Fragment() {
                 listener(onError = { _, _ -> avatarImage.visibility = View.GONE })
             }
         }
+        // 아바타 우측 하단 체크 배지 — 이 행에 렌더되는 멤버는 이미 합류를 마친 사람들뿐이라 항상 "합류완료" 상태.
+        val checkBadge = FrameLayout(ctx).apply {
+            layoutParams = FrameLayout.LayoutParams(dp(16), dp(16), Gravity.BOTTOM or Gravity.END).apply {
+                bottomMargin = -dp(1)
+                marginEnd = -dp(1)
+            }
+            setBackgroundResource(R.drawable.bg_avatar_check_badge)
+        }
+        checkBadge.addView(ImageView(ctx).apply {
+            setImageResource(R.drawable.ic_check)
+            imageTintList = android.content.res.ColorStateList.valueOf(Color.WHITE)
+            layoutParams = FrameLayout.LayoutParams(dp(9), dp(9), Gravity.CENTER)
+        })
+        circle.addView(checkBadge)
         val label = TextView(ctx).apply {
             text = if (isMe) "$name(나)" else name
-            setTextColor(Color.WHITE)
+            setTextColor(Color.parseColor("#CCFFFFFF"))
             setTextSize(TypedValue.COMPLEX_UNIT_SP, 9f)
             gravity = Gravity.CENTER
             layoutParams = LinearLayout.LayoutParams(

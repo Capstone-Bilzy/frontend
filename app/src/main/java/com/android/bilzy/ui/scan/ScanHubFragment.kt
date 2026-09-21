@@ -34,7 +34,7 @@ class ScanHubFragment : Fragment() {
 
         binding.btnShutter.setOnClickListener {
             if (isReceiptMode) {
-                findNavController().navigate(R.id.action_scanHub_to_scanCameraModal)
+                findNavController().navigate(R.id.action_scanHub_to_scanCamera)
             } else {
                 findNavController().navigate(R.id.action_scanHub_to_enteringRoom)
             }

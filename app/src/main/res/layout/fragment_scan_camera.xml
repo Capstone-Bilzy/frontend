@@ -1,257 +1,370 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="#0D1133">
+    android:layout_height="match_parent">
 
-    <!-- 헤더: ← 스캔 -->
-    <LinearLayout
-        android:id="@+id/topBar"
+    <!-- BlurTarget: 사진 접근 모달(photoAccessOverlay)이 이 안의 실제 카메라 화면을 블러해서 보여줄 수 있게 한다.
+         모달을 별도 DialogFragment(다른 Window)로 뒀을 때는 BlurView가 캡처를 못 해서, 같은 화면(같은 Window) 안의
+         오버레이로 바꿨다. -->
+    <eightbitlab.com.blurview.BlurTarget
+        android:id="@+id/blurTarget"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:paddingStart="20dp"
-        android:paddingEnd="20dp"
-        android:paddingTop="52dp"
-        android:paddingBottom="16dp">
-
-        <ImageView
-            android:id="@+id/btnBack"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/ic_back"
-            android:clickable="true"
-            android:focusable="true"
-            app:tint="#FFFFFF" />
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginStart="10dp"
-            android:text="스캔"
-            android:textColor="#FFFFFF"
-            android:textSize="22sp"
-            android:textStyle="bold" />
+        android:layout_height="match_parent">
 
         <LinearLayout
-            android:id="@+id/roundBadgeContainer"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:background="@drawable/bg_badge_green"
-            android:paddingStart="13dp"
-            android:paddingEnd="13dp"
-            android:paddingTop="5dp"
-            android:paddingBottom="5dp">
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:background="#0D1133">
 
-            <View
-                android:layout_width="6dp"
-                android:layout_height="6dp"
-                android:layout_marginEnd="6dp"
-                android:background="@drawable/dot_green" />
-
-            <TextView
-                android:id="@+id/tvRoundBadge"
-                android:layout_width="wrap_content"
+            <!-- 헤더: ← 스캔 -->
+            <LinearLayout
+                android:id="@+id/topBar"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="1차"
-                android:textColor="#7DE87D"
-                android:textSize="13sp"
-                android:textStyle="bold" />
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp"
+                android:paddingTop="52dp"
+                android:paddingBottom="16dp">
+
+                <ImageView
+                    android:id="@+id/btnBack"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_back"
+                    android:clickable="true"
+                    android:focusable="true"
+                    app:tint="#FFFFFF" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="10dp"
+                    android:text="스캔"
+                    android:textColor="#FFFFFF"
+                    android:textSize="22sp"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:id="@+id/roundBadgeContainer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:background="@drawable/bg_badge_green"
+                    android:paddingStart="13dp"
+                    android:paddingEnd="13dp"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp">
+
+                    <View
+                        android:layout_width="6dp"
+                        android:layout_height="6dp"
+                        android:layout_marginEnd="6dp"
+                        android:background="@drawable/dot_green" />
+
+                    <TextView
+                        android:id="@+id/tvRoundBadge"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="1차"
+                        android:textColor="#7DE87D"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <!-- 헤더 구분선 -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#33FFFFFF" />
+
+            <!-- 뷰파인더 영역 (flex 공간) -->
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1">
+
+                <!-- CameraX 프리뷰 (배경). implementationMode=compatible(TextureView)로 둬야
+                     갤러리 버튼을 눌렀을 때 뒤에서 BlurView가 이 화면을 캡처해 블러할 수 있다
+                     — 기본 SurfaceView는 별도 하드웨어 레이어라 캡처가 안 된다. -->
+                <androidx.camera.view.PreviewView
+                    android:id="@+id/previewView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:implementationMode="compatible" />
+
+                <!-- 좌상단 코너 -->
+                <ImageView
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:layout_gravity="top|start"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="16dp"
+                    android:src="@drawable/ic_corner_tl" />
+
+                <!-- 우상단 코너 -->
+                <ImageView
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:layout_gravity="top|end"
+                    android:layout_marginEnd="20dp"
+                    android:layout_marginTop="16dp"
+                    android:src="@drawable/ic_corner_tr" />
+
+                <!-- 좌하단 코너 -->
+                <ImageView
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:layout_gravity="bottom|start"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginBottom="16dp"
+                    android:src="@drawable/ic_corner_bl" />
+
+                <!-- 우하단 코너 -->
+                <ImageView
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:layout_gravity="bottom|end"
+                    android:layout_marginEnd="20dp"
+                    android:layout_marginBottom="16dp"
+                    android:src="@drawable/ic_corner_br" />
+
+                <!-- 중앙 안내 아이콘 + 텍스트 -->
+                <LinearLayout
+                    android:id="@+id/guideCenter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal">
+
+                    <ImageView
+                        android:layout_width="56dp"
+                        android:layout_height="56dp"
+                        android:src="@drawable/ic_scan"
+                        app:tint="#555588" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:text="정산해야 하는 영수증의\n결제 정보가 나오게 찍어주세요"
+                        android:textColor="#666699"
+                        android:textSize="16sp"
+                        android:gravity="center"
+                        android:lineSpacingExtra="4dp" />
+
+                </LinearLayout>
+
+            </FrameLayout>
+
+            <!-- 하단 컨트롤 영역 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center_horizontal"
+                android:paddingTop="24dp"
+                android:paddingBottom="36dp">
+
+                <!-- 갤러리 / 셔터 버튼 행 -->
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="88dp"
+                    android:paddingStart="52dp"
+                    android:paddingEnd="52dp">
+
+                    <!-- 갤러리 (흰 사각형) -->
+                    <FrameLayout
+                        android:id="@+id/btnGallery"
+                        android:layout_width="44dp"
+                        android:layout_height="44dp"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true"
+                        android:background="#FFFFFF"
+                        android:clickable="true"
+                        android:focusable="true" />
+
+                    <!-- 셔터 버튼 (라벤더 링 + 흰 원) -->
+                    <FrameLayout
+                        android:id="@+id/btnShutter"
+                        android:layout_width="76dp"
+                        android:layout_height="76dp"
+                        android:layout_centerInParent="true"
+                        android:clickable="true"
+                        android:focusable="true">
+
+                        <View
+                            android:layout_width="76dp"
+                            android:layout_height="76dp"
+                            android:background="@drawable/bg_shutter_ring" />
+
+                        <View
+                            android:layout_width="58dp"
+                            android:layout_height="58dp"
+                            android:layout_gravity="center"
+                            android:background="@drawable/bg_shutter" />
+
+                    </FrameLayout>
+
+                </RelativeLayout>
+
+                <!-- 모드 라벨 행 -->
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="52dp"
+                    android:paddingEnd="52dp">
+
+                    <!-- QR 스캔 (왼쪽, 비활성) -->
+                    <TextView
+                        android:id="@+id/tabQr"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true"
+                        android:text="QR 스캔"
+                        android:textColor="#606090"
+                        android:textSize="16sp"
+                        android:clickable="true"
+                        android:focusable="true" />
+
+                    <!-- 영수증 스캔 (중앙, 활성): 텍스트 → ▲ 순서 -->
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:gravity="center_horizontal"
+                        android:layout_centerHorizontal="true">
+
+                        <TextView
+                            android:id="@+id/tabReceipt"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="영수증 스캔"
+                            android:textColor="#FFFFFF"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="▲"
+                            android:textColor="#FFFFFF"
+                            android:textSize="12sp"
+                            android:layout_marginTop="2dp" />
+
+                    </LinearLayout>
+
+                </RelativeLayout>
+
+            </LinearLayout>
 
         </LinearLayout>
 
-    </LinearLayout>
+    </eightbitlab.com.blurview.BlurTarget>
 
-    <!-- 헤더 구분선 -->
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#33FFFFFF" />
-
-    <!-- 뷰파인더 영역 (flex 공간) -->
+    <!-- 사진 접근 권한 모달 오버레이 (기본 숨김). ScanCameraModalFragment(별도 Window) 대신
+         같은 화면 안의 오버레이로 둬서 BlurView가 위 blurTarget을 실시간으로 캡처/블러할 수 있게 한다. -->
     <FrameLayout
+        android:id="@+id/photoAccessOverlay"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:clickable="true"
+        android:focusable="true">
 
-        <!-- CameraX 프리뷰 (배경) -->
-        <androidx.camera.view.PreviewView
-            android:id="@+id/previewView"
+        <eightbitlab.com.blurview.BlurView
+            android:id="@+id/blurView"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
-        <!-- 좌상단 코너 -->
-        <ImageView
-            android:layout_width="44dp"
-            android:layout_height="44dp"
-            android:layout_gravity="top|start"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="16dp"
-            android:src="@drawable/ic_corner_tl" />
-
-        <!-- 우상단 코너 -->
-        <ImageView
-            android:layout_width="44dp"
-            android:layout_height="44dp"
-            android:layout_gravity="top|end"
-            android:layout_marginEnd="20dp"
-            android:layout_marginTop="16dp"
-            android:src="@drawable/ic_corner_tr" />
-
-        <!-- 좌하단 코너 -->
-        <ImageView
-            android:layout_width="44dp"
-            android:layout_height="44dp"
-            android:layout_gravity="bottom|start"
-            android:layout_marginStart="20dp"
-            android:layout_marginBottom="16dp"
-            android:src="@drawable/ic_corner_bl" />
-
-        <!-- 우하단 코너 -->
-        <ImageView
-            android:layout_width="44dp"
-            android:layout_height="44dp"
-            android:layout_gravity="bottom|end"
-            android:layout_marginEnd="20dp"
-            android:layout_marginBottom="16dp"
-            android:src="@drawable/ic_corner_br" />
-
-        <!-- 중앙 안내 아이콘 + 텍스트 -->
         <LinearLayout
-            android:id="@+id/guideCenter"
-            android:layout_width="wrap_content"
+            android:layout_width="290dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:orientation="vertical"
-            android:gravity="center_horizontal">
+            android:background="@drawable/bg_dialog"
+            android:padding="20dp">
 
             <ImageView
-                android:layout_width="56dp"
-                android:layout_height="56dp"
-                android:src="@drawable/ic_scan"
-                app:tint="#555588" />
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_gravity="center_horizontal"
+                android:src="@drawable/ic_receipt"
+                app:tint="#A5A6F6"
+                android:layout_marginTop="6dp"
+                android:layout_marginBottom="14dp" />
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="정산해야 하는 영수증의\n결제 정보가 나오게 찍어주세요"
-                android:textColor="#666699"
-                android:textSize="16sp"
+                android:text="'Bilzy'가 사진에\n접근하도록 허용하시겠습니까?"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                android:textStyle="bold"
                 android:gravity="center"
-                android:lineSpacingExtra="4dp" />
+                android:lineSpacingExtra="3dp"
+                android:layout_marginBottom="6dp" />
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="영수증 이미지를 선택하여\n스캔할 수 있습니다."
+                android:textColor="#99FFFFFF"
+                android:textSize="14sp"
+                android:gravity="center"
+                android:lineSpacingExtra="2dp"
+                android:layout_marginBottom="18dp" />
+
+            <TextView
+                android:id="@+id/btnPhotoLibrary"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:text="사진 선택..."
+                android:textColor="#FFFFFF"
+                android:textSize="17sp"
+                android:gravity="center"
+                android:background="@drawable/bg_dialog_button"
+                android:clickable="true"
+                android:focusable="true"
+                android:layout_marginBottom="8dp" />
+
+            <TextView
+                android:id="@+id/btnFile"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:text="모든 사진에 접근 허용"
+                android:textColor="#FFFFFF"
+                android:textSize="17sp"
+                android:gravity="center"
+                android:background="@drawable/bg_dialog_button"
+                android:clickable="true"
+                android:focusable="true"
+                android:layout_marginBottom="8dp" />
+
+            <TextView
+                android:id="@+id/btnCancel"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:text="허용 안 함"
+                android:textColor="#FFFFFF"
+                android:textSize="17sp"
+                android:gravity="center"
+                android:background="@drawable/bg_dialog_button"
+                android:clickable="true"
+                android:focusable="true" />
         </LinearLayout>
 
     </FrameLayout>
 
-    <!-- 하단 컨트롤 영역 -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center_horizontal"
-        android:paddingTop="24dp"
-        android:paddingBottom="36dp">
-
-        <!-- 갤러리 / 셔터 버튼 행 -->
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="88dp"
-            android:paddingStart="52dp"
-            android:paddingEnd="52dp">
-
-            <!-- 갤러리 (흰 사각형) -->
-            <FrameLayout
-                android:id="@+id/btnGallery"
-                android:layout_width="44dp"
-                android:layout_height="44dp"
-                android:layout_alignParentStart="true"
-                android:layout_centerVertical="true"
-                android:background="#FFFFFF"
-                android:clickable="true"
-                android:focusable="true" />
-
-            <!-- 셔터 버튼 (라벤더 링 + 흰 원) -->
-            <FrameLayout
-                android:id="@+id/btnShutter"
-                android:layout_width="76dp"
-                android:layout_height="76dp"
-                android:layout_centerInParent="true"
-                android:clickable="true"
-                android:focusable="true">
-
-                <View
-                    android:layout_width="76dp"
-                    android:layout_height="76dp"
-                    android:background="@drawable/bg_shutter_ring" />
-
-                <View
-                    android:layout_width="58dp"
-                    android:layout_height="58dp"
-                    android:layout_gravity="center"
-                    android:background="@drawable/bg_shutter" />
-
-            </FrameLayout>
-
-        </RelativeLayout>
-
-        <!-- 모드 라벨 행 -->
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingStart="52dp"
-            android:paddingEnd="52dp">
-
-            <!-- QR 스캔 (왼쪽, 비활성) -->
-            <TextView
-                android:id="@+id/tabQr"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_centerVertical="true"
-                android:text="QR 스캔"
-                android:textColor="#606090"
-                android:textSize="16sp"
-                android:clickable="true"
-                android:focusable="true" />
-
-            <!-- 영수증 스캔 (중앙, 활성): 텍스트 → ▲ 순서 -->
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:gravity="center_horizontal"
-                android:layout_centerHorizontal="true">
-
-                <TextView
-                    android:id="@+id/tabReceipt"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="영수증 스캔"
-                    android:textColor="#FFFFFF"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="▲"
-                    android:textColor="#FFFFFF"
-                    android:textSize="12sp"
-                    android:layout_marginTop="2dp" />
-
-            </LinearLayout>
-
-        </RelativeLayout>
-
-    </LinearLayout>
-
-</LinearLayout>
+</FrameLayout>
