@@ -52,6 +52,13 @@ data class AddItemRequest(
     val quantity: Int
 )
 
+/** POST /ocr/attach-photo 응답 — 완료된 정산방에 사진만 순수 첨부(OCR·금액 계산 없음) */
+@Serializable
+data class AttachPhotoResponse(
+    val round: Int = 1,
+    @SerialName("image_url") val imageUrl: String? = null
+)
+
 // ── 매퍼 ─────────────────────────────────────────────
 fun OcrItemDto.toDraft() = ReceiptItemDraft(name = name, price = price, quantity = quantity)
 fun ReceiptItemDraft.toDto() = OcrItemDto(name = name, price = price, quantity = quantity)

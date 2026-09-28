@@ -3,6 +3,7 @@ package com.android.bilzy.data.repository
 import com.android.bilzy.data.remote.BilzyApi
 import com.android.bilzy.data.remote.dto.AddMemberRequest
 import com.android.bilzy.data.remote.dto.CreateSettlementRequest
+import com.android.bilzy.data.remote.dto.SetMemberCapacityRequest
 import com.android.bilzy.data.remote.dto.SetMemberRoundsRequest
 import com.android.bilzy.data.remote.dto.SetRoundAdjustmentRequest
 import com.android.bilzy.data.remote.dto.UpdateSettlementRequest
@@ -28,6 +29,9 @@ class SettlementRepositoryImpl @Inject constructor(
 
     override suspend fun updateTitle(id: String, title: String): Settlement =
         api.updateSettlement(id, UpdateSettlementRequest(title)).toDomain()
+
+    override suspend fun setMemberCapacity(id: String, memberCapacity: Int): Settlement =
+        api.setMemberCapacity(id, SetMemberCapacityRequest(memberCapacity)).toDomain()
 
     override suspend fun updateStatus(id: String, status: SettlementStatus): Settlement =
         api.updateSettlementStatus(id, UpdateStatusRequest(status.value)).toDomain()

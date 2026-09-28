@@ -1,6 +1,7 @@
 package com.android.bilzy.data.remote
 
 import com.android.bilzy.data.remote.dto.AddItemRequest
+import com.android.bilzy.data.remote.dto.AttachPhotoResponse
 import com.android.bilzy.data.remote.dto.AddMemberRequest
 import com.android.bilzy.data.remote.dto.AuthResponse
 import com.android.bilzy.data.remote.dto.CreateSettlementRequest
@@ -14,6 +15,7 @@ import com.android.bilzy.data.remote.dto.RefreshRequest
 import com.android.bilzy.data.remote.dto.SettlementDto
 import com.android.bilzy.data.remote.dto.SettlementMemberDto
 import com.android.bilzy.data.remote.dto.SettlementMemberRoundDto
+import com.android.bilzy.data.remote.dto.SetMemberCapacityRequest
 import com.android.bilzy.data.remote.dto.SetMemberRoundsRequest
 import com.android.bilzy.data.remote.dto.SetMemberRoundsResponse
 import com.android.bilzy.data.remote.dto.SetRoundAdjustmentRequest
@@ -89,6 +91,13 @@ interface BilzyApi {
     @DELETE("settlements/{id}")
     suspend fun deleteSettlement(@Path("id") id: String)
 
+    /** PeopleCount 화면에서 정한 정원(총 인원) 저장(방장만 가능). 이후 join이 이 값을 넘지 못하게 막는다. */
+    @PATCH("settlements/{id}/capacity")
+    suspend fun setMemberCapacity(
+        @Path("id") id: String,
+        @Body body: SetMemberCapacityRequest
+    ): SettlementDto
+
     /** QR로 정산방 참여. 본인 닉네임으로 멤버 추가. */
     @POST("settlements/{id}/join")
     suspend fun joinSettlement(
@@ -148,6 +157,14 @@ interface BilzyApi {
 
     @POST("ocr/add-item")
     suspend fun addItem(@Body body: AddItemRequest): ReceiptItemDto
+
+    /** 완료된 정산방에도 쓸 수 있는 순수 사진 첨부(OCR·금액 계산 없음). */
+    @Multipart
+    @POST("ocr/attach-photo")
+    suspend fun attachReceiptPhoto(
+        @Query("settlement_id") settlementId: String,
+        @Part file: MultipartBody.Part
+    ): AttachPhotoResponse
 
     /**
      * 정산건의 특정 라운드에 붙은 영수증 이미지 삭제(저장 안 함 선택 시). round 기본값 1.

@@ -7,19 +7,19 @@
     android:background="@color/bg_dark">
 
     <!-- Logo -->
-    <TextView
+    <ImageView
         android:id="@+id/tvLogo"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Bilzy"
-        android:textColor="#A5A6F6"
-        android:textStyle="bold|italic"
-        android:textSize="31sp"
-        android:fontFamily="sans-serif-black"
+        android:layout_height="24dp"
+        android:src="@drawable/logo_bilzy"
+        android:adjustViewBounds="true"
+        android:scaleType="fitStart"
+        android:contentDescription="@null"
         android:layout_marginStart="20dp"
         android:layout_marginTop="52dp"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+    />
 
     <!-- Back + title row -->
     <LinearLayout
@@ -79,7 +79,7 @@
                 android:layout_height="wrap_content"
                 android:text="영수증 내역"
                 android:textColor="#FFFFFF"
-                android:textSize="18sp"
+                android:textSize="15sp"
                 android:textStyle="bold"
                 android:layout_marginBottom="10dp" />
 
@@ -101,7 +101,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="@drawable/bg_amount_card"
+                android:background="@drawable/bg_amount_card_adjust"
                 android:padding="14dp"
                 android:layout_marginBottom="16dp">
 
@@ -111,7 +111,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
-                    android:background="@drawable/bg_chip_purple"
+                    android:background="@drawable/bg_chip_purple_flat"
                     android:paddingStart="8dp"
                     android:paddingEnd="8dp"
                     android:paddingTop="4dp"
@@ -122,7 +122,7 @@
                         android:layout_width="14dp"
                         android:layout_height="14dp"
                         android:src="@drawable/ic_person"
-                        app:tint="#BEBEF7"
+                        app:tint="#FFFFFF"
                         android:layout_marginEnd="4dp" />
 
                     <TextView
@@ -130,7 +130,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="기본 1/N"
-                        android:textColor="#BEBEF7"
+                        android:textColor="#FFFFFF"
                         android:textSize="13sp" />
 
                 </LinearLayout>
@@ -158,7 +158,7 @@
                         android:layout_alignParentEnd="true"
                         android:layout_centerVertical="true"
                         android:text=""
-                        android:textColor="#7CE7A0"
+                        android:textColor="#67F874"
                         android:textSize="14sp"
                         android:background="@drawable/bg_chip_green_outline"
                         android:paddingStart="8dp"
@@ -188,20 +188,15 @@
                 android:textSize="14sp"
                 android:layout_marginBottom="12dp" />
 
-            <!-- 가로 스크롤 칩 행 (항목 수 제한 없음, 동적 생성) -->
-            <HorizontalScrollView
+            <!-- 항목 칩 행 (항목 수 제한 없음, 동적 생성) — 잘리지 않도록 가로 스크롤 대신 줄바꿈 -->
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chipRow"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:scrollbars="none"
-                android:layout_marginBottom="12dp">
-
-                <LinearLayout
-                    android:id="@+id/chipRow"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal" />
-
-            </HorizontalScrollView>
+                android:layout_marginBottom="12dp"
+                app:singleLine="false"
+                app:chipSpacingHorizontal="8dp"
+                app:chipSpacingVertical="8dp" />
 
             <!-- Info box -->
             <LinearLayout

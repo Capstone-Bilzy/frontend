@@ -85,6 +85,7 @@ class QrScanViewModel @Inject constructor(
         "INVITE_TOKEN_EXPIRED" -> "초대 링크가 만료됐어요. 방장에게 새 링크를 요청해주세요"
         "INVITE_TOKEN_MISSING", "INVITE_TOKEN_INVALID" -> "유효하지 않은 초대 링크예요"
         "SETTLEMENT_DONE" -> "이미 완료된 정산방이에요"
+        "SETTLEMENT_FULL" -> "정원이 다 찼어요"
         else -> message ?: "정산방 참여에 실패했어요"
     }
 

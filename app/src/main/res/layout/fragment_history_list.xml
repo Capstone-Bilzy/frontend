@@ -3,22 +3,22 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg_home_gradient">
+    android:background="@drawable/bg_home_gradient_dark">
 
     <!-- Logo -->
-    <TextView
+    <ImageView
         android:id="@+id/tvLogo"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="24dp"
+        android:src="@drawable/logo_bilzy"
+        android:adjustViewBounds="true"
+        android:scaleType="fitStart"
+        android:contentDescription="@null"
         android:layout_marginStart="20dp"
         android:layout_marginTop="52dp"
-        android:fontFamily="sans-serif-black"
-        android:text="Bilzy"
-        android:textColor="#A5A6F6"
-        android:textSize="31sp"
-        android:textStyle="bold|italic"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+    />
 
     <!-- Scroll content -->
     <androidx.core.widget.NestedScrollView
@@ -45,11 +45,40 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="24dp"
-                android:background="@drawable/bg_glass_card"
+                android:background="@drawable/bg_history_summary_card"
                 android:orientation="vertical"
                 android:padding="20dp">
 
+                <!-- 이번 달 내역이 없을 때: 아이콘 + 안내 문구 -->
+                <LinearLayout
+                    android:id="@+id/monthEmptyGroup"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal"
+                    android:paddingTop="16dp"
+                    android:paddingBottom="12dp"
+                    android:visibility="gone">
+
+                    <ImageView
+                        android:layout_width="90dp"
+                        android:layout_height="90dp"
+                        android:src="@drawable/character_smile"
+                        android:scaleType="fitCenter"
+                        android:layout_marginBottom="14dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="이번 달 정산 내역이 없어요"
+                        android:textColor="#FFFFFF"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
                 <RelativeLayout
+                    android:id="@+id/monthHeaderRow"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="16dp">
@@ -89,6 +118,7 @@
                 </RelativeLayout>
 
                 <LinearLayout
+                    android:id="@+id/monthStatsRow"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
@@ -105,8 +135,8 @@
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="4dp"
                             android:text="총 금액"
-                            android:textColor="#80FFFFFF"
-                            android:textSize="13sp" />
+                            android:textColor="@color/primary_light"
+                            android:textSize="15sp" />
 
                         <TextView
                             android:id="@+id/tvTotalAmount"
@@ -135,8 +165,8 @@
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="4dp"
                             android:text="횟수"
-                            android:textColor="#80FFFFFF"
-                            android:textSize="13sp" />
+                            android:textColor="@color/primary_light"
+                            android:textSize="15sp" />
 
                         <TextView
                             android:id="@+id/tvCount"
@@ -193,7 +223,7 @@
         android:id="@+id/bottomNav"
         android:layout_width="0dp"
         android:layout_height="72dp"
-        android:background="@drawable/bg_bottom_nav"
+        android:background="@android:color/transparent"
         android:gravity="center"
         android:orientation="horizontal"
         android:paddingBottom="8dp"
@@ -216,14 +246,14 @@
                 android:layout_width="22dp"
                 android:layout_height="22dp"
                 android:src="@drawable/ic_home"
-                app:tint="#80FFFFFF" />
+                app:tint="@color/white" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
                 android:text="홈"
-                android:textColor="#80FFFFFF"
+                android:textColor="@color/white"
                 android:textSize="12sp" />
         </LinearLayout>
 
@@ -241,14 +271,14 @@
                 android:layout_width="22dp"
                 android:layout_height="22dp"
                 android:src="@drawable/ic_scan"
-                app:tint="#80FFFFFF" />
+                app:tint="@color/white" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
                 android:text="스캔"
-                android:textColor="#80FFFFFF"
+                android:textColor="@color/white"
                 android:textSize="12sp" />
         </LinearLayout>
 
@@ -262,31 +292,22 @@
             android:gravity="center"
             android:orientation="vertical">
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/bg_nav_active"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:paddingStart="18dp"
-                android:paddingTop="6dp"
-                android:paddingEnd="18dp"
-                android:paddingBottom="6dp">
+            
 
                 <ImageView
                     android:layout_width="22dp"
                     android:layout_height="22dp"
                     android:src="@drawable/ic_history"
-                    app:tint="#A5A6F6" />
+                    app:tint="@color/nav_selector" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
                     android:text="정산내역"
-                    android:textColor="#A5A6F6"
+                    android:textColor="@color/nav_selector"
                     android:textSize="12sp" />
-            </LinearLayout>
+            
         </LinearLayout>
 
         <LinearLayout
@@ -303,14 +324,14 @@
                 android:layout_width="22dp"
                 android:layout_height="22dp"
                 android:src="@drawable/ic_mapage"
-                app:tint="#80FFFFFF" />
+                app:tint="@color/white" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
                 android:text="마이페이지"
-                android:textColor="#80FFFFFF"
+                android:textColor="@color/white"
                 android:textSize="12sp" />
         </LinearLayout>
     </LinearLayout>

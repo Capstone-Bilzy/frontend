@@ -18,15 +18,15 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <TextView
+        <ImageView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Bilzy"
-            android:textColor="#A5A6F6"
-            android:textStyle="bold|italic"
-            android:textSize="34sp"
-            android:fontFamily="sans-serif-black"
-            android:layout_marginBottom="28dp" />
+            android:layout_height="26dp"
+            android:src="@drawable/logo_bilzy"
+            android:adjustViewBounds="true"
+            android:scaleType="fitStart"
+            android:contentDescription="@null"
+            android:layout_marginBottom="28dp"
+        />
 
         <TextView
             android:layout_width="wrap_content"

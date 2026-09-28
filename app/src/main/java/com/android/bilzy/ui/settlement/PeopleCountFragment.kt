@@ -4,13 +4,16 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.android.bilzy.R
 import com.android.bilzy.databinding.FragmentPeopleCountBinding
 import com.android.bilzy.ui.room.RoomViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class PeopleCountFragment : Fragment() {
@@ -45,7 +48,12 @@ class PeopleCountFragment : Fragment() {
 
         binding.btnNext.setOnClickListener {
             roomViewModel.expectedCount = count
-            findNavController().navigate(R.id.action_peopleCount_to_qrInvite)
+            viewLifecycleOwner.lifecycleScope.launch {
+                if (!roomViewModel.saveMemberCapacity(count)) {
+                    Toast.makeText(requireContext(), "정원 설정 저장에 실패했어요. 정원 제한 없이 진행돼요", Toast.LENGTH_SHORT).show()
+                }
+                findNavController().navigate(R.id.action_peopleCount_to_qrInvite)
+            }
         }
     }
 

@@ -72,7 +72,12 @@ class HistoryListFragment : Fragment() {
         val current = list.filter { yearMonth(it.createdAt) == nowYm }
         val past = list.filter { yearMonth(it.createdAt) != nowYm }
 
-        // 이번 달 요약 카드
+        // 이번 달 요약 카드: 데이터가 없으면 총금액/횟수 대신 아이콘+안내 문구를 보여준다.
+        val hasCurrentMonth = current.isNotEmpty()
+        binding.monthEmptyGroup.visibility = if (hasCurrentMonth) View.GONE else View.VISIBLE
+        binding.monthHeaderRow.visibility = if (hasCurrentMonth) View.VISIBLE else View.GONE
+        binding.monthStatsRow.visibility = if (hasCurrentMonth) View.VISIBLE else View.GONE
+
         val monthTotal = current.sumOf { it.totalAmount }
         binding.tvTotalAmount.text = NumberFormat.getInstance().format(monthTotal) + "원"
         binding.tvCount.text = "${current.size}회"
@@ -96,15 +101,21 @@ class HistoryListFragment : Fragment() {
         amount = NumberFormat.getInstance().format(h.totalAmount) + "원"
     )
 
-    /** "2026-05-24T12:30:..." → "5. 24. 2026" */
+    /** 서버가 UTC(timestamptz)로 내려주는 값을 기기 로컬 시간대로 변환해
+     * "5. 24. 2026 • 12:30 PM" 형식으로 표시(Figma 최종 디자인 기준). */
     private fun formatDate(iso: String?): String {
         iso ?: return ""
-        val parts = iso.substringBefore('T').split('-')
-        if (parts.size < 3) return ""
-        val y = parts[0]
-        val m = parts[1].toIntOrNull() ?: return ""
-        val d = parts[2].toIntOrNull() ?: return ""
-        return "$m. $d. $y"
+        return runCatching {
+            val local = java.time.OffsetDateTime.parse(iso)
+                .atZoneSameInstant(java.time.ZoneId.systemDefault())
+            local.format(
+                java.time.format.DateTimeFormatter.ofPattern("M. d. yyyy • hh:mm a", java.util.Locale.ENGLISH)
+            )
+        }.getOrElse {
+            // 파싱 실패 시 최소한 날짜만이라도 표시
+            val parts = iso.substringBefore('T').split('-')
+            if (parts.size < 3) "" else "${parts[1].toIntOrNull() ?: 0}. ${parts[2].toIntOrNull() ?: 0}. ${parts[0]}"
+        }
     }
 
     private fun yearMonth(iso: String?): String =

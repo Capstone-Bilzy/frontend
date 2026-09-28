@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 프로토타입 .bz-center-glow: radial-gradient(90% 55% at 50% 52%, rgba(74,58,168,.65) 0%, rgba(30,26,88,.35) 45%, transparent 75%)
+     타원형(oval) 배경 위에 원형 그라데이션을 얹어 근사한 타원 글로우 -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+    <gradient
+        android:type="radial"
+        android:gradientRadius="50%p"
+        android:startColor="#A64A3AA8"
+        android:centerColor="#591E1A58"
+        android:endColor="#00080B24"/>
+</shape>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 금액조정 "AI가 찾은 항목" 선택된 칩: 프로토타입 .bz-chips button.on
+     (border-color:#8B87F5, background:rgba(108,99,255,.2)) 근사 -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="#336C63FF" />
+    <corners android:radius="19dp" />
+    <stroke android:color="@color/primary_light" android:width="1.4dp" />
+</shape>

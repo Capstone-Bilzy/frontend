@@ -53,17 +53,16 @@
             android:paddingBottom="20dp">
 
             <!-- 프로토타입 .bz-consent-head: 로고 + "{provider}로 간편하게 시작하세요" -->
-            <TextView
+            <ImageView
                 android:id="@+id/tvLogo"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="22dp"
+                android:src="@drawable/logo_bilzy"
+                android:adjustViewBounds="true"
+                android:scaleType="fitStart"
+                android:contentDescription="@null"
                 android:layout_gravity="center_horizontal"
-                android:text="Bilzy"
-                android:textColor="#A5A6F6"
-                android:textStyle="bold|italic"
-                android:textSize="30sp"
-                android:fontFamily="sans-serif-black"
-                android:letterSpacing="-0.02" />
+            />
 
             <TextView
                 android:id="@+id/tvHeadline"

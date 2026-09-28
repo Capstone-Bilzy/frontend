@@ -81,10 +81,12 @@ class SettlementResultFragment : Fragment() {
         else settlement.items.sumOf { it.price * it.quantity }
 
         binding.tvMemberChip.text = "${members.size}명 참여"
-        binding.tvRoomTitle.text = settlement.title.ifBlank { "정산" }
-        binding.tvTotalAmount.text = "${nf.format(total)}원"
-        binding.tvDate.text = formatDate(settlement.createdAt)
+        val date = formatDate(settlement.createdAt)
+        binding.tvRoomTitle.text = settlement.title.ifBlank { "정산" } + (if (date.isNotBlank()) " · $date" else "")
+        binding.tvTotalAmount.text = bigAmountSpan(total)
         renderAvatars(members)
+        renderRounds(settlement)
+        renderPayerLine(settlement, total)
 
         // 저장된 금액이 있으면 사용, 없으면 엔빵
         val hasStored = members.any { it.amount > 0 }
@@ -93,11 +95,12 @@ class SettlementResultFragment : Fragment() {
 
         val container = binding.personsContainer
         container.removeAllViews()
+        val receipts = settlement.receipts
         members.forEachIndexed { i, m ->
             val amount = if (hasStored) m.amount else shares.getOrElse(i) { 0L }
             val reason = m.reason?.takeIf { hasStored && it.isNotBlank() }
             val roundAmounts = if (hasStored) m.rounds else emptyList()
-            container.addView(personCard(m.nickname, amount, m.nickname == myNick, reason, roundAmounts))
+            container.addView(personCard(m.nickname, amount, m.nickname == myNick, reason, roundAmounts, receipts))
         }
     }
 
@@ -154,18 +157,82 @@ class SettlementResultFragment : Fragment() {
         }
     }
 
+    /** 라운드(영수증)별 "N차 · 참여인원" 칩 + 합계(프로토타입 .bz-res-rounds). 라운드 사이 세로 구분선 포함. */
+    private fun renderRounds(settlement: Settlement) {
+        val container = binding.roundsContainer
+        container.removeAllViews()
+        val receipts = settlement.receipts.sortedBy { it.round }
+        binding.roundsDivider.visibility = if (receipts.isEmpty()) View.GONE else View.VISIBLE
+        receipts.forEachIndexed { index, receipt ->
+            if (index > 0) {
+                container.addView(View(requireContext()).apply {
+                    layoutParams = LinearLayout.LayoutParams(dp(1), dp(48)).apply {
+                        marginStart = dp(4); marginEnd = dp(4)
+                        gravity = Gravity.CENTER_VERTICAL
+                    }
+                    setBackgroundColor(Color.parseColor("#33FFFFFF"))
+                })
+            }
+            val participants = settlement.members.count { m -> m.rounds.any { it.round == receipt.round } }
+            container.addView(roundColumn(receipt.round, participants, receipt.totalAmount))
+        }
+    }
+
+    private fun roundColumn(round: Int, participants: Int, amount: Long): View {
+        val ctx = requireContext()
+        val col = LinearLayout(ctx).apply {
+            orientation = LinearLayout.VERTICAL
+            gravity = Gravity.CENTER_HORIZONTAL
+            layoutParams = LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f)
+        }
+        col.addView(TextView(ctx).apply {
+            text = "${round}차 · ${participants}명"
+            setTextColor(Color.WHITE)
+            setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
+            setBackgroundResource(R.drawable.bg_round_chip)
+            setPadding(dp(12), dp(4), dp(12), dp(4))
+            layoutParams = LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+        })
+        col.addView(TextView(ctx).apply {
+            text = "${nf.format(amount)}원"
+            setTextColor(Color.WHITE)
+            setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f)
+            setTypeface(typeface, Typeface.BOLD)
+            layoutParams = LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
+            ).apply { topMargin = dp(8) }
+        })
+        return col
+    }
+
+    /** "{결제자} 전액 결제 · 받을 금액 {금액}"(프로토타입 .bz-res-payer). 결제자를 찾을 수 없으면 숨김. */
+    private fun renderPayerLine(settlement: Settlement, total: Long) {
+        val payer = settlement.members.find { it.userId == settlement.createdBy }
+        if (payer == null) {
+            binding.payerRow.visibility = View.GONE
+            return
+        }
+        binding.payerRow.visibility = View.VISIBLE
+        val receive = (total - payer.amount).coerceAtLeast(0)
+        binding.tvPayerPrefix.text = "${payer.nickname} 전액 결제 · 받을 금액 "
+        binding.tvPayerAmount.text = "${nf.format(receive)}원"
+    }
+
     private fun personCard(
         name: String,
         amount: Long,
         isMe: Boolean,
         reason: String?,
-        roundAmounts: List<MemberRoundAmount> = emptyList()
+        roundAmounts: List<MemberRoundAmount> = emptyList(),
+        receipts: List<com.android.bilzy.domain.model.Receipt> = emptyList()
     ): View {
         val ctx = requireContext()
         val card = LinearLayout(ctx).apply {
             orientation = LinearLayout.VERTICAL
             setBackgroundResource(R.drawable.bg_person_card)
-            setPadding(dp(14), dp(14), dp(14), dp(14))
+            setPadding(dp(17), dp(22), dp(16), dp(22))
             layoutParams = LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT
             ).apply { bottomMargin = dp(8) }
@@ -186,16 +253,17 @@ class SettlementResultFragment : Fragment() {
         nameWrap.addView(TextView(ctx).apply {
             text = name
             setTextColor(Color.WHITE)
-            setTextSize(TypedValue.COMPLEX_UNIT_SP, 15f)
+            setTextSize(TypedValue.COMPLEX_UNIT_SP, 20f)
             setTypeface(typeface, Typeface.BOLD)
         })
         if (isMe) {
             nameWrap.addView(TextView(ctx).apply {
                 text = "나"
-                setTextColor(Color.parseColor("#BEBEF7"))
-                setTextSize(TypedValue.COMPLEX_UNIT_SP, 11f)
-                setBackgroundResource(R.drawable.bg_chip_purple)
-                setPadding(dp(6), dp(2), dp(6), dp(2))
+                setTextColor(Color.WHITE)
+                setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
+                setTypeface(typeface, Typeface.BOLD)
+                setBackgroundResource(R.drawable.bg_me_badge)
+                setPadding(dp(8), dp(3), dp(8), dp(3))
                 layoutParams = LinearLayout.LayoutParams(
                     ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
                 ).apply { marginStart = dp(6) }
@@ -206,7 +274,7 @@ class SettlementResultFragment : Fragment() {
         row.addView(TextView(ctx).apply {
             text = "${nf.format(amount)}원"
             setTextColor(Color.WHITE)
-            setTextSize(TypedValue.COMPLEX_UNIT_SP, 15f)
+            setTextSize(TypedValue.COMPLEX_UNIT_SP, 20f)
             setTypeface(typeface, Typeface.BOLD)
             layoutParams = RelativeLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
@@ -216,41 +284,100 @@ class SettlementResultFragment : Fragment() {
             }
         })
         card.addView(row)
-        val rounds: List<Triple<String, Long, String>> = if (roundAmounts.isNotEmpty()) {
-            roundAmounts.map { Triple("${it.round}차", it.amount, it.reason?.takeIf(String::isNotBlank) ?: "1/N 정산") }
+
+        // Figma 실제 디자인(정산 결과 요약 화면) 기준: 참여자 카드는 정산방의 모든 라운드를 다 보여준다 —
+        // 참여한 라운드는 금액+태그(제외 항목별로 각각 칩, 없으면 "1/N 정산"), 참여 안 한 라운드는
+        // "N차 - 0원" + "미참여" 칩으로 표시한다. receipts가 없으면(구버전 데이터) 기존처럼 단일 라운드로 폴백.
+        val roundsByNumber = roundAmounts.associateBy { it.round }
+        data class RoundRow(val label: String, val amount: Long, val tags: List<String>)
+        val rows: List<RoundRow> = if (receipts.isNotEmpty()) {
+            receipts.sortedBy { it.round }.map { receipt ->
+                val ra = roundsByNumber[receipt.round]
+                if (ra != null) {
+                    val itemTags = ra.excludedItemNames.mapNotNull { itemName ->
+                        receipt.items.find { it.name == itemName }
+                            ?.let { "$itemName -${nf.format(it.price * it.quantity)}원" }
+                    }
+                    val tags = itemTags.ifEmpty {
+                        listOf(ra.reason?.takeIf(String::isNotBlank) ?: "1/N 정산")
+                    }
+                    RoundRow("${receipt.round}차", ra.amount, tags)
+                } else {
+                    RoundRow("${receipt.round}차", 0L, listOf("미참여"))
+                }
+            }
+        } else if (roundAmounts.isNotEmpty()) {
+            roundAmounts.map {
+                RoundRow("${it.round}차", it.amount, listOf(it.reason?.takeIf(String::isNotBlank) ?: "1/N 정산"))
+            }
         } else {
-            listOf(Triple("1차", amount, reason ?: "1/N 정산"))
+            listOf(RoundRow("1차", amount, listOf(reason ?: "1/N 정산")))
         }
-        rounds.forEach { (round, roundAmount, tag) -> card.addView(roundTagRow(round, roundAmount, tag)) }
+        rows.forEachIndexed { index, r ->
+            // 프로토타입 .bz-person-row: 첫 행 제외 위쪽 구분선
+            if (index > 0) {
+                card.addView(View(ctx).apply {
+                    layoutParams = LinearLayout.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT, dp(1)
+                    ).apply { topMargin = dp(18) }
+                    setBackgroundColor(Color.parseColor("#33FFFFFF"))
+                })
+            }
+            card.addView(roundTagRow(r.label, r.amount, r.tags))
+        }
         return card
     }
 
-    /** 라운드별 "N차 - 금액" 텍스트 + 사유 태그 칩 한 행. */
-    private fun roundTagRow(round: String, amount: Long, tag: String): View {
+    /** 라운드별 "N차 - 금액" 텍스트 + 태그 칩들(제외 항목 개수만큼, 잘리지 않게 줄바꿈)이 있는 블록. */
+    private fun roundTagRow(round: String, amount: Long, tags: List<String>): View {
         val ctx = requireContext()
-        val row = LinearLayout(ctx).apply {
-            orientation = LinearLayout.HORIZONTAL
-            gravity = Gravity.CENTER_VERTICAL
+        val block = LinearLayout(ctx).apply {
+            orientation = LinearLayout.VERTICAL
             layoutParams = LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT
-            ).apply { topMargin = dp(8) }
+            ).apply { topMargin = dp(18) }
         }
-        row.addView(TextView(ctx).apply {
+        block.addView(TextView(ctx).apply {
             text = "$round - ${nf.format(amount)}원"
-            setTextColor(Color.parseColor("#BEBEF7"))
-            setTextSize(TypedValue.COMPLEX_UNIT_SP, 13f)
-            layoutParams = LinearLayout.LayoutParams(
-                0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f
+            setTextColor(Color.parseColor("#AAB2FF"))
+            setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f)
+        })
+        block.addView(
+            com.google.android.material.chip.ChipGroup(ctx).apply {
+                isSingleLine = false
+                chipSpacingHorizontal = dp(8)
+                chipSpacingVertical = dp(6)
+                layoutParams = LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT
+                ).apply { topMargin = dp(8) }
+                tags.forEach { tag ->
+                    addView(TextView(ctx).apply {
+                        text = tag
+                        setTextColor(Color.parseColor("#67F874"))
+                        setTextSize(TypedValue.COMPLEX_UNIT_SP, 13f)
+                        setBackgroundResource(R.drawable.bg_chip_green_outline)
+                        setPadding(dp(12), dp(4), dp(12), dp(4))
+                    })
+                }
+            }
+        )
+        return block
+    }
+
+    /** Figma 실측: 총액 숫자는 34sp, "원"은 22sp로 크기가 다르다. */
+    private fun bigAmountSpan(amount: Long): android.text.SpannableString {
+        val number = nf.format(amount)
+        val full = "${number}원"
+        val px22sp = TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_SP, 22f, resources.displayMetrics
+        ).toInt()
+        return android.text.SpannableString(full).apply {
+            setSpan(
+                android.text.style.AbsoluteSizeSpan(px22sp, false),
+                number.length, full.length,
+                android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
             )
-        })
-        row.addView(TextView(ctx).apply {
-            text = tag
-            setTextColor(Color.parseColor("#7CE7A0"))
-            setTextSize(TypedValue.COMPLEX_UNIT_SP, 11f)
-            setBackgroundResource(R.drawable.bg_chip_green_outline)
-            setPadding(dp(10), dp(4), dp(10), dp(4))
-        })
-        return row
+        }
     }
 
     private fun dp(value: Int): Int =

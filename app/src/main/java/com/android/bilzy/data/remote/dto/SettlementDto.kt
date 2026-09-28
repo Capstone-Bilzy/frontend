@@ -31,6 +31,10 @@ data class AddMemberRequest(
 @Serializable
 data class SetMemberRoundsRequest(val rounds: List<Int> = emptyList())
 
+/** PATCH /settlements/{id}/capacity 요청 바디. PeopleCount 화면에서 정한 정원. */
+@Serializable
+data class SetMemberCapacityRequest(@SerialName("member_capacity") val memberCapacity: Int)
+
 /** PATCH /settlements/{id}/members/me/rounds 응답. */
 @Serializable
 data class SetMemberRoundsResponse(

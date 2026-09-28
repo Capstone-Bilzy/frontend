@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 정산방 초대 화면 전용: 홈 화면과 같은 어두운 톤, 중심을 화면 위쪽으로 이동 -->
+    <gradient
+        android:type="radial"
+        android:centerX="50%"
+        android:centerY="22%"
+        android:gradientRadius="820"
+        android:startColor="#362E9E"
+        android:endColor="#080B24"/>
+</shape>

@@ -16,15 +16,15 @@
         android:paddingEnd="20dp">
 
         <!-- Logo -->
-        <TextView
+        <ImageView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Bilzy"
-            android:textColor="#A5A6F6"
-            android:textStyle="bold|italic"
-            android:textSize="31sp"
-            android:fontFamily="sans-serif-black"
-            android:layout_marginBottom="20dp" />
+            android:layout_height="24dp"
+            android:src="@drawable/logo_bilzy"
+            android:adjustViewBounds="true"
+            android:scaleType="fitStart"
+            android:contentDescription="@null"
+            android:layout_marginBottom="20dp"
+        />
 
         <!-- 3D Wait illustration -->
         <ImageView

@@ -7,19 +7,19 @@
     android:background="@color/bg_dark">
 
     <!-- Logo -->
-    <TextView
+    <ImageView
         android:id="@+id/tvLogo"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Bilzy"
-        android:textColor="#A5A6F6"
-        android:textStyle="bold|italic"
-        android:textSize="31sp"
-        android:fontFamily="sans-serif-black"
+        android:layout_height="24dp"
+        android:src="@drawable/logo_bilzy"
+        android:adjustViewBounds="true"
+        android:scaleType="fitStart"
+        android:contentDescription="@null"
         android:layout_marginStart="20dp"
         android:layout_marginTop="52dp"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+    />
 
     <!-- Back + title -->
     <LinearLayout
@@ -73,63 +73,72 @@
             android:paddingEnd="20dp"
             android:paddingBottom="8dp">
 
-            <!-- Summary card -->
+            <!-- Summary card: 프로토타입 .bz-res-summary(반투명 화이트+테두리, 라운드별 합계 + 결제자 안내 포함) -->
             <LinearLayout
                 android:id="@+id/summaryCard"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:background="@drawable/bg_summary_card"
-                android:padding="16dp"
+                android:padding="20dp"
                 android:layout_marginBottom="16dp">
 
-                <!-- "N명 참여" chip -->
-                <LinearLayout
-                    android:layout_width="wrap_content"
+                <!-- Avatar row(프로필 사진) + "N명 참여" chip -->
+                <RelativeLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:background="@drawable/bg_chip_purple"
-                    android:paddingStart="8dp"
-                    android:paddingEnd="8dp"
-                    android:paddingTop="4dp"
-                    android:paddingBottom="4dp"
-                    android:layout_marginBottom="8dp">
+                    android:layout_marginBottom="12dp">
 
-                    <ImageView
-                        android:layout_width="14dp"
-                        android:layout_height="14dp"
-                        android:src="@drawable/ic_person"
-                        app:tint="#BEBEF7"
-                        android:layout_marginEnd="4dp" />
-
-                    <TextView
-                        android:id="@+id/tvMemberChip"
+                    <LinearLayout
+                        android:id="@+id/avatarRow"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text=""
-                        android:textColor="#BEBEF7"
-                        android:textSize="13sp" />
+                        android:orientation="horizontal"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true" />
 
-                </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:background="@drawable/bg_chip_purple"
+                        android:paddingStart="8dp"
+                        android:paddingEnd="8dp"
+                        android:paddingTop="4dp"
+                        android:paddingBottom="4dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true">
 
+                        <ImageView
+                            android:layout_width="14dp"
+                            android:layout_height="14dp"
+                            android:src="@drawable/ic_person"
+                            app:tint="#BEBEF7"
+                            android:layout_marginEnd="4dp" />
+
+                        <TextView
+                            android:id="@+id/tvMemberChip"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text=""
+                            android:textColor="#BEBEF7"
+                            android:textSize="13sp" />
+
+                    </LinearLayout>
+
+                </RelativeLayout>
+
+                <!-- meta: "{정산명} · {날짜}" (프로토타입 .bz-res-meta) -->
                 <TextView
                     android:id="@+id/tvRoomTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text=""
-                    android:textColor="#FFFFFF"
-                    android:textSize="22sp"
-                    android:textStyle="bold"
-                    android:layout_marginBottom="8dp" />
+                    android:textColor="#AAB2FF"
+                    android:textSize="16sp" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="총 결제 금액"
-                    android:textColor="#BEBEF7"
-                    android:textSize="14sp" />
-
+                <!-- 총액(프로토타입 .bz-res-total). 숫자 34sp + "원" 22sp는 Kotlin에서 SpannableString으로 처리 -->
                 <TextView
                     android:id="@+id/tvTotalAmount"
                     android:layout_width="wrap_content"
@@ -138,31 +147,49 @@
                     android:textColor="#FFFFFF"
                     android:textSize="34sp"
                     android:textStyle="bold"
-                    android:layout_marginBottom="10dp" />
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="16dp" />
 
-                <!-- Avatar row + date -->
-                <RelativeLayout
+                <!-- 라운드별 합계(프로토타입 .bz-res-rounds) -->
+                <LinearLayout
+                    android:id="@+id/roundsContainer"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingBottom="16dp" />
 
-                    <LinearLayout
-                        android:id="@+id/avatarRow"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_alignParentStart="true" />
+                <View
+                    android:id="@+id/roundsDivider"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/divider" />
+
+                <!-- 결제자 안내(프로토타입 .bz-res-payer) -->
+                <LinearLayout
+                    android:id="@+id/payerRow"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="14dp">
 
                     <TextView
-                        android:id="@+id/tvDate"
+                        android:id="@+id/tvPayerPrefix"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true"
                         android:text=""
-                        android:textColor="#8888BB"
-                        android:textSize="14sp" />
+                        android:textColor="#AAB2FF"
+                        android:textSize="16sp" />
 
-                </RelativeLayout>
+                    <TextView
+                        android:id="@+id/tvPayerAmount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:textColor="#AAB2FF"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
 
             </LinearLayout>
 

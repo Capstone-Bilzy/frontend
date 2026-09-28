@@ -12,6 +12,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
@@ -138,7 +139,7 @@ class CalculatingFragment : Fragment() {
         row.weightSum = joined.toFloat()
         val myNick = roomViewModel.myNickname.value
         members.forEach { member ->
-            row.addView(avatarTile(member.nickname, member.nickname == myNick))
+            row.addView(avatarTile(member.nickname, member.nickname == myNick, member.ready))
         }
 
         renderPending(members)
@@ -175,7 +176,7 @@ class CalculatingFragment : Fragment() {
         }
     }
 
-    private fun avatarTile(name: String, isMe: Boolean): View {
+    private fun avatarTile(name: String, isMe: Boolean, ready: Boolean): View {
         val ctx = requireContext()
         val tile = LinearLayout(ctx).apply {
             orientation = LinearLayout.VERTICAL
@@ -184,7 +185,9 @@ class CalculatingFragment : Fragment() {
         }
         val circle = FrameLayout(ctx).apply {
             layoutParams = LinearLayout.LayoutParams(dp(44), dp(44)).apply { gravity = Gravity.CENTER_HORIZONTAL }
-            setBackgroundResource(R.drawable.bg_avatar_done)
+            setBackgroundResource(if (ready) R.drawable.bg_avatar_done else R.drawable.bg_avatar_pending)
+            clipChildren = false
+            clipToPadding = false
         }
         circle.addView(TextView(ctx).apply {
             text = name.take(1)
@@ -195,6 +198,22 @@ class CalculatingFragment : Fragment() {
                 ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.CENTER
             )
         })
+        // 특이사항 입력(정산 준비 완료)을 마친 멤버만 체크 배지 표시 — MemberWaitingFragment와 동일 패턴.
+        if (ready) {
+            val checkBadge = FrameLayout(ctx).apply {
+                layoutParams = FrameLayout.LayoutParams(dp(16), dp(16), Gravity.BOTTOM or Gravity.END).apply {
+                    bottomMargin = -dp(1)
+                    marginEnd = -dp(1)
+                }
+                setBackgroundResource(R.drawable.bg_avatar_check_badge)
+            }
+            checkBadge.addView(ImageView(ctx).apply {
+                setImageResource(R.drawable.ic_check)
+                imageTintList = android.content.res.ColorStateList.valueOf(Color.WHITE)
+                layoutParams = FrameLayout.LayoutParams(dp(9), dp(9), Gravity.CENTER)
+            })
+            circle.addView(checkBadge)
+        }
         val label = TextView(ctx).apply {
             text = if (isMe) "$name(나)" else name
             setTextColor(Color.WHITE)

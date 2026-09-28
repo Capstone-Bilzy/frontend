@@ -4,22 +4,22 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg_dark">
+    android:background="@color/splash_navy">
 
     <!-- Logo -->
-    <TextView
+    <ImageView
         android:id="@+id/tvLogo"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Bilzy"
-        android:textColor="#A5A6F6"
-        android:textStyle="bold|italic"
-        android:textSize="31sp"
-        android:fontFamily="sans-serif-black"
+        android:layout_height="24dp"
+        android:src="@drawable/logo_bilzy"
+        android:adjustViewBounds="true"
+        android:scaleType="fitStart"
+        android:contentDescription="@null"
         android:layout_marginStart="20dp"
         android:layout_marginTop="52dp"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+    />
 
     <!-- Back + Page title row -->
     <LinearLayout
@@ -82,83 +82,78 @@
             android:orientation="vertical"
             android:padding="20dp">
 
-            <!-- Summary card -->
+            <!-- Summary card: Figma "정산내역_회사 점심 약속" 실측 기준(정산결과 요약 화면과 동일 구조) -->
             <LinearLayout
+                android:id="@+id/summaryCard"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="@drawable/bg_glass_card"
+                android:background="@drawable/bg_history_detail_top_card"
                 android:padding="20dp"
-                android:layout_marginBottom="24dp">
+                android:layout_marginBottom="16dp">
 
-                <!-- People chip -->
-                <TextView
-                    android:id="@+id/tvPeopleChip"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="👥 4명 참여"
-                    android:textColor="#FFFFFF"
-                    android:textSize="14sp"
-                    android:background="@drawable/bg_chip"
-                    android:paddingStart="10dp"
-                    android:paddingEnd="10dp"
-                    android:paddingTop="4dp"
-                    android:paddingBottom="4dp"
-                    android:layout_marginBottom="10dp" />
-
-                <!-- Settlement name -->
+                <!-- meta: "{정산명} · {날짜}" -->
                 <TextView
                     android:id="@+id/tvSettlementName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="회사 점심 약속 · 1차"
-                    android:textColor="#FFFFFF"
-                    android:textSize="19sp"
-                    android:textStyle="bold"
-                    android:layout_marginBottom="8dp" />
+                    android:text=""
+                    android:textColor="#AAB2FF"
+                    android:textSize="16sp" />
 
-                <!-- Total amount label -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="총 결제 금액"
-                    android:textColor="#80FFFFFF"
-                    android:textSize="14sp"
-                    android:layout_marginBottom="4dp" />
-
-                <!-- Total amount value -->
+                <!-- 총액 -->
                 <TextView
                     android:id="@+id/tvTotalAmount"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="57,500원"
+                    android:text=""
                     android:textColor="#FFFFFF"
                     android:textSize="34sp"
                     android:textStyle="bold"
+                    android:layout_marginTop="8dp"
                     android:layout_marginBottom="16dp" />
 
-                <!-- Avatar row + date -->
-                <RelativeLayout
+                <!-- 라운드별 합계 -->
+                <LinearLayout
+                    android:id="@+id/roundsContainer"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingBottom="16dp" />
 
-                    <LinearLayout
-                        android:id="@+id/avatarRow"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_alignParentStart="true" />
+                <View
+                    android:id="@+id/roundsDivider"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/divider" />
+
+                <!-- 결제자 안내 -->
+                <LinearLayout
+                    android:id="@+id/payerRow"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="14dp">
 
                     <TextView
-                        android:id="@+id/tvDate"
+                        android:id="@+id/tvPayerPrefix"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true"
-                        android:text="2026.05.04"
-                        android:textColor="#80FFFFFF"
-                        android:textSize="14sp" />
-                </RelativeLayout>
+                        android:text=""
+                        android:textColor="#AAB2FF"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/tvPayerAmount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:textColor="#AAB2FF"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
             </LinearLayout>
 
             <!-- 참여자 정산 내역 section -->
@@ -171,12 +166,12 @@
                 android:textStyle="bold"
                 android:layout_marginBottom="12dp" />
 
-            <!-- Participants RecyclerView -->
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvParticipants"
+            <!-- Person cards (실제 참여자로 동적 생성) -->
+            <LinearLayout
+                android:id="@+id/personsContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:nestedScrollingEnabled="false"
+                android:orientation="vertical"
                 android:layout_marginBottom="16dp" />
 
             <!-- 영수증 사진 추가하기 (dashed border) — 보관함 기능 제거로 숨김 -->
@@ -218,7 +213,7 @@
         android:orientation="horizontal"
         android:gravity="center"
         android:paddingBottom="8dp"
-        android:background="@drawable/bg_bottom_nav"
+        android:background="@android:color/transparent"
         android:weightSum="4"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -228,39 +223,34 @@
             android:id="@+id/navHome"
             android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
             android:orientation="vertical" android:gravity="center" android:clickable="true" android:focusable="true">
-            <ImageView android:layout_width="22dp" android:layout_height="22dp" android:src="@drawable/ic_home" app:tint="#80FFFFFF" />
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:text="홈" android:textColor="#80FFFFFF" android:textSize="12sp" />
+            <ImageView android:layout_width="22dp" android:layout_height="22dp" android:src="@drawable/ic_home" app:tint="@color/white" />
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:text="홈" android:textColor="@color/white" android:textSize="12sp" />
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/navScan"
             android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
             android:orientation="vertical" android:gravity="center" android:clickable="true" android:focusable="true">
-            <ImageView android:layout_width="22dp" android:layout_height="22dp" android:src="@drawable/ic_scan" app:tint="#80FFFFFF" />
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:text="스캔" android:textColor="#80FFFFFF" android:textSize="12sp" />
+            <ImageView android:layout_width="22dp" android:layout_height="22dp" android:src="@drawable/ic_scan" app:tint="@color/white" />
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:text="스캔" android:textColor="@color/white" android:textSize="12sp" />
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/navHistory"
             android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
             android:orientation="vertical" android:gravity="center" android:clickable="true" android:focusable="true">
-            <LinearLayout
-                android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:orientation="vertical" android:gravity="center"
-                android:background="@drawable/bg_nav_active"
-                android:paddingStart="18dp" android:paddingEnd="18dp"
-                android:paddingTop="6dp" android:paddingBottom="6dp">
-                <ImageView android:layout_width="22dp" android:layout_height="22dp" android:src="@drawable/ic_history" app:tint="#A5A6F6" />
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:text="정산내역" android:textColor="#A5A6F6" android:textSize="12sp" />
-            </LinearLayout>
+            
+                <ImageView android:layout_width="22dp" android:layout_height="22dp" android:src="@drawable/ic_history" app:tint="@color/nav_selector" />
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:text="정산내역" android:textColor="@color/nav_selector" android:textSize="12sp" />
+            
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/navMyPage"
             android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
             android:orientation="vertical" android:gravity="center" android:clickable="true" android:focusable="true">
-            <ImageView android:layout_width="22dp" android:layout_height="22dp" android:src="@drawable/ic_mapage" app:tint="#80FFFFFF" />
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:text="마이페이지" android:textColor="#80FFFFFF" android:textSize="12sp" />
+            <ImageView android:layout_width="22dp" android:layout_height="22dp" android:src="@drawable/ic_mapage" app:tint="@color/white" />
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:text="마이페이지" android:textColor="@color/white" android:textSize="12sp" />
         </LinearLayout>
     </LinearLayout>
 

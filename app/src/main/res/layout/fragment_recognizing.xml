@@ -164,7 +164,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|center_horizontal"
-            android:layout_marginBottom="28dp"
+            android:layout_marginBottom="42dp"
             android:orientation="horizontal"
             android:gravity="center_vertical">
 
@@ -207,8 +207,8 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
+                android:layout_marginStart="18dp"
+                android:layout_marginEnd="18dp"
                 android:layout_marginBottom="16dp"
                 android:text="- - -"
                 android:textColor="#5555AA"
@@ -254,8 +254,8 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
+                android:layout_marginStart="18dp"
+                android:layout_marginEnd="18dp"
                 android:layout_marginBottom="16dp"
                 android:text="- - -"
                 android:textColor="#5555AA"
@@ -301,49 +301,19 @@
 
     </FrameLayout>
 
-    <!-- 인식 실패 상태 뷰: scanFrame/tipCard와 겹치지 않도록 실패 시에만 별도 그룹으로 노출 -->
+    <!-- 인식 실패 시 버튼(재촬영/직접입력)만 TIP 카드 자리에 대신 노출한다.
+         Figma 최종 디자인은 실패해도 뷰파인더/스텝 행을 그대로 보여주고(tvStatus/tvSubStatus
+         텍스트만 실패 메시지로 바뀜, step1Icon만 에러 스타일로 바뀜) 바뀌지 않는다 — 이전엔
+         scanFrame/tipCard를 통째로 숨기고 이 컨테이너로 화면을 갈아치웠는데, 그게 프로토타입과
+         다른 부분이었다. -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/failedContainer"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@id/divider"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
-
-        <TextView
-            android:id="@+id/tvFailTitle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
-            android:layout_marginEnd="24dp"
-            android:text="영수증을 인식하지 못했어요"
-            android:textColor="#FFFFFF"
-            android:textSize="22sp"
-            android:textStyle="bold"
-            android:gravity="center"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintVertical_bias="0.38"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-        <TextView
-            android:id="@+id/tvFailSub"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
-            android:layout_marginEnd="24dp"
-            android:layout_marginTop="10dp"
-            android:text="빛 반사나 흐림 없이 다시 촬영해 주세요"
-            android:textColor="@color/error"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:gravity="center"
-            app:layout_constraintTop_toBottomOf="@id/tvFailTitle"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
 
         <TextView
             android:id="@+id/btnRetry"

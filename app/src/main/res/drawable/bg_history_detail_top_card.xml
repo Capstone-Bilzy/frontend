@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Figma 개발자도구 실측: bg #151538, 테두리 스트로크가 아니라 box-shadow 글로우(0 0 7px #c5caff).
+     Android shape는 box-shadow를 못 그려서 옅은 스트로크로 근사(정확한 블러 글로우 아님). -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="#151538" />
+    <stroke android:width="1dp" android:color="#80C5CAFF" />
+    <corners android:radius="20dp" />
+</shape>

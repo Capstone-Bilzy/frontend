@@ -168,6 +168,14 @@ class RoomViewModel @Inject constructor(
         return ok
     }
 
+    /** PeopleCount 화면에서 정한 정원을 서버에 저장 — 이후 join이 이 값을 넘지 못하게 막는다. 실패 시 false(호출 측이 알려야 함). */
+    suspend fun saveMemberCapacity(capacity: Int): Boolean {
+        val id = settlementId ?: return false
+        return runCatching { settlementRepository.setMemberCapacity(id, capacity) }
+            .onSuccess { _settlement.value = it }
+            .isSuccess
+    }
+
     /** 정산방 상세를 다시 불러온다(멤버·항목·총액 포함). 멤버 대기 폴링에도 사용. */
     fun load() {
         val id = settlementId ?: return

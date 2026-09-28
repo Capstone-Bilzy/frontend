@@ -73,7 +73,8 @@ class MyPageAccountFragment : Fragment() {
 
             override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
                 val v = super.getDropDownView(position, convertView, parent)
-                (v as? TextView)?.setTextColor(Color.WHITE)
+                // 드롭다운 팝업 배경은 시스템 기본(흰색)이라 흰 글씨를 쓰면 안 보인다 — 어두운 글씨로.
+                (v as? TextView)?.setTextColor(Color.parseColor("#191919"))
                 return v
             }
         }

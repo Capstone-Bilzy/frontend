@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 홈 화면 전용: 기존 bg_home_gradient보다 어둡게, 중심을 액션 버튼(정산 시작하기/스캔하기) 쪽으로 이동 -->
+    <gradient
+        android:type="radial"
+        android:centerX="50%"
+        android:centerY="32%"
+        android:gradientRadius="820"
+        android:startColor="#362E9E"
+        android:endColor="#080B24"/>
+</shape>

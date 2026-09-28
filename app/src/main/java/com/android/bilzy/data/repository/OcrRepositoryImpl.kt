@@ -65,4 +65,14 @@ class OcrRepositoryImpl @Inject constructor(
         quantity: Int
     ): ReceiptItem =
         api.addItem(AddItemRequest(settlementId, round, name, price, quantity)).toDomain()
+
+    override suspend fun attachPhoto(settlementId: String, imageBytes: ByteArray, mimeType: String) {
+        val ext = if (mimeType.contains("png")) "png" else "jpg"
+        val part = MultipartBody.Part.createFormData(
+            name = "file",
+            filename = "receipt.$ext",
+            body = imageBytes.toRequestBody(mimeType.toMediaType())
+        )
+        api.attachReceiptPhoto(settlementId, part)
+    }
 }

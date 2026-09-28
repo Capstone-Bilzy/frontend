@@ -19,4 +19,7 @@ interface OcrRepository {
 
     /** 항목 1개 추가. */
     suspend fun addItem(settlementId: String, round: Int, name: String, price: Long, quantity: Int): ReceiptItem
+
+    /** 완료된 정산방에도 쓸 수 있는 순수 사진 첨부(OCR·금액 계산 없음) — 새 라운드로 이미지만 저장. */
+    suspend fun attachPhoto(settlementId: String, imageBytes: ByteArray, mimeType: String)
 }

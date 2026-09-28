@@ -275,7 +275,7 @@ class AmountAdjustFragment : Fragment() {
     /** 선택된 칩은 보라색 채움, 미선택은 외곽선. */
     private fun styleChip(chip: android.widget.TextView, selected: Boolean) {
         chip.setBackgroundResource(
-            if (selected) R.drawable.bg_role_chip else R.drawable.bg_chip_outline
+            if (selected) R.drawable.bg_item_chip_selected else R.drawable.bg_chip_outline
         )
         chip.setTypeface(chip.typeface, if (selected) Typeface.BOLD else Typeface.NORMAL)
     }

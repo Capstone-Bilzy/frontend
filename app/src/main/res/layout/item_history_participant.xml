@@ -52,7 +52,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="핫도그 -3,500원"
-        android:textColor="#7CE7A0"
+        android:textColor="#67F874"
         android:textSize="13sp"
         android:background="@drawable/bg_chip_green_outline"
         android:paddingStart="10dp"

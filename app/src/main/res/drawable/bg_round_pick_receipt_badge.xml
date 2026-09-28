@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- RoundPick 캐릭터 위 "영수증 든" 뱃지 원형 배경 -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+    <solid android:color="@color/primary" />
+    <stroke android:width="2dp" android:color="@color/bg_dark" />
+</shape>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 멤버 합류 대기 화면 전용: 홈과 같은 어두운 톤, 중심을 캐릭터+안내문구 쪽으로 (Figma Ellipse 1755 위치 근사) -->
+    <gradient
+        android:type="radial"
+        android:centerX="50%"
+        android:centerY="35%"
+        android:gradientRadius="820"
+        android:startColor="#362E9E"
+        android:endColor="#080B24"/>
+</shape>

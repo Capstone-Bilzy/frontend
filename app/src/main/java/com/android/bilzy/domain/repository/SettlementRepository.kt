@@ -14,6 +14,9 @@ interface SettlementRepository {
     /** 정산방 제목 수정. */
     suspend fun updateTitle(id: String, title: String): Settlement
 
+    /** PeopleCount 화면에서 정한 정원(총 인원) 저장(방장만 가능). 이후 join이 이 값을 넘지 못하게 막는다. */
+    suspend fun setMemberCapacity(id: String, memberCapacity: Int): Settlement
+
     suspend fun updateStatus(id: String, status: SettlementStatus): Settlement
 
     suspend fun deleteSettlement(id: String)

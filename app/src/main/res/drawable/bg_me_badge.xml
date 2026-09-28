@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Figma 개발자도구 실측("나" 배지): background #5856D0 -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="#5856D0" />
+    <corners android:radius="20dp" />
+</shape>

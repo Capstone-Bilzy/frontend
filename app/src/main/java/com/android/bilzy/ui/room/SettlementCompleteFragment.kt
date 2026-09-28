@@ -105,10 +105,10 @@ class SettlementCompleteFragment : Fragment() {
 
         val myRoundAmounts = if (calculated) myMember?.rounds.orEmpty() else emptyList()
         val rounds: List<Pair<String, String>> = if (myRoundAmounts.isNotEmpty()) {
-            myRoundAmounts.map { "${it.round}차" to (it.reason?.takeIf(String::isNotBlank) ?: "N분의 1 적용") }
+            myRoundAmounts.map { "${it.round}차" to (it.reason?.takeIf(String::isNotBlank) ?: "1/N 정산") }
         } else {
             val myReason = myMember?.reason?.takeIf { it.isNotBlank() }
-            listOf("1차" to (myReason ?: "N분의 1 적용"))
+            listOf("1차" to (myReason ?: "1/N 정산"))
         }
         binding.roundsContainer.removeAllViews()
         rounds.forEach { (round, tag) -> binding.roundsContainer.addView(roundBadge(round, tag)) }
@@ -130,7 +130,7 @@ class SettlementCompleteFragment : Fragment() {
         })
         row.addView(TextView(ctx).apply {
             text = tag
-            setTextColor(Color.parseColor("#7CE7A0"))
+            setTextColor(Color.parseColor("#67F874"))
             setTextSize(TypedValue.COMPLEX_UNIT_SP, 13f)
             setBackgroundResource(R.drawable.bg_chip_green_outline)
             setPadding(dp(10), dp(4), dp(10), dp(4))

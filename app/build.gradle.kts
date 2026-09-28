@@ -56,8 +56,8 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            // TODO: 배포 백엔드 주소로 교체
-            buildConfigField("String", "BASE_URL", "\"https://api.bilzy.app/\"")
+            // Render 배포 주소 (커스텀 도메인 연결 시 이 값만 교체하면 됨)
+            buildConfigField("String", "BASE_URL", "\"https://backend-no1a.onrender.com/\"")
         }
     }
 

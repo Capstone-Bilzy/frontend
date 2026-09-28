@@ -27,8 +27,8 @@
         android:id="@+id/tvDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="5. 24. 2026 · 12:30 PM"
-        android:textColor="#80FFFFFF"
+        android:text="5. 24. 2026 • 12:30 PM"
+        android:textColor="#FFFFFF"
         android:textSize="14sp"
         android:layout_marginBottom="10dp" />
 
@@ -52,7 +52,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="6명"
-            android:textColor="#80FFFFFF"
+            android:textColor="#FFFFFF"
             android:textSize="14sp" />
 
         <TextView

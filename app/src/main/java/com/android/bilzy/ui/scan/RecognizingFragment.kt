@@ -114,9 +114,19 @@ class RecognizingFragment : Fragment() {
         }, 700L)
     }
 
-    /** AI 인식 실패 → 진행 표시(scanFrame/tipCard)를 숨기고 재촬영/직접입력 선택 뷰를 보여준다. */
+    /** AI 인식 실패 → 뷰파인더/스텝 행은 그대로 두고(Figma 최종 디자인 기준) 상태 텍스트만
+     * 실패 메시지로 바꾸고, 1단계 아이콘을 에러 스타일로, TIP 카드 자리를 재촬영/직접입력
+     * 버튼으로 바꾼다. */
     private fun showFailed() {
-        binding.scanFrame.visibility = GONE
+        binding.tvStatus.text = "영수증을 인식하지 못했어요"
+        binding.tvSubStatus.text = "빛 반사나 흐림 없이 다시 촬영해 주세요"
+        binding.tvSubStatus.setTextColor(
+            androidx.core.content.ContextCompat.getColor(requireContext(), R.color.error)
+        )
+        binding.step1Icon.setBackgroundResource(R.drawable.bg_step_error)
+        binding.ivStep1.setColorFilter(
+            androidx.core.content.ContextCompat.getColor(requireContext(), R.color.error)
+        )
         binding.tipCard.visibility = GONE
         binding.failedContainer.visibility = VISIBLE
     }

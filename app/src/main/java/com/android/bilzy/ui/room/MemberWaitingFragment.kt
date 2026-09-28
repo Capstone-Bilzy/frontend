@@ -84,9 +84,9 @@ class MemberWaitingFragment : Fragment() {
 
                     val myNick = roomViewModel.myNickname.value
                     val iAmIn = myNick != null && members.any { it.nickname == myNick }
-                    val ready =
-                        if (target > 0) members.size >= target  // 설정 인원이 다 모이면
-                        else iAmIn || members.isNotEmpty()       // 인원 미설정이면 멤버가 생기는 대로
+                    // TEMP: 테스트용 — 정원 미달 상태에서도 다음 단계 진행 허용 (나중에 원복 필요)
+                    // 원래 로직: val ready = if (target > 0) members.size >= target else iAmIn || members.isNotEmpty()
+                    val ready = iAmIn || members.isNotEmpty()
                     if (ready) {
                         handler.postDelayed({ advance() }, 1200L)
                     }
@@ -102,16 +102,61 @@ class MemberWaitingFragment : Fragment() {
         findNavController().navigate(R.id.action_memberWaiting_to_amountAdjust)
     }
 
-    /** avatarRow를 실제 멤버 아바타로 다시 그린다. */
+    /**
+     * avatarRow를 다시 그린다. 정원(expectedCount)을 아는 경우(호스트)는 화면 진입 시점부터
+     * 정원만큼 빈 슬롯을 전부 보여주고, 실제로 합류한 멤버 수만큼 앞에서부터 채운다.
+     * 정원을 모르는 경우(게스트 — expectedCount<=0)는 기존처럼 합류한 멤버만 표시한다.
+     */
     private fun renderMembers(members: List<SettlementMember>) {
         val row = binding.avatarRow
         row.removeAllViews()
-        if (members.isEmpty()) return
-        row.weightSum = members.size.toFloat()
+        val target = roomViewModel.expectedCount
         val myNick = roomViewModel.myNickname.value
-        members.forEach { member ->
-            row.addView(avatarTile(member.nickname, member.nickname == myNick, member.profileImageUrl))
+
+        if (target > 0) {
+            row.weightSum = target.toFloat()
+            for (i in 0 until target) {
+                val member = members.getOrNull(i)
+                row.addView(
+                    if (member != null) {
+                        avatarTile(member.nickname, member.nickname == myNick, member.profileImageUrl)
+                    } else {
+                        emptySlotTile()
+                    }
+                )
+            }
+        } else {
+            if (members.isEmpty()) return
+            row.weightSum = members.size.toFloat()
+            members.forEach { member ->
+                row.addView(avatarTile(member.nickname, member.nickname == myNick, member.profileImageUrl))
+            }
         }
+    }
+
+    /** 아직 합류하지 않은 정원 슬롯: 빈 원 + 체크 배지 없음. */
+    private fun emptySlotTile(): View {
+        val ctx = requireContext()
+        val tile = LinearLayout(ctx).apply {
+            orientation = LinearLayout.VERTICAL
+            gravity = Gravity.CENTER
+            layoutParams = LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f)
+        }
+        val circle = FrameLayout(ctx).apply {
+            layoutParams = LinearLayout.LayoutParams(dp(44), dp(44))
+            setBackgroundResource(R.drawable.bg_avatar_pending)
+        }
+        val label = TextView(ctx).apply {
+            text = ""
+            setTextSize(TypedValue.COMPLEX_UNIT_SP, 9f)
+            gravity = Gravity.CENTER
+            layoutParams = LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
+            ).apply { setMargins(dp(4)) }
+        }
+        tile.addView(circle)
+        tile.addView(label)
+        return tile
     }
 
     private fun avatarTile(name: String, isMe: Boolean, profileImageUrl: String?): View {
@@ -123,7 +168,7 @@ class MemberWaitingFragment : Fragment() {
         }
         val circle = FrameLayout(ctx).apply {
             layoutParams = LinearLayout.LayoutParams(dp(44), dp(44))
-            setBackgroundResource(R.drawable.bg_role_chip)
+            setBackgroundResource(R.drawable.bg_avatar_done)
             clipChildren = false
             clipToPadding = false
         }

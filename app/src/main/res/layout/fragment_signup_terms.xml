@@ -65,17 +65,16 @@
             android:paddingBottom="20dp">
 
             <!-- 프로토타입 .bz-terms-head: 로고 + 안내 문구. 예전엔 이 블록이 통째로 없이 빈 여백(150dp)만 있었다. -->
-            <TextView
+            <ImageView
                 android:id="@+id/tvLogo"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="26dp"
+                android:src="@drawable/logo_bilzy"
+                android:adjustViewBounds="true"
+                android:scaleType="fitStart"
+                android:contentDescription="@null"
                 android:layout_gravity="center_horizontal"
-                android:text="Bilzy"
-                android:textColor="#A5A6F6"
-                android:textStyle="bold|italic"
-                android:textSize="34sp"
-                android:fontFamily="sans-serif-black"
-                android:letterSpacing="-0.02" />
+            />
 
             <TextView
                 android:layout_width="match_parent"
