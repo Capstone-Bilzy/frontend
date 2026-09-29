@@ -23,7 +23,14 @@ data class Settlement(
     val createdAt: String?,
     val members: List<SettlementMember> = emptyList(),
     val items: List<ReceiptItem> = emptyList(),
-    val receipts: List<Receipt> = emptyList()
+    val receipts: List<Receipt> = emptyList(),
+    val extraPhotos: List<ExtraPhoto> = emptyList()
+)
+
+/** 라운드와 무관하게 순수 기록용으로 첨부된 영수증 사진(정산 계산에 영향 없음). */
+data class ExtraPhoto(
+    val imageUrl: String,
+    val createdAt: String?
 )
 
 data class SettlementMember(

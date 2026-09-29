@@ -38,6 +38,7 @@ import com.android.bilzy.databinding.FragmentHistoryDetailWithReceiptBinding
 import com.android.bilzy.domain.model.MemberRoundAmount
 import com.android.bilzy.domain.model.Receipt
 import com.android.bilzy.domain.model.Settlement
+import com.android.bilzy.util.ImageCompressor
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -60,6 +61,34 @@ class HistoryDetailWithReceiptFragment : Fragment() {
 
     private var pendingDownloadUrl: String? = null
 
+    /** 완료된 정산방에 순수 기록용으로 영수증 사진만 추가(OCR·금액 계산 없음). */
+    private val pickReceiptPhoto =
+        registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+            uri ?: return@registerForActivityResult
+            val resolver = requireContext().contentResolver
+            val bytes = resolver.openInputStream(uri)?.use { it.readBytes() }
+            if (bytes == null || bytes.isEmpty()) {
+                Toast.makeText(requireContext(), "이미지를 불러오지 못했어요", Toast.LENGTH_SHORT).show()
+                return@registerForActivityResult
+            }
+            val mime = resolver.getType(uri) ?: "image/jpeg"
+            uploadReceiptPhoto(bytes, mime)
+        }
+
+    private fun uploadReceiptPhoto(bytes: ByteArray, mime: String) {
+        binding.btnAddReceipt.isEnabled = false
+        viewLifecycleOwner.lifecycleScope.launch {
+            val compressed = ImageCompressor.compress(bytes, mime)
+            val ok = viewModel.attachPhoto(compressed.bytes, compressed.mime)
+            if (isAdded && _binding != null) {
+                binding.btnAddReceipt.isEnabled = true
+                if (!ok) {
+                    Toast.makeText(requireContext(), "영수증 추가에 실패했어요", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
     private val requestStoragePermission =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
             if (granted) pendingDownloadUrl?.let { saveToGallery(it) }
@@ -80,6 +109,7 @@ class HistoryDetailWithReceiptFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.btnBack.setOnClickListener { findNavController().navigateUp() }
+        binding.btnAddReceipt.setOnClickListener { pickReceiptPhoto.launch("image/*") }
 
         binding.navHome.setOnClickListener {
             findNavController().navigate(R.id.action_historyDetailWithReceipt_to_home)
@@ -326,20 +356,23 @@ class HistoryDetailWithReceiptFragment : Fragment() {
     private fun dp(value: Int): Int =
         (value * resources.displayMetrics.density).toInt()
 
-    /** 정산방이 영수증 이미지를 가졌을 때만 영수증 섹션을 보여주고 Coil로 로드. */
-    /** 라운드별로 이미지가 있는 영수증만 카드로 그린다(다차 정산이면 여러 장). */
+    /** 라운드별 실제 영수증(스캔된 것) + 순수 첨부 사진(라운드·금액과 무관)을 모두 카드로 그린다. */
     private fun renderReceipt(s: Settlement) {
         val withImage = s.receipts.filter { !it.receiptImageUrl.isNullOrBlank() }.sortedBy { it.round }
-        val hasReceipt = withImage.isNotEmpty()
+        val extraPhotos = s.extraPhotos
+        val hasReceipt = withImage.isNotEmpty() || extraPhotos.isNotEmpty()
 
         binding.receiptSectionHeader.isVisible = hasReceipt
         binding.receiptsContainer.isVisible = hasReceipt
         binding.receiptsContainer.removeAllViews()
         if (!hasReceipt) return
 
-        binding.tvReceiptCount.text = "${withImage.size}장"
+        binding.tvReceiptCount.text = "${withImage.size + extraPhotos.size}장"
         withImage.forEach { receipt ->
             binding.receiptsContainer.addView(receiptCard(receipt))
+        }
+        extraPhotos.forEach { photo ->
+            binding.receiptsContainer.addView(extraPhotoCard(photo.imageUrl))
         }
     }
 
@@ -397,6 +430,53 @@ class HistoryDetailWithReceiptFragment : Fragment() {
         }
         card.addView(thumb)
         card.addView(texts)
+        card.addView(more)
+        return card
+    }
+
+    /** 라운드/금액 없이 순수 기록용으로 첨부된 사진 카드. */
+    private fun extraPhotoCard(url: String): View {
+        val ctx = requireContext()
+        val card = LinearLayout(ctx).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = Gravity.CENTER_VERTICAL
+            setBackgroundResource(R.drawable.bg_attached_receipt)
+            setPadding(dp(12), dp(12), dp(12), dp(12))
+            layoutParams = LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT
+            ).apply { bottomMargin = dp(10) }
+            isClickable = true
+            isFocusable = true
+            setOnClickListener { showFullScreenImage(url) }
+        }
+        val thumb = ImageView(ctx).apply {
+            layoutParams = LinearLayout.LayoutParams(dp(56), dp(56)).apply { marginEnd = dp(14) }
+            setBackgroundResource(R.drawable.bg_receipt_thumb)
+            scaleType = ImageView.ScaleType.CENTER_CROP
+            load(url) {
+                crossfade(true)
+                error(R.drawable.bg_receipt_thumb)
+                placeholder(R.drawable.bg_receipt_thumb)
+            }
+        }
+        val label = TextView(ctx).apply {
+            text = "영수증 사진"
+            setTextColor(Color.WHITE)
+            setTextSize(TypedValue.COMPLEX_UNIT_SP, 17f)
+            setTypeface(typeface, Typeface.BOLD)
+            layoutParams = LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f)
+        }
+        val more = TextView(ctx).apply {
+            text = "⋯"
+            setTextColor(Color.parseColor("#80FFFFFF"))
+            setTextSize(TypedValue.COMPLEX_UNIT_SP, 24f)
+            setPadding(dp(8), 0, dp(4), 0)
+            isClickable = true
+            isFocusable = true
+            setOnClickListener { showReceiptOptions(it, url) }
+        }
+        card.addView(thumb)
+        card.addView(label)
         card.addView(more)
         return card
     }

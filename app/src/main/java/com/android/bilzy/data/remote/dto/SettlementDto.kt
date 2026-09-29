@@ -1,5 +1,6 @@
 package com.android.bilzy.data.remote.dto
 
+import com.android.bilzy.domain.model.ExtraPhoto
 import com.android.bilzy.domain.model.InviteToken
 import com.android.bilzy.domain.model.MemberRoundAmount
 import com.android.bilzy.domain.model.Receipt
@@ -83,7 +84,15 @@ data class SettlementDto(
     @SerialName("created_at") val createdAt: String? = null,
     val members: List<SettlementMemberDto> = emptyList(),
     val items: List<ReceiptItemDto> = emptyList(),
-    val receipts: List<ReceiptDto> = emptyList()
+    val receipts: List<ReceiptDto> = emptyList(),
+    @SerialName("extra_photos") val extraPhotos: List<ExtraPhotoDto> = emptyList()
+)
+
+/** 라운드와 무관하게 순수 기록용으로 첨부된 영수증 사진(정산 계산에 영향 없음). */
+@Serializable
+data class ExtraPhotoDto(
+    @SerialName("image_url") val imageUrl: String = "",
+    @SerialName("created_at") val createdAt: String? = null
 )
 
 @Serializable
@@ -147,7 +156,8 @@ fun SettlementDto.toDomain() = Settlement(
     createdAt = createdAt,
     members = members.map { it.toDomain() },
     items = items.map { it.toDomain() },
-    receipts = receipts.map { it.toDomain() }
+    receipts = receipts.map { it.toDomain() },
+    extraPhotos = extraPhotos.map { it.toDomain() }
 )
 
 fun SettlementMemberDto.toDomain() = SettlementMember(
@@ -178,6 +188,11 @@ fun ReceiptDto.toDomain() = Receipt(
     receiptImageUrl = receiptImageUrl,
     totalAmount = totalAmount,
     items = items.map { it.toDomain() }
+)
+
+fun ExtraPhotoDto.toDomain() = ExtraPhoto(
+    imageUrl = imageUrl,
+    createdAt = createdAt
 )
 
 fun InviteTokenDto.toDomain() = InviteToken(

@@ -52,10 +52,9 @@ data class AddItemRequest(
     val quantity: Int
 )
 
-/** POST /ocr/attach-photo 응답 — 완료된 정산방에 사진만 순수 첨부(OCR·금액 계산 없음) */
+/** POST /ocr/attach-photo 응답 — 정산방에 사진만 순수 첨부(OCR·금액 계산 없음, 라운드와 무관) */
 @Serializable
 data class AttachPhotoResponse(
-    val round: Int = 1,
     @SerialName("image_url") val imageUrl: String? = null
 )
 

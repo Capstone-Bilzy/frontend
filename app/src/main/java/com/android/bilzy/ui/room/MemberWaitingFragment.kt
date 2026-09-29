@@ -84,9 +84,7 @@ class MemberWaitingFragment : Fragment() {
 
                     val myNick = roomViewModel.myNickname.value
                     val iAmIn = myNick != null && members.any { it.nickname == myNick }
-                    // TEMP: 테스트용 — 정원 미달 상태에서도 다음 단계 진행 허용 (나중에 원복 필요)
-                    // 원래 로직: val ready = if (target > 0) members.size >= target else iAmIn || members.isNotEmpty()
-                    val ready = iAmIn || members.isNotEmpty()
+                    val ready = if (target > 0) members.size >= target else iAmIn || members.isNotEmpty()
                     if (ready) {
                         handler.postDelayed({ advance() }, 1200L)
                     }
