@@ -46,6 +46,9 @@ class ScanFlowViewModel @Inject constructor(
     var currentRound: Int = 1
         private set
 
+    /** 지금까지 서버에 확정된 가장 큰 차수. 앞 차수를 다시 찍어도 다음 새 차수 번호가 꼬이지 않게 한다. */
+    private var highestConfirmedRound: Int = 0
+
     // ── 정산방 지연 생성 ──────────────────────────────────
     /**
      * 정산방이 아직 없으면 임시 제목으로 생성하고 id를 반환한다.
@@ -180,7 +183,10 @@ class ScanFlowViewModel @Inject constructor(
                     settlementRepository.updateStatus(sid, SettlementStatus.WAITING)
                 }
             }
-                .onSuccess { _confirmState.value = ConfirmState.Success }
+                .onSuccess {
+                    highestConfirmedRound = maxOf(highestConfirmedRound, currentRound)
+                    _confirmState.value = ConfirmState.Success
+                }
                 .onFailure { _confirmState.value = ConfirmState.Error(it.message ?: "확정에 실패했습니다") }
         }
     }
@@ -195,10 +201,22 @@ class ScanFlowViewModel @Inject constructor(
         scannedReceipt = null
     }
 
-    /** "추가 스캔하기": 이번 라운드는 이미 confirm()으로 서버에 반영됐다는 전제하에 다음 라운드로 넘어간다. */
+    /**
+     * "추가 스캔하기": 이번 라운드는 이미 confirm()으로 서버에 반영됐다는 전제하에 다음 라운드로 넘어간다.
+     * 앞 차수를 다시 찍은 직후일 수 있으므로 currentRound+1이 아니라 지금까지 확정된 가장 큰 차수 다음으로 간다
+     * (안 그러면 이미 있는 다음 차수를 덮어쓴다).
+     */
     fun advanceToNextRound() {
-        currentRound += 1
+        currentRound = maxOf(currentRound, highestConfirmedRound) + 1
         resetForNextScan()
+    }
+
+    /** 영수증 목록에서 고른 차수를 다시 스캔한다. 확정하면 그 차수만 새 내역으로 교체된다. */
+    fun startRescan(round: Int) {
+        currentRound = round
+        resetForNextScan()
+        _scanState.value = ScanState.Idle
+        _confirmState.value = ConfirmState.Idle
     }
 
     // ── 다차 정산(n차) 영수증 목록 화면용 ────────────────────
@@ -218,6 +236,25 @@ class ScanFlowViewModel @Inject constructor(
     }
 
     /**
+     * 영수증 목록의 ✕: 그 차수를 서버에서 삭제하고(뒤 차수는 번호가 당겨짐) 목록을 다시 불러온다.
+     * 성공하면 남은 차수 개수를 돌려주고(0이면 호출 측이 1차 스캔으로 보냄), 실패하면 null.
+     */
+    suspend fun deleteRound(round: Int): Int? {
+        val id = settlementId ?: return null
+        return runCatching {
+            settlementRepository.deleteRound(id, round)
+            settlementRepository.getSettlement(id)
+        }.map { refreshed ->
+            _settlement.value = refreshed
+            receiptListSaved = false
+            highestConfirmedRound = refreshed.receipts.maxOfOrNull { it.round } ?: 0
+            currentRound = highestConfirmedRound.coerceAtLeast(1)
+            if (refreshed.receipts.isEmpty()) resetForNextScan()
+            refreshed.receipts.size
+        }.getOrNull()
+    }
+
+    /**
      * 정산 완료 후 홈으로 돌아가거나 로그아웃할 때 호출해 이 ViewModel 전체를 초기 상태로 되돌린다.
      * nav_graph 스코프(Activity 생명주기 동안 유지)라 리셋하지 않으면 settlementId 등 이전
      * (완료됐거나 다른 사용자의) 정산방 상태가 다음 스캔에 그대로 재사용될 위험이 있다.
@@ -228,6 +265,7 @@ class ScanFlowViewModel @Inject constructor(
         pendingGroupName = ""
         scannedReceipt = null
         currentRound = 1
+        highestConfirmedRound = 0
         pendingImage = null
         capturedImage = null
         _scanState.value = ScanState.Idle

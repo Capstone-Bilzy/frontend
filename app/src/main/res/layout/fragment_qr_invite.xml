@@ -10,13 +10,13 @@
     <ImageView
         android:id="@+id/tvLogo"
         android:layout_width="wrap_content"
-        android:layout_height="24dp"
+        android:layout_height="27dp"
         android:src="@drawable/logo_bilzy"
         android:adjustViewBounds="true"
         android:scaleType="fitStart"
         android:contentDescription="@null"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="52dp"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="61dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
     />
@@ -29,7 +29,7 @@
         android:orientation="horizontal"
         android:gravity="center_vertical"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="15dp"
         app:layout_constraintTop_toBottomOf="@id/tvLogo"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -49,45 +49,54 @@
             android:layout_marginStart="6dp"
             android:text="정산방 초대"
             android:textColor="#FFFFFF"
-            android:textSize="19sp"
-            android:textStyle="bold" />
+            android:textSize="18sp"
+            android:textFontWeight="500" />
 
     </LinearLayout>
 
     <!-- QR Card (윗면 중앙 반원 컷) -->
+    <!-- 세로가 짧은 화면/큰 글꼴에서 카드가 하단 버튼과 겹치지 않도록 카드만 스크롤 -->
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/qrScroll"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="12dp"
+        android:overScrollMode="never"
+        app:layout_constraintTop_toBottomOf="@id/headerDivider"
+        app:layout_constraintBottom_toTopOf="@id/btnEnter"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
     <com.android.bilzy.ui.widget.NotchedTicketLayout
         android:id="@+id/qrCard"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:gravity="center_horizontal"
         app:notchMode="topCenter"
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
-        android:layout_marginTop="20dp"
         android:paddingStart="28dp"
         android:paddingEnd="28dp"
-        android:paddingTop="32dp"
-        android:paddingBottom="28dp"
-        app:layout_constraintTop_toBottomOf="@id/titleRow"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        android:paddingTop="52dp"
+        android:paddingBottom="30dp">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="QR코드를 스캔하여\n정산방에 들어가세요"
-            android:textColor="#FFFFFF"
-            android:textSize="19sp"
-            android:textStyle="bold"
+            android:textColor="#CCFFFFFF"
+            android:textSize="22sp"
             android:gravity="center"
-            android:lineSpacingExtra="4dp"
-            android:layout_marginBottom="20dp" />
+            android:layout_marginBottom="25dp"
+            android:textFontWeight="500"
+            android:lineHeight="30sp" />
 
         <!-- QR code + 코너 브래킷 -->
         <FrameLayout
-            android:layout_width="214dp"
-            android:layout_height="214dp">
+            android:layout_width="232dp"
+            android:layout_height="232dp">
 
             <ImageView
                 android:id="@+id/ivQr"
@@ -133,12 +142,12 @@
             android:id="@+id/tvRoomTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="9dp"
             android:text="정산방"
-            android:textColor="#BEBEF7"
-            android:textSize="17sp"
-            android:textStyle="bold"
-            android:gravity="center" />
+            android:textColor="#AAB2FF"
+            android:textSize="18sp"
+            android:gravity="center"
+            android:textFontWeight="500" />
 
         <TextView
             android:id="@+id/tvRoomCode"
@@ -146,9 +155,10 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:text="2026.06.06"
-            android:textColor="#BEBEF7"
-            android:textSize="14sp"
-            android:gravity="center" />
+            android:textColor="#AAB2FF"
+            android:textSize="16sp"
+            android:gravity="center"
+            android:textFontWeight="400" />
 
         <TextView
             android:id="@+id/tvTokenExpiry"
@@ -177,7 +187,8 @@
         <!-- 이미지 저장 / 공유 버튼 행 -->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="44dp"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp"
             android:orientation="horizontal"
             android:layout_marginTop="18dp">
 
@@ -205,7 +216,8 @@
                     android:layout_height="wrap_content"
                     android:text="이미지 저장하기"
                     android:textColor="#FFFFFF"
-                    android:textSize="14sp" />
+                    android:textSize="14sp"
+                    android:textFontWeight="400" />
 
             </LinearLayout>
 
@@ -233,7 +245,8 @@
                     android:layout_height="wrap_content"
                     android:text="QR코드 공유하기"
                     android:textColor="#FFFFFF"
-                    android:textSize="14sp" />
+                    android:textSize="14sp"
+                    android:textFontWeight="400" />
 
             </LinearLayout>
 
@@ -263,23 +276,36 @@
 
     </com.android.bilzy.ui.widget.NotchedTicketLayout>
 
+    </androidx.core.widget.NestedScrollView>
+
     <!-- Bottom button -->
     <TextView
         android:id="@+id/btnEnter"
         android:layout_width="0dp"
         android:layout_height="56dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
+        android:layout_marginStart="26dp"
+        android:layout_marginEnd="25dp"
         android:layout_marginBottom="36dp"
         android:text="정산방 입장하기"
         android:textColor="#FFFFFF"
-        android:textSize="19sp"
-        android:textStyle="bold"
+        android:textSize="16sp"
         android:gravity="center"
         android:background="@drawable/bg_button_outline"
         android:clickable="true"
         android:focusable="true"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:textFontWeight="500" />
+
+    <!-- 헤더 구분선 (피그마 Header - TopAppBar: 아래 테두리 #6FA8FF 30%, 제목 아래 18) -->
+    <View
+        android:id="@+id/headerDivider"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginTop="18dp"
+        android:background="#4D6FA8FF"
+        app:layout_constraintTop_toBottomOf="@id/titleRow"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 

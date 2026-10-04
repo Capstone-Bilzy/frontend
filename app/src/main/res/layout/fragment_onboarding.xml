@@ -81,15 +81,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="로그인"
-            android:textColor="#A5A6F6"
+            android:textColor="#AAB2FF"
             android:textSize="16sp"
-            android:textStyle="bold"
             android:clickable="true"
             android:focusable="true"
             android:paddingTop="6dp"
             android:paddingBottom="6dp"
             android:paddingStart="8dp"
-            android:paddingEnd="8dp" />
+            android:paddingEnd="8dp"
+            android:textFontWeight="400" />
     </LinearLayout>
 
     <TextView
@@ -101,14 +101,14 @@
         android:layout_marginBottom="32dp"
         android:text="회원가입"
         android:textColor="#FFFFFF"
-        android:textSize="18sp"
-        android:textStyle="bold"
+        android:textSize="16sp"
         android:gravity="center"
         android:background="@drawable/bg_button_outline"
         android:clickable="true"
         android:focusable="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        android:textFontWeight="500" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

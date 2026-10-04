@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.Bilzy" parent="Theme.Material3.DayNight.NoActionBar" />
+    <style name="Theme.Bilzy" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- 피그마(UI 4차) 서체: 앱 전체 기본 글꼴을 Pretendard로 -->
+        <item name="android:fontFamily">@font/pretendard</item>
+        <item name="fontFamily">@font/pretendard</item>
+    </style>
 
     <!-- 런치(스플래시) 테마: 네이비 배경 + 중앙 로고. onCreate에서 Theme.Bilzy로 전환. -->
     <style name="Theme.Bilzy.Splash" parent="Theme.Bilzy">

@@ -16,22 +16,24 @@
         android:layout_height="wrap_content"
         android:text=""
         android:textColor="#FFFFFF"
-        android:textSize="26sp"
+        android:textSize="24sp"
         android:textStyle="bold"
         android:gravity="center"
-        android:lineSpacingExtra="6dp"
-        android:layout_marginBottom="14dp" />
+        android:layout_marginBottom="14dp"
+        android:textFontWeight="600"
+        android:lineHeight="35sp" />
 
     <TextView
         android:id="@+id/tvSubtitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text=""
-        android:textColor="#A5A6F6"
+        android:textColor="#AAB2FF"
         android:textSize="16sp"
         android:gravity="center"
         android:lineSpacingExtra="3dp"
-        android:layout_marginBottom="36dp" />
+        android:layout_marginBottom="36dp"
+        android:textFontWeight="400" />
 
     <ImageView
         android:id="@+id/ivCharacter"

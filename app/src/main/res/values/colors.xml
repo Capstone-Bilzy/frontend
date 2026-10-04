@@ -4,7 +4,7 @@
     <color name="white">#FFFFFFFF</color>
 
     <!-- Brand -->
-    <color name="bg_dark">#080B24</color>
+    <color name="bg_dark">#020A2F</color>
     <color name="bg_surface">#1A1F3E</color>
     <color name="bg_card">#161B3A</color>
     <color name="bg_card_purple">#2D2388</color>
@@ -23,7 +23,7 @@
     <color name="overlay">#80000000</color>
 
     <color name="success">#4CAF50</color>
-    <color name="error">#FF4D2E</color>
+    <color name="error">#FF9789</color>
     <color name="nav_selector">#85ADFF</color>
 
     <!-- 스플래시 배경(로고 본체 네이비와 동일) -->

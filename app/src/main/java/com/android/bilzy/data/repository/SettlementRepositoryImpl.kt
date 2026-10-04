@@ -42,6 +42,9 @@ class SettlementRepositoryImpl @Inject constructor(
     override suspend fun deleteReceiptImage(id: String, round: Int) =
         api.deleteSettlementReceipt(id, round)
 
+    override suspend fun deleteRound(id: String, round: Int) =
+        api.deleteRound(id, round)
+
     override suspend fun setMyRounds(id: String, rounds: List<Int>) {
         api.setMyRounds(id, SetMemberRoundsRequest(rounds))
     }

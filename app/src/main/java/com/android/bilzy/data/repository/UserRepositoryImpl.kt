@@ -1,6 +1,5 @@
 package com.android.bilzy.data.repository
 
-import com.android.bilzy.data.demo.DemoData
 import com.android.bilzy.data.remote.BilzyApi
 import com.android.bilzy.data.remote.dto.toDomain
 import com.android.bilzy.data.remote.dto.toProfile
@@ -23,7 +22,7 @@ class UserRepositoryImpl @Inject constructor(
         api.getMe().toProfile().also { profileCache = it }
 
     override suspend fun getMyHistory(): List<SettlementHistory> =
-        (api.getHistory().mapNotNull { it.toDomain() } + DemoData.historyItem)
+        api.getHistory().mapNotNull { it.toDomain() }
             .sortedByDescending { it.createdAt ?: "" }
             .also { historyCache = it }
 

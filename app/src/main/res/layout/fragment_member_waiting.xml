@@ -10,13 +10,13 @@
     <ImageView
         android:id="@+id/tvLogo"
         android:layout_width="wrap_content"
-        android:layout_height="24dp"
+        android:layout_height="27dp"
         android:src="@drawable/logo_bilzy"
         android:adjustViewBounds="true"
         android:scaleType="fitStart"
         android:contentDescription="@null"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="52dp"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="61dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
     />
@@ -36,11 +36,11 @@
     <!-- Character -->
     <ImageView
         android:id="@+id/ivCharacter"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
+        android:layout_width="292dp"
+        android:layout_height="209dp"
         android:src="@drawable/character_side"
         android:scaleType="fitCenter"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="59dp"
         app:layout_constraintTop_toBottomOf="@id/tvLogo"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -51,27 +51,29 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="멤버 합류를 기다리고 있어요"
-        android:textColor="#FFFFFF"
-        android:textSize="26sp"
+        android:textColor="#F8FAFF"
+        android:textSize="24sp"
         android:textStyle="bold"
         android:gravity="center"
         android:layout_marginTop="16dp"
         app:layout_constraintTop_toBottomOf="@id/ivCharacter"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        android:textFontWeight="600" />
 
     <TextView
         android:id="@+id/tvDesc"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="모두가 모이면 자동으로 정산이 시작됩니다"
-        android:textColor="#BEBEF7"
+        android:textColor="#AAB2FF"
         android:textSize="16sp"
         android:gravity="center"
-        android:layout_marginTop="6dp"
+        android:layout_marginTop="10dp"
         app:layout_constraintTop_toBottomOf="@id/tvTitle"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        android:textFontWeight="400" />
 
     <!-- Member count progress section -->
     <LinearLayout
@@ -79,9 +81,9 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
-        android:layout_marginTop="28dp"
+        android:layout_marginStart="38dp"
+        android:layout_marginEnd="37dp"
+        android:layout_marginTop="49dp"
         app:layout_constraintTop_toBottomOf="@id/tvDesc"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -90,15 +92,18 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp">
+            android:layout_marginStart="6dp"
+            android:layout_marginEnd="6dp"
+            android:layout_marginBottom="11dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:text="모인 멤버"
-                android:textColor="#FFFFFF"
-                android:textSize="15sp" />
+                android:textColor="#DCDAFF"
+                android:textSize="18sp"
+                android:textFontWeight="500" />
 
             <TextView
                 android:id="@+id/tvStatus"
@@ -106,9 +111,9 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:text=""
-                android:textColor="#C7C1FF"
-                android:textSize="15sp"
-                android:textStyle="bold" />
+                android:textColor="#DCDAFF"
+                android:textSize="16sp"
+                android:textFontWeight="500" />
 
         </RelativeLayout>
 
@@ -117,7 +122,7 @@
             android:id="@+id/progressBar"
             style="@android:style/Widget.ProgressBar.Horizontal"
             android:layout_width="match_parent"
-            android:layout_height="8dp"
+            android:layout_height="12dp"
             android:progress="0"
             android:progressDrawable="@drawable/bg_progress_bar"
             android:indeterminate="false" />
@@ -130,10 +135,11 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:gravity="center"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginTop="20dp"
+        android:gravity="start"
+        android:clipChildren="false"
+        android:layout_marginStart="19dp"
+        android:layout_marginEnd="11dp"
+        android:layout_marginTop="28dp"
         app:layout_constraintTop_toBottomOf="@id/progressSection"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />

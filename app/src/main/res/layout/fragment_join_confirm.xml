@@ -32,10 +32,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="정산방 초대"
-            android:textColor="#FFFFFF"
+            android:textColor="#F8FAFF"
             android:textSize="24sp"
             android:textStyle="bold"
-            android:layout_marginBottom="10dp" />
+            android:layout_marginBottom="10dp"
+            android:textFontWeight="600" />
 
         <TextView
             android:layout_width="match_parent"
@@ -53,13 +54,13 @@
             android:layout_height="56dp"
             android:text="입장하기"
             android:textColor="#FFFFFF"
-            android:textSize="19sp"
-            android:textStyle="bold"
+            android:textSize="16sp"
             android:gravity="center"
-            android:background="@drawable/bg_button_primary"
+            android:background="@drawable/bg_button_glass"
             android:clickable="true"
             android:focusable="true"
-            android:layout_marginBottom="12dp" />
+            android:layout_marginBottom="12dp"
+            android:textFontWeight="500" />
 
         <TextView
             android:id="@+id/btnCancel"

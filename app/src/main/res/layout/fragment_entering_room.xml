@@ -10,13 +10,13 @@
     <ImageView
         android:id="@+id/tvLogo"
         android:layout_width="wrap_content"
-        android:layout_height="24dp"
+        android:layout_height="27dp"
         android:src="@drawable/logo_bilzy"
         android:adjustViewBounds="true"
         android:scaleType="fitStart"
         android:contentDescription="@null"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="52dp"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="61dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
     />
@@ -42,27 +42,29 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="정산방에 들어가는 중이에요"
-        android:textColor="#FFFFFF"
-        android:textSize="26sp"
+        android:textColor="#F8FAFF"
+        android:textSize="24sp"
         android:textStyle="bold"
         android:gravity="center"
         android:layout_marginTop="20dp"
         app:layout_constraintTop_toBottomOf="@id/ivCharacter"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        android:textFontWeight="600" />
 
     <TextView
         android:id="@+id/tvSubMessage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="초대받은 정산방을 확인하고 있어요"
-        android:textColor="#BEBEF7"
+        android:textColor="#AAB2FF"
         android:textSize="16sp"
         android:gravity="center"
         android:layout_marginTop="6dp"
         app:layout_constraintTop_toBottomOf="@id/tvMessage"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        android:textFontWeight="400" />
 
     <!-- Indeterminate horizontal progress bar -->
     <ProgressBar
@@ -83,12 +85,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="잠시만 기다려 주세요"
-        android:textColor="#BEBEF7"
-        android:textSize="16sp"
+        android:textColor="#AAB2FF"
+        android:textSize="18sp"
         android:gravity="center"
         android:layout_marginTop="12dp"
         app:layout_constraintTop_toBottomOf="@id/progressBar"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        android:textFontWeight="400" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

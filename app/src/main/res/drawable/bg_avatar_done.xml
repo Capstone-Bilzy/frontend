@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- 피그마 멤버 아바타(합류/완료): #201F4C + #776AEC 테두리 3 -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="oval">
-    <solid android:color="#5A4FC4" />
-    <stroke android:color="#A5A6F6" android:width="1.5dp" />
+    <solid android:color="#201F4C" />
+    <stroke android:color="#776AEC" android:width="3dp" />
 </shape>

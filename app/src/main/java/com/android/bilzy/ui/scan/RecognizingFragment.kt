@@ -14,6 +14,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import coil.load
+import coil.transform.RoundedCornersTransformation
 import com.android.bilzy.R
 import com.android.bilzy.databinding.FragmentRecognizingBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -62,6 +64,12 @@ class RecognizingFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.tvRoundBadge.text = "${viewModel.currentRound}차"
+        // 방금 찍은(또는 갤러리에서 고른) 영수증을 인식 중 화면 가운데에 보여준다.
+        viewModel.capturedImage?.let { bytes ->
+            binding.ivCaptured.load(bytes) {
+                transformations(RoundedCornersTransformation(12f * resources.displayMetrics.density))
+            }
+        }
         updateStep(0)
         pulseStep(0)
         handler.postDelayed(animTick, 1100L)
@@ -163,7 +171,7 @@ class RecognizingFragment : Fragment() {
     }
 
     private companion object {
-        const val ACTIVE_COLOR = 0xFFFFFFFF.toInt()
-        const val IDLE_COLOR = 0xFF8888BB.toInt()
+        const val ACTIVE_COLOR = 0xFFAAB2FF.toInt()
+        const val IDLE_COLOR = 0xFF7C8190.toInt()
     }
 }

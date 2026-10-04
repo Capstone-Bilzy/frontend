@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#0D1133">
+    android:background="@color/bg_dark">
 
     <!-- 헤더 -->
     <LinearLayout
@@ -15,7 +15,7 @@
         android:gravity="center_vertical"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
-        android:paddingTop="52dp"
+        android:paddingTop="70dp"
         android:paddingBottom="16dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -34,8 +34,8 @@
             android:layout_marginStart="8dp"
             android:text="스캔"
             android:textColor="#FFFFFF"
-            android:textSize="22sp"
-            android:textStyle="bold" />
+            android:textSize="18sp"
+            android:textFontWeight="500" />
 
         <LinearLayout
             android:id="@+id/roundBadgeContainer"
@@ -60,9 +60,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="1차"
-                android:textColor="#7DE87D"
-                android:textSize="13sp"
-                android:textStyle="bold" />
+                android:textColor="#6ADB74"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textFontWeight="600" />
 
         </LinearLayout>
 
@@ -86,52 +87,60 @@
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
         app:layout_constraintTop_toBottomOf="@id/divider"
-        app:layout_constraintBottom_toTopOf="@id/tipCard"
+        app:layout_constraintBottom_toTopOf="@id/bottomBarrier"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
         <!-- 좌상단 코너 -->
         <ImageView
-            android:layout_width="44dp"
-            android:layout_height="44dp"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
             android:layout_gravity="top|start"
-            android:layout_marginStart="4dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginStart="3dp"
+            android:layout_marginTop="27dp"
             android:src="@drawable/ic_corner_tl" />
 
         <!-- 우상단 코너 -->
         <ImageView
-            android:layout_width="44dp"
-            android:layout_height="44dp"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
             android:layout_gravity="top|end"
-            android:layout_marginEnd="4dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginEnd="3dp"
+            android:layout_marginTop="27dp"
             android:src="@drawable/ic_corner_tr" />
 
         <!-- 좌하단 코너 -->
         <ImageView
-            android:layout_width="44dp"
-            android:layout_height="44dp"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
             android:layout_gravity="bottom|start"
-            android:layout_marginStart="4dp"
-            android:layout_marginBottom="16dp"
+            android:layout_marginStart="3dp"
+            android:layout_marginBottom="41dp"
             android:src="@drawable/ic_corner_bl" />
 
         <!-- 우하단 코너 -->
         <ImageView
-            android:layout_width="44dp"
-            android:layout_height="44dp"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
             android:layout_gravity="bottom|end"
-            android:layout_marginEnd="4dp"
-            android:layout_marginBottom="16dp"
+            android:layout_marginEnd="3dp"
+            android:layout_marginBottom="41dp"
             android:src="@drawable/ic_corner_br" />
+
+        <!-- 상태 텍스트(상단) / 방금 찍은 영수증(가운데) / 스텝 행(하단)을 세로로 쌓아
+             글자 크기나 화면 높이가 달라져도 서로 겹치지 않게 한다. -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:clipChildren="false"
+            android:gravity="center_horizontal">
 
         <!-- 상태 텍스트 (상단) -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="top|center_horizontal"
-            android:layout_marginTop="48dp"
+            android:layout_marginTop="60dp"
             android:orientation="vertical"
             android:gravity="center_horizontal">
 
@@ -140,51 +149,68 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="영수증을 인식하는 중이에요"
-                android:textColor="#FFFFFF"
-                android:textSize="22sp"
+                android:textColor="#F8FAFF"
+                android:textSize="20sp"
                 android:textStyle="bold"
-                android:gravity="center" />
+                android:gravity="center"
+                android:textFontWeight="600" />
 
             <TextView
                 android:id="@+id/tvSubStatus"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="8dp"
                 android:text="잠시만 기다려 주세요"
-                android:textColor="#BEBEF7"
+                android:textColor="#AAB2FF"
                 android:textSize="16sp"
-                android:gravity="center" />
+                android:gravity="center"
+                android:textFontWeight="400" />
 
         </LinearLayout>
+
+        <!-- 방금 찍은 영수증 미리보기 (남는 세로 공간을 차지) -->
+        <ImageView
+            android:id="@+id/ivCaptured"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginStart="56dp"
+            android:layout_marginEnd="56dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            android:scaleType="fitCenter"
+            android:contentDescription="@null" />
 
         <!-- 스텝 진행 행: 실제 프로토타입 스크린샷(영수증_스캔_화면_인식과정_정보_추출.png) 기준으로
              화면 중간이 아니라 뷰파인더 하단, TIP 카드 바로 위에 위치해야 한다. -->
         <LinearLayout
             android:id="@+id/stepRow"
+            android:clipChildren="false"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom|center_horizontal"
-            android:layout_marginBottom="42dp"
+            android:layout_marginBottom="72dp"
             android:orientation="horizontal"
             android:gravity="center_vertical">
 
             <!-- Step 1: 영수증 인식 -->
+            <!-- 진행 중인 단계 아이콘이 커졌다 작아질 때(펄스) 잘려 보이지 않게 clipChildren 해제 -->
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
+                android:clipChildren="false"
                 android:gravity="center_horizontal">
 
                 <FrameLayout
                     android:id="@+id/step1Icon"
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
+                    android:layout_width="46dp"
+                    android:layout_height="46dp"
                     android:background="@drawable/bg_step_active">
 
                     <ImageView
                         android:id="@+id/ivStep1"
-                        android:layout_width="18dp"
-                        android:layout_height="18dp"
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
                         android:layout_gravity="center"
                         android:src="@drawable/ic_scan"
                         app:tint="#FFFFFF" />
@@ -195,11 +221,12 @@
                     android:id="@+id/tvStep1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
+                    android:layout_marginTop="8dp"
                     android:text="영수증 인식"
-                    android:textColor="#FFFFFF"
-                    android:textSize="12sp"
-                    android:gravity="center" />
+                    android:textColor="#AAB2FF"
+                    android:textSize="14sp"
+                    android:gravity="center"
+                    android:textFontWeight="300" />
 
             </LinearLayout>
 
@@ -207,8 +234,8 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="18dp"
-                android:layout_marginEnd="18dp"
+                android:layout_marginStart="11dp"
+                android:layout_marginEnd="11dp"
                 android:layout_marginBottom="16dp"
                 android:text="- - -"
                 android:textColor="#5555AA"
@@ -216,22 +243,24 @@
                 android:gravity="center" />
 
             <!-- Step 2: 정보 추출 -->
+            <!-- 진행 중인 단계 아이콘이 커졌다 작아질 때(펄스) 잘려 보이지 않게 clipChildren 해제 -->
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
+                android:clipChildren="false"
                 android:gravity="center_horizontal">
 
                 <FrameLayout
                     android:id="@+id/step2Icon"
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
+                    android:layout_width="46dp"
+                    android:layout_height="46dp"
                     android:background="@drawable/bg_step_idle">
 
                     <ImageView
                         android:id="@+id/ivStep2"
-                        android:layout_width="18dp"
-                        android:layout_height="18dp"
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
                         android:layout_gravity="center"
                         android:src="@drawable/ic_receipt"
                         app:tint="#8888BB" />
@@ -242,11 +271,12 @@
                     android:id="@+id/tvStep2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
+                    android:layout_marginTop="8dp"
                     android:text="정보 추출"
-                    android:textColor="#8888BB"
-                    android:textSize="12sp"
-                    android:gravity="center" />
+                    android:textColor="#7C8190"
+                    android:textSize="14sp"
+                    android:gravity="center"
+                    android:textFontWeight="300" />
 
             </LinearLayout>
 
@@ -254,8 +284,8 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="18dp"
-                android:layout_marginEnd="18dp"
+                android:layout_marginStart="11dp"
+                android:layout_marginEnd="11dp"
                 android:layout_marginBottom="16dp"
                 android:text="- - -"
                 android:textColor="#5555AA"
@@ -263,22 +293,24 @@
                 android:gravity="center" />
 
             <!-- Step 3: 내역 확인 -->
+            <!-- 진행 중인 단계 아이콘이 커졌다 작아질 때(펄스) 잘려 보이지 않게 clipChildren 해제 -->
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
+                android:clipChildren="false"
                 android:gravity="center_horizontal">
 
                 <FrameLayout
                     android:id="@+id/step3Icon"
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
+                    android:layout_width="46dp"
+                    android:layout_height="46dp"
                     android:background="@drawable/bg_step_idle">
 
                     <ImageView
                         android:id="@+id/ivStep3"
-                        android:layout_width="18dp"
-                        android:layout_height="18dp"
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
                         android:layout_gravity="center"
                         android:src="@drawable/ic_check"
                         app:tint="#8888BB" />
@@ -289,17 +321,30 @@
                     android:id="@+id/tvStep3"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
+                    android:layout_marginTop="8dp"
                     android:text="내역 확인"
-                    android:textColor="#8888BB"
-                    android:textSize="12sp"
-                    android:gravity="center" />
+                    android:textColor="#7C8190"
+                    android:textSize="14sp"
+                    android:gravity="center"
+                    android:textFontWeight="300" />
 
             </LinearLayout>
 
         </LinearLayout>
 
+        </LinearLayout>
+
     </FrameLayout>
+
+    <!-- 뷰파인더 하단 기준선: TIP 카드/실패 버튼 중 보이는 쪽의 위. tipCard에 직접 걸면
+         실패 시 tipCard가 GONE이 되면서 뷰파인더가 화면 끝까지 늘어나 버튼과 겹친다. -->
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/bottomBarrier"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="top"
+        app:barrierAllowsGoneWidgets="false"
+        app:constraint_referenced_ids="tipCard,failedContainer" />
 
     <!-- 인식 실패 시 버튼(재촬영/직접입력)만 TIP 카드 자리에 대신 노출한다.
          Figma 최종 디자인은 실패해도 뷰파인더/스텝 행을 그대로 보여주고(tvStatus/tvSubStatus
@@ -319,30 +364,29 @@
             android:id="@+id/btnRetry"
             android:layout_width="0dp"
             android:layout_height="56dp"
-            android:layout_marginStart="24dp"
-            android:layout_marginEnd="24dp"
-            android:layout_marginBottom="12dp"
+            android:layout_marginStart="26dp"
+            android:layout_marginEnd="25dp"
+            android:layout_marginBottom="18dp"
             android:text="다시 촬영하기"
             android:textColor="#FFFFFF"
-            android:textSize="18sp"
-            android:textStyle="bold"
+            android:textSize="16sp"
             android:gravity="center"
-            android:background="@drawable/bg_button_primary"
+            android:background="@drawable/bg_button_glass"
             android:clickable="true"
             android:focusable="true"
             app:layout_constraintBottom_toTopOf="@id/btnManualInput"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"
+            android:textFontWeight="500" />
 
         <TextView
             android:id="@+id/btnManualInput"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="32dp"
+            android:layout_marginBottom="30dp"
             android:text="직접 입력할게요"
-            android:textColor="#A5A6F6"
+            android:textColor="#FFFFFF"
             android:textSize="16sp"
-            android:textStyle="bold"
             android:paddingTop="6dp"
             android:paddingBottom="6dp"
             android:paddingStart="8dp"
@@ -351,7 +395,8 @@
             android:focusable="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"
+            android:textFontWeight="300" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -364,9 +409,9 @@
         android:gravity="center_vertical"
         android:background="@drawable/bg_tip_card"
         android:padding="16dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
-        android:layout_marginBottom="32dp"
+        android:layout_marginStart="23dp"
+        android:layout_marginEnd="23dp"
+        android:layout_marginBottom="55dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -389,18 +434,20 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="TIP"
-                android:textColor="#A5A6F6"
-                android:textSize="14sp"
-                android:textStyle="bold" />
+                android:textColor="#AAB2FF"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textFontWeight="600" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:text="영수증의 글자가 잘 보이도록 밝은 곳에서\n촬영하면 인식률이 올라가요."
-                android:textColor="#BEBEF7"
-                android:textSize="14sp"
-                android:lineSpacingExtra="2dp" />
+                android:textColor="#D9DCFF"
+                android:textSize="15sp"
+                android:textFontWeight="300"
+                android:lineHeight="22sp" />
 
         </LinearLayout>
 

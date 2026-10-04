@@ -2,7 +2,6 @@ package com.android.bilzy.ui.history
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.android.bilzy.data.demo.DemoData
 import com.android.bilzy.domain.model.Settlement
 import com.android.bilzy.domain.repository.OcrRepository
 import com.android.bilzy.domain.repository.SettlementRepository
@@ -27,10 +26,6 @@ class HistoryDetailViewModel @Inject constructor(
     fun load(id: String) {
         if (id == loadedId && _settlement.value != null) return
         loadedId = id
-        if (id == DemoData.DEMO_ID) {
-            _settlement.value = DemoData.settlement
-            return
-        }
         viewModelScope.launch {
             runCatching { settlementRepository.getSettlement(id) }
                 .onSuccess { _settlement.value = it }

@@ -24,6 +24,9 @@ interface SettlementRepository {
     /** 정산건의 특정 라운드에 붙은 영수증 이미지 삭제(사용자가 '저장 안 함'/'다시 찍기' 선택 시). */
     suspend fun deleteReceiptImage(id: String, round: Int = 1)
 
+    /** 특정 차수(영수증+항목)를 통째로 삭제. 뒤 차수는 서버에서 번호가 한 칸씩 당겨진다. */
+    suspend fun deleteRound(id: String, round: Int)
+
     /** 본인이 참여한 라운드 집합을 설정(토글 결과 전체를 한 번에 보냄). */
     suspend fun setMyRounds(id: String, rounds: List<Int>)
 

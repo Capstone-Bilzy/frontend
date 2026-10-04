@@ -48,7 +48,8 @@ android {
     buildTypes {
         debug {
             // 에뮬레이터에서 로컬 FastAPI(호스트의 localhost:8000)는 10.0.2.2로 접근
-            buildConfigField("String", "BASE_URL", "\"http://10.0.2.2:8000/\"")
+            // 팀원 실기기 배포용으로 임시로 Render 주소 사용 (로컬 개발 복귀 시 "http://10.0.2.2:8000/"로 되돌릴 것)
+            buildConfigField("String", "BASE_URL", "\"https://backend-no1a.onrender.com/\"")
         }
         release {
             isMinifyEnabled = false

@@ -356,6 +356,22 @@
             app:destination="@id/peopleCountFragment" />
         <action android:id="@+id/action_receiptList_to_saved"
             app:destination="@id/receiptListSavedFragment" />
+        <action android:id="@+id/action_receiptList_to_roundDetail"
+            app:destination="@id/receiptRoundDetailFragment" />
+    </fragment>
+
+    <!-- 영수증 목록에서 차수를 누르면 그 차수의 스캔 내역을 다시 보여준다. "다시 찍기"는 같은 차수를
+         재스캔하는 흐름으로 보내고, 목록/상세는 스택에서 걷어내 확정 후 새 목록으로 돌아오게 한다. -->
+    <fragment
+        android:id="@+id/receiptRoundDetailFragment"
+        android:name="com.android.bilzy.ui.settlement.ReceiptRoundDetailFragment"
+        android:label="ReceiptRoundDetail"
+        tools:layout="@layout/fragment_receipt_round_detail">
+        <argument android:name="round" app:argType="integer" />
+        <action android:id="@+id/action_receiptRoundDetail_to_scanCamera"
+            app:destination="@id/scanCameraFragment"
+            app:popUpTo="@id/receiptListFragment"
+            app:popUpToInclusive="true" />
     </fragment>
 
     <!-- "영수증 저장하기" 결과 화면 — 2.4초 후 자동으로 목록으로 복귀 -->

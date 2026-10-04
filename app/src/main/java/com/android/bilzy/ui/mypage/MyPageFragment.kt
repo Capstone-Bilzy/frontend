@@ -90,6 +90,9 @@ class MyPageFragment : Fragment() {
             return
         }
         binding.ivProfileAvatar.scaleType = ImageView.ScaleType.CENTER_CROP
+        // 원형 변환이 적용되기 전(첫 로드·전환 중)에 사진이 잠깐 네모로 보이지 않도록 뷰 자체를
+        // 원형 배경 외곽선으로 잘라 둔다. 테두리 링은 foreground(fg_profile_ring)로 사진 위에 그려진다.
+        binding.ivProfileAvatar.clipToOutline = true
         binding.ivProfileAvatar.setPadding(0, 0, 0, 0)
         binding.ivProfileAvatar.load(url) {
             crossfade(true)
@@ -101,7 +104,7 @@ class MyPageFragment : Fragment() {
 
     private fun resetAvatarToPlaceholder() {
         binding.ivProfileAvatar.scaleType = ImageView.ScaleType.FIT_CENTER
-        val padding = (6 * resources.displayMetrics.density).toInt()
+        val padding = (13 * resources.displayMetrics.density).toInt()
         binding.ivProfileAvatar.setPadding(padding, padding, padding, padding)
         binding.ivProfileAvatar.setImageResource(R.drawable.character_smile)
     }

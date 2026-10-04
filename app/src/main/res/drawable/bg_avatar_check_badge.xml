@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- 프로토타입 .bz-av i.on: background:#6C5CE7 (합류한 멤버 아바타 우측 하단 체크 배지) -->
+<!-- 아바타 우측 하단 체크 배지. 색은 코드에서 tint(완료 #776AEC / 대기 #544E8A). -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="oval">
-    <solid android:color="#6C5CE7" />
+    <solid android:color="#776AEC" />
 </shape>

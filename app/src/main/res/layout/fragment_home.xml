@@ -20,28 +20,28 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingTop="52dp"
+            android:paddingTop="61dp"
             android:paddingBottom="88dp">
 
             <!-- Logo -->
             <ImageView
                 android:layout_width="wrap_content"
-                android:layout_height="26dp"
+                android:layout_height="27dp"
                 android:src="@drawable/logo_bilzy"
                 android:adjustViewBounds="true"
                 android:scaleType="fitStart"
                 android:contentDescription="@null"
-                android:layout_marginStart="20dp"
-                android:layout_marginBottom="12dp"
+                android:layout_marginStart="28dp"
+                android:layout_marginBottom="11dp"
             />
 
             <!-- Hero section -->
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="20dp"
-                android:layout_marginBottom="16dp">
+                android:layout_marginStart="33dp"
+                android:layout_marginEnd="36dp"
+                android:layout_marginBottom="25dp">
 
                 <TextView
                     android:id="@+id/tvHero"
@@ -50,15 +50,17 @@
                     android:layout_alignParentStart="true"
                     android:layout_centerVertical="true"
                     android:text="오늘 모임 정산,\n자리에서 바로 끝내요"
-                    android:textColor="#FFFFFF"
-                    android:textSize="26sp"
+                    android:textColor="#F6F5FF"
+                    android:textSize="24sp"
                     android:textStyle="bold"
-                    android:lineSpacingExtra="4dp" />
+                    android:textFontWeight="600"
+                    android:lineHeight="34sp" />
 
+                <!-- 좁은 화면(360dp 등)에서 문구를 가리지 않도록 문구 옆 남는 폭만 차지 -->
                 <ImageView
-                    android:layout_width="120dp"
-                    android:layout_height="wrap_content"
-                    android:adjustViewBounds="true"
+                    android:layout_width="108dp"
+                    android:layout_height="90dp"
+                    android:layout_toEndOf="@id/tvHero"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
                     android:src="@drawable/character_side"
@@ -71,8 +73,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="20dp"
+                android:layout_marginStart="23dp"
+                android:layout_marginEnd="23dp"
                 android:weightSum="2">
 
                 <!-- Left card: 결제자 -->
@@ -84,7 +86,10 @@
                     android:layout_marginEnd="6dp"
                     android:orientation="vertical"
                     android:gravity="center_horizontal"
-                    android:padding="16dp"
+                    android:paddingTop="17dp"
+                    android:paddingBottom="18dp"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="8dp"
                     android:background="@drawable/bg_action_card_left"
                     android:clickable="true"
                     android:focusable="true">
@@ -95,39 +100,42 @@
                         android:layout_height="wrap_content"
                         android:text="결제자"
                         android:textColor="#FFFFFF"
-                        android:textSize="13sp"
+                        android:textSize="14sp"
                         android:textStyle="bold"
                         android:background="@drawable/bg_chip_card_label"
                         android:paddingStart="12dp"
                         android:paddingEnd="12dp"
                         android:paddingTop="4dp"
-                        android:paddingBottom="4dp" />
+                        android:paddingBottom="4dp"
+                        android:textFontWeight="600" />
 
                     <ImageView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:layout_marginTop="14dp"
+                        android:layout_width="23dp"
+                        android:layout_height="23dp"
+                        android:layout_marginTop="18dp"
                         android:src="@drawable/ic_scan" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
+                        android:layout_marginTop="17dp"
                         android:text="정산 시작하기"
                         android:textColor="#FFFFFF"
-                        android:textSize="17sp"
+                        android:textSize="18sp"
                         android:textStyle="bold"
-                        android:gravity="center" />
+                        android:gravity="center"
+                        android:textFontWeight="600" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
                         android:text="영수증 스캔으로\n정산방 만들기"
-                        android:textColor="#BEBEF7"
-                        android:textSize="13sp"
-                        android:lineSpacingExtra="2dp"
-                        android:gravity="center" />
+                        android:textColor="#B2FFFFFF"
+                        android:textSize="15sp"
+                        android:gravity="center"
+                        android:textFontWeight="400"
+                        android:lineHeight="20sp" />
 
                 </LinearLayout>
 
@@ -140,7 +148,10 @@
                     android:layout_marginStart="6dp"
                     android:orientation="vertical"
                     android:gravity="center_horizontal"
-                    android:padding="16dp"
+                    android:paddingTop="17dp"
+                    android:paddingBottom="18dp"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="8dp"
                     android:background="@drawable/bg_action_card_right"
                     android:clickable="true"
                     android:focusable="true">
@@ -151,39 +162,42 @@
                         android:layout_height="wrap_content"
                         android:text="참여자"
                         android:textColor="#FFFFFF"
-                        android:textSize="13sp"
+                        android:textSize="14sp"
                         android:textStyle="bold"
                         android:background="@drawable/bg_chip_card_label"
                         android:paddingStart="12dp"
                         android:paddingEnd="12dp"
                         android:paddingTop="4dp"
-                        android:paddingBottom="4dp" />
+                        android:paddingBottom="4dp"
+                        android:textFontWeight="600" />
 
                     <ImageView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:layout_marginTop="14dp"
+                        android:layout_width="23dp"
+                        android:layout_height="23dp"
+                        android:layout_marginTop="18dp"
                         android:src="@drawable/joinlogo" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
+                        android:layout_marginTop="17dp"
                         android:text="정산 참여하기"
                         android:textColor="#FFFFFF"
-                        android:textSize="17sp"
+                        android:textSize="18sp"
                         android:textStyle="bold"
-                        android:gravity="center" />
+                        android:gravity="center"
+                        android:textFontWeight="600" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
                         android:text="QR 스캔으로\n정산방 입장"
-                        android:textColor="#BEBEF7"
-                        android:textSize="13sp"
-                        android:lineSpacingExtra="2dp"
-                        android:gravity="center" />
+                        android:textColor="#B2FFFFFF"
+                        android:textSize="15sp"
+                        android:gravity="center"
+                        android:textFontWeight="400"
+                        android:lineHeight="20sp" />
 
                 </LinearLayout>
 
@@ -194,11 +208,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="20dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="22dp"
                 android:layout_marginTop="20dp"
                 android:background="@drawable/bg_glass_panel"
-                android:padding="16dp">
+                android:paddingTop="20dp"
+                android:paddingBottom="18dp"
+                android:paddingStart="22dp"
+                android:paddingEnd="24dp">
 
                 <!-- Header row -->
                 <RelativeLayout
@@ -212,7 +229,8 @@
                         android:text="최근 정산 내역"
                         android:textColor="#FFFFFF"
                         android:textSize="18sp"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"
+                        android:textFontWeight="600" />
 
                     <TextView
                         android:id="@+id/btnSeeAll"
@@ -220,10 +238,11 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
                         android:text="전체보기 ›"
-                        android:textColor="#8080BB"
+                        android:textColor="#B2FFFFFF"
                         android:textSize="14sp"
                         android:clickable="true"
-                        android:focusable="true" />
+                        android:focusable="true"
+                        android:textFontWeight="500" />
 
                 </RelativeLayout>
 
@@ -257,25 +276,26 @@
     <LinearLayout
         android:id="@+id/bottomNav"
         android:layout_width="0dp"
-        android:layout_height="72dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="21dp"
         android:orientation="horizontal"
         android:gravity="center"
-        android:paddingBottom="8dp"
         android:background="@android:color/transparent"
-        android:weightSum="4"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
         <LinearLayout
             android:id="@+id/navHome"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_width="74dp"
+            android:layout_height="57dp"
             android:orientation="vertical"
             android:gravity="center"
             android:clickable="true"
-            android:focusable="true">
+            android:focusable="true"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/bg_nav_active">
             
                 <ImageView
                     android:layout_width="22dp"
@@ -288,19 +308,22 @@
                     android:layout_marginTop="2dp"
                     android:text="홈"
                     android:textColor="@color/nav_selector"
-                    android:textSize="12sp" />
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:textFontWeight="600" />
             
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/navScan"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_width="74dp"
+            android:layout_height="57dp"
             android:orientation="vertical"
             android:gravity="center"
             android:clickable="true"
-            android:focusable="true">
+            android:focusable="true"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp">
             <ImageView
                 android:layout_width="22dp"
                 android:layout_height="22dp"
@@ -312,18 +335,20 @@
                 android:layout_marginTop="2dp"
                 android:text="스캔"
                 android:textColor="@color/white"
-                android:textSize="12sp" />
+                android:textSize="12sp"
+                android:textFontWeight="500" />
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/navHistory"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_width="74dp"
+            android:layout_height="57dp"
             android:orientation="vertical"
             android:gravity="center"
             android:clickable="true"
-            android:focusable="true">
+            android:focusable="true"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp">
             <ImageView
                 android:layout_width="22dp"
                 android:layout_height="22dp"
@@ -335,18 +360,20 @@
                 android:layout_marginTop="2dp"
                 android:text="정산내역"
                 android:textColor="@color/white"
-                android:textSize="12sp" />
+                android:textSize="12sp"
+                android:textFontWeight="500" />
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/navMyPage"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_width="74dp"
+            android:layout_height="57dp"
             android:orientation="vertical"
             android:gravity="center"
             android:clickable="true"
-            android:focusable="true">
+            android:focusable="true"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp">
             <ImageView
                 android:layout_width="22dp"
                 android:layout_height="22dp"
@@ -358,7 +385,8 @@
                 android:layout_marginTop="2dp"
                 android:text="마이페이지"
                 android:textColor="@color/white"
-                android:textSize="12sp" />
+                android:textSize="12sp"
+                android:textFontWeight="500" />
         </LinearLayout>
 
     </LinearLayout>

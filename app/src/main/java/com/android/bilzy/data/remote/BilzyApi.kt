@@ -174,4 +174,11 @@ interface BilzyApi {
         @Path("id") id: String,
         @Query("round") round: Int = 1
     )
+
+    /** 정산방의 특정 차수(영수증+항목)를 삭제. 서버가 뒤 차수 번호를 한 칸씩 당긴다(방장 전용). */
+    @DELETE("settlements/{id}/rounds/{round}")
+    suspend fun deleteRound(
+        @Path("id") id: String,
+        @Path("round") round: Int
+    )
 }

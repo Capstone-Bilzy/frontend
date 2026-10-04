@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- 프로토타입 .bz-bar: background:rgba(255,255,255,.14) / .bz-bar-fill: linear-gradient(90deg,#8B7BEF,#5EC8F0) -->
+<!-- 프로토타입 .bz-bar: background:rgba(255,255,255,.14) / .bz-bar-fill: linear-gradient(90deg,#825EFA,#6FA8FF) -->
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@android:id/background">
         <shape android:shape="rectangle">
-            <solid android:color="#24FFFFFF"/>
-            <corners android:radius="4dp"/>
+            <solid android:color="#EFEAFF"/>
+            <corners android:radius="99dp"/>
         </shape>
     </item>
     <item android:id="@android:id/progress">
@@ -13,9 +13,9 @@
                 <gradient
                     android:type="linear"
                     android:angle="0"
-                    android:startColor="#8B7BEF"
-                    android:endColor="#5EC8F0" />
-                <corners android:radius="4dp"/>
+                    android:startColor="#825EFA"
+                    android:endColor="#6FA8FF" />
+                <corners android:radius="99dp"/>
             </shape>
         </clip>
     </item>

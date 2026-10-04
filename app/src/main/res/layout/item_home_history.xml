@@ -31,17 +31,18 @@
             android:text="모임 이름"
             android:textColor="#FFFFFF"
             android:textSize="16sp"
-            android:textStyle="bold"
             android:maxLines="1"
-            android:ellipsize="end" />
+            android:ellipsize="end"
+            android:textFontWeight="500" />
 
         <TextView
             android:id="@+id/tvSubtitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="5.04 · 정산 완료"
-            android:textColor="#8080BB"
-            android:textSize="13sp" />
+            android:textColor="#AAB2FF"
+            android:textSize="14sp"
+            android:textFontWeight="300" />
 
     </LinearLayout>
 
@@ -53,7 +54,7 @@
         android:layout_centerVertical="true"
         android:text="0원"
         android:textColor="#FFFFFF"
-        android:textSize="16sp"
-        android:textStyle="bold" />
+        android:textSize="18sp"
+        android:textFontWeight="500" />
 
 </RelativeLayout>

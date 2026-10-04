@@ -185,6 +185,13 @@ class RoomViewModel @Inject constructor(
         }
     }
 
+    /** [load]의 suspend 버전 — 호출 측이 응답을 기다린 뒤 다음 단계(계산 등)를 순서대로 진행할 때 쓴다. */
+    suspend fun refresh() {
+        val id = settlementId ?: return
+        runCatching { settlementRepository.getSettlement(id) }
+            .onSuccess { _settlement.value = it }
+    }
+
     /**
      * AI(Gemini) 정산 계산. 성공 시 멤버별 금액·사유가 반영된 상세로 갱신하고 aiApplied=true.
      * 실패하면 false(호출 측은 엔빵으로 폴백).

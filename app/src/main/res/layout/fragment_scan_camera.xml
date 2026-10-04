@@ -17,7 +17,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:background="#0D1133">
+            android:background="@color/bg_dark">
 
             <!-- 헤더: ← 스캔 -->
             <LinearLayout
@@ -28,7 +28,7 @@
                 android:gravity="center_vertical"
                 android:paddingStart="20dp"
                 android:paddingEnd="20dp"
-                android:paddingTop="52dp"
+                android:paddingTop="70dp"
                 android:paddingBottom="16dp">
 
                 <ImageView
@@ -47,8 +47,8 @@
                     android:layout_marginStart="10dp"
                     android:text="스캔"
                     android:textColor="#FFFFFF"
-                    android:textSize="22sp"
-                    android:textStyle="bold" />
+                    android:textSize="18sp"
+                    android:textFontWeight="500" />
 
                 <LinearLayout
                     android:id="@+id/roundBadgeContainer"
@@ -73,9 +73,10 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="1차"
-                        android:textColor="#7DE87D"
-                        android:textSize="13sp"
-                        android:textStyle="bold" />
+                        android:textColor="#6ADB74"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textFontWeight="600" />
 
                 </LinearLayout>
 
@@ -104,38 +105,38 @@
 
                 <!-- 좌상단 코너 -->
                 <ImageView
-                    android:layout_width="44dp"
-                    android:layout_height="44dp"
+                    android:layout_width="42dp"
+                    android:layout_height="42dp"
                     android:layout_gravity="top|start"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginStart="23dp"
+                    android:layout_marginTop="27dp"
                     android:src="@drawable/ic_corner_tl" />
 
                 <!-- 우상단 코너 -->
                 <ImageView
-                    android:layout_width="44dp"
-                    android:layout_height="44dp"
+                    android:layout_width="42dp"
+                    android:layout_height="42dp"
                     android:layout_gravity="top|end"
-                    android:layout_marginEnd="20dp"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="23dp"
+                    android:layout_marginTop="27dp"
                     android:src="@drawable/ic_corner_tr" />
 
                 <!-- 좌하단 코너 -->
                 <ImageView
-                    android:layout_width="44dp"
-                    android:layout_height="44dp"
+                    android:layout_width="42dp"
+                    android:layout_height="42dp"
                     android:layout_gravity="bottom|start"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginBottom="16dp"
+                    android:layout_marginStart="23dp"
+                    android:layout_marginBottom="11dp"
                     android:src="@drawable/ic_corner_bl" />
 
                 <!-- 우하단 코너 -->
                 <ImageView
-                    android:layout_width="44dp"
-                    android:layout_height="44dp"
+                    android:layout_width="42dp"
+                    android:layout_height="42dp"
                     android:layout_gravity="bottom|end"
-                    android:layout_marginEnd="20dp"
-                    android:layout_marginBottom="16dp"
+                    android:layout_marginEnd="23dp"
+                    android:layout_marginBottom="11dp"
                     android:src="@drawable/ic_corner_br" />
 
                 <!-- 중앙 안내 아이콘 + 텍스트 -->
@@ -144,24 +145,26 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
+                    android:translationY="35dp"
                     android:orientation="vertical"
                     android:gravity="center_horizontal">
 
                     <ImageView
-                        android:layout_width="56dp"
-                        android:layout_height="56dp"
+                        android:layout_width="94dp"
+                        android:layout_height="85dp"
                         android:src="@drawable/ic_scan"
                         app:tint="#555588" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
+                        android:layout_marginTop="29dp"
                         android:text="정산해야 하는 영수증의\n결제 정보가 나오게 찍어주세요"
-                        android:textColor="#666699"
+                        android:textColor="#FFFFFF"
                         android:textSize="16sp"
                         android:gravity="center"
-                        android:lineSpacingExtra="4dp" />
+                        android:textFontWeight="300"
+                        android:lineHeight="24sp" />
 
                 </LinearLayout>
 
@@ -173,21 +176,21 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:gravity="center_horizontal"
-                android:paddingTop="24dp"
-                android:paddingBottom="36dp">
+                android:paddingTop="11dp"
+                android:paddingBottom="30dp">
 
                 <!-- 갤러리 / 셔터 버튼 행 -->
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="88dp"
-                    android:paddingStart="52dp"
-                    android:paddingEnd="52dp">
+                    android:layout_height="68dp"
+                    android:paddingStart="23dp"
+                    android:paddingEnd="23dp">
 
                     <!-- 갤러리 (흰 사각형) -->
                     <FrameLayout
                         android:id="@+id/btnGallery"
-                        android:layout_width="44dp"
-                        android:layout_height="44dp"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
                         android:layout_alignParentStart="true"
                         android:layout_centerVertical="true"
                         android:background="#FFFFFF"
@@ -197,15 +200,15 @@
                     <!-- 셔터 버튼 (라벤더 링 + 흰 원) -->
                     <FrameLayout
                         android:id="@+id/btnShutter"
-                        android:layout_width="76dp"
-                        android:layout_height="76dp"
+                        android:layout_width="68dp"
+                        android:layout_height="68dp"
                         android:layout_centerInParent="true"
                         android:clickable="true"
                         android:focusable="true">
 
                         <View
-                            android:layout_width="76dp"
-                            android:layout_height="76dp"
+                            android:layout_width="68dp"
+                            android:layout_height="68dp"
                             android:background="@drawable/bg_shutter_ring" />
 
                         <View
@@ -222,8 +225,9 @@
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingStart="52dp"
-                    android:paddingEnd="52dp">
+                    android:layout_marginTop="21dp"
+                    android:paddingStart="55dp"
+                    android:paddingEnd="55dp">
 
                     <!-- QR 스캔 (왼쪽, 비활성) -->
                     <TextView
@@ -233,10 +237,11 @@
                         android:layout_alignParentStart="true"
                         android:layout_centerVertical="true"
                         android:text="QR 스캔"
-                        android:textColor="#606090"
+                        android:textColor="#FFFFFF"
                         android:textSize="16sp"
                         android:clickable="true"
-                        android:focusable="true" />
+                        android:focusable="true"
+                        android:textFontWeight="400" />
 
                     <!-- 영수증 스캔 (중앙, 활성): 텍스트 → ▲ 순서 -->
                     <LinearLayout
@@ -253,7 +258,8 @@
                             android:text="영수증 스캔"
                             android:textColor="#FFFFFF"
                             android:textSize="16sp"
-                            android:textStyle="bold" />
+                            android:textStyle="bold"
+                            android:textFontWeight="600" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -311,20 +317,21 @@
                 android:text="'Bilzy'가 사진에\n접근하도록 허용하시겠습니까?"
                 android:textColor="#FFFFFF"
                 android:textSize="18sp"
-                android:textStyle="bold"
                 android:gravity="center"
-                android:lineSpacingExtra="3dp"
-                android:layout_marginBottom="6dp" />
+                android:layout_marginBottom="6dp"
+                android:textFontWeight="500"
+                android:lineHeight="24sp" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="영수증 이미지를 선택하여\n스캔할 수 있습니다."
-                android:textColor="#99FFFFFF"
+                android:textColor="#E2E2E3"
                 android:textSize="14sp"
                 android:gravity="center"
-                android:lineSpacingExtra="2dp"
-                android:layout_marginBottom="18dp" />
+                android:layout_marginBottom="18dp"
+                android:textFontWeight="300"
+                android:lineHeight="20sp" />
 
             <TextView
                 android:id="@+id/btnPhotoLibrary"
@@ -332,12 +339,13 @@
                 android:layout_height="44dp"
                 android:text="사진 선택..."
                 android:textColor="#FFFFFF"
-                android:textSize="17sp"
+                android:textSize="16sp"
                 android:gravity="center"
                 android:background="@drawable/bg_dialog_button"
                 android:clickable="true"
                 android:focusable="true"
-                android:layout_marginBottom="8dp" />
+                android:layout_marginBottom="8dp"
+                android:textFontWeight="400" />
 
             <TextView
                 android:id="@+id/btnFile"
@@ -345,12 +353,13 @@
                 android:layout_height="44dp"
                 android:text="모든 사진에 접근 허용"
                 android:textColor="#FFFFFF"
-                android:textSize="17sp"
+                android:textSize="16sp"
                 android:gravity="center"
                 android:background="@drawable/bg_dialog_button"
                 android:clickable="true"
                 android:focusable="true"
-                android:layout_marginBottom="8dp" />
+                android:layout_marginBottom="8dp"
+                android:textFontWeight="400" />
 
             <TextView
                 android:id="@+id/btnCancel"
@@ -358,11 +367,12 @@
                 android:layout_height="44dp"
                 android:text="허용 안 함"
                 android:textColor="#FFFFFF"
-                android:textSize="17sp"
+                android:textSize="16sp"
                 android:gravity="center"
                 android:background="@drawable/bg_dialog_button"
                 android:clickable="true"
-                android:focusable="true" />
+                android:focusable="true"
+                android:textFontWeight="400" />
         </LinearLayout>
 
     </FrameLayout>

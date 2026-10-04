@@ -10,13 +10,13 @@
     <ImageView
         android:id="@+id/tvLogo"
         android:layout_width="wrap_content"
-        android:layout_height="24dp"
+        android:layout_height="27dp"
         android:src="@drawable/logo_bilzy"
         android:adjustViewBounds="true"
         android:scaleType="fitStart"
         android:contentDescription="@null"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="52dp"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="61dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
     />
@@ -29,7 +29,7 @@
         android:orientation="horizontal"
         android:gravity="center_vertical"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="15dp"
         app:layout_constraintTop_toBottomOf="@id/tvLogo"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -49,8 +49,8 @@
             android:layout_marginStart="6dp"
             android:text="정산 결과"
             android:textColor="#FFFFFF"
-            android:textSize="19sp"
-            android:textStyle="bold" />
+            android:textSize="18sp"
+            android:textFontWeight="500" />
 
     </LinearLayout>
 
@@ -60,7 +60,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="12dp"
-        app:layout_constraintTop_toBottomOf="@id/titleRow"
+        app:layout_constraintTop_toBottomOf="@id/headerDivider"
         app:layout_constraintBottom_toTopOf="@id/btnConfirm"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -218,18 +218,29 @@
         android:id="@+id/btnConfirm"
         android:layout_width="0dp"
         android:layout_height="56dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
+        android:layout_marginStart="26dp"
+        android:layout_marginEnd="25dp"
         android:layout_marginBottom="36dp"
         android:text="정산 완료하기"
         android:textColor="#FFFFFF"
-        android:textSize="19sp"
-        android:textStyle="bold"
+        android:textSize="16sp"
         android:gravity="center"
         android:background="@drawable/bg_button_outline"
         android:clickable="true"
         android:focusable="true"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:textFontWeight="500" />
+
+    <!-- 헤더 구분선 (피그마 Header - TopAppBar: 아래 테두리 #6FA8FF 30%, 제목 아래 18) -->
+    <View
+        android:id="@+id/headerDivider"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginTop="18dp"
+        android:background="#4D6FA8FF"
+        app:layout_constraintTop_toBottomOf="@id/titleRow"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 

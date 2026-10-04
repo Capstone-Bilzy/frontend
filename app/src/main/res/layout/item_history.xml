@@ -20,7 +20,8 @@
         android:textColor="#FFFFFF"
         android:textSize="18sp"
         android:textStyle="bold"
-        android:layout_marginBottom="4dp" />
+        android:layout_marginBottom="4dp"
+        android:textFontWeight="600" />
 
     <!-- Date -->
     <TextView
@@ -29,8 +30,9 @@
         android:layout_height="wrap_content"
         android:text="5. 24. 2026 • 12:30 PM"
         android:textColor="#FFFFFF"
-        android:textSize="14sp"
-        android:layout_marginBottom="10dp" />
+        android:textSize="15sp"
+        android:layout_marginBottom="10dp"
+        android:textFontWeight="400" />
 
     <!-- People count + amount row -->
     <LinearLayout
@@ -53,7 +55,8 @@
             android:layout_weight="1"
             android:text="6명"
             android:textColor="#FFFFFF"
-            android:textSize="14sp" />
+            android:textSize="16sp"
+            android:textFontWeight="400" />
 
         <TextView
             android:id="@+id/tvAmount"
@@ -62,7 +65,8 @@
             android:text="57,500원"
             android:textColor="#FFFFFF"
             android:textSize="18sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:textFontWeight="600" />
     </LinearLayout>
 
 </LinearLayout>

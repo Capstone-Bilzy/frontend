@@ -42,20 +42,22 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:text="대기 중이에요"
-            android:textColor="#FFFFFF"
-            android:textSize="29sp"
+            android:textColor="#F8FAFF"
+            android:textSize="24sp"
             android:textStyle="bold"
-            android:layout_marginTop="16dp" />
+            android:layout_marginTop="16dp"
+            android:textFontWeight="600" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:text="나머지 인원의 입력을 기다리고 있어요"
-            android:textColor="#BEBEF7"
+            android:textColor="#AAB2FF"
             android:textSize="16sp"
             android:layout_marginTop="6dp"
-            android:layout_marginBottom="28dp" />
+            android:layout_marginBottom="28dp"
+            android:textFontWeight="400" />
 
         <!-- Progress section -->
         <RelativeLayout
@@ -68,9 +70,9 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:text="정산 완료 현황"
-                android:textColor="#FFFFFF"
-                android:textSize="17sp"
-                android:textStyle="bold" />
+                android:textColor="#DCDAFF"
+                android:textSize="18sp"
+                android:textFontWeight="500" />
 
             <TextView
                 android:id="@+id/tvStatus"
@@ -78,9 +80,9 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:text=""
-                android:textColor="#A5A6F6"
-                android:textSize="17sp"
-                android:textStyle="bold" />
+                android:textColor="#DCDAFF"
+                android:textSize="16sp"
+                android:textFontWeight="500" />
 
         </RelativeLayout>
 
@@ -88,11 +90,11 @@
             android:id="@+id/progressBar"
             style="@android:style/Widget.ProgressBar.Horizontal"
             android:layout_width="match_parent"
-            android:layout_height="8dp"
+            android:layout_height="12dp"
             android:progress="0"
             android:progressDrawable="@drawable/bg_progress_bar"
             android:indeterminate="false"
-            android:layout_marginBottom="16dp" />
+            android:layout_marginBottom="22dp" />
 
         <!-- Avatar circles row (동적으로 채워짐) -->
         <LinearLayout
@@ -136,9 +138,10 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="AI가 최적의 정산 금액을 계산하고 있어요"
-                android:textColor="#BEBEF7"
-                android:textSize="14sp"
-                android:lineSpacingExtra="2dp" />
+                android:textColor="#D9DCFF"
+                android:textSize="15sp"
+                android:lineSpacingExtra="2dp"
+                android:textFontWeight="400" />
 
         </LinearLayout>
 

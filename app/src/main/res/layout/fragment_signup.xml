@@ -54,12 +54,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Bilzy와 함께 빠르고 간편한\n정산을 시작해보세요"
-            android:textColor="#A5A6F6"
-            android:textSize="14sp"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
             android:gravity="center"
-            android:lineSpacingExtra="4dp"
             android:layout_marginTop="16dp"
-            android:layout_marginBottom="32dp" />
+            android:layout_marginBottom="32dp"
+            android:textFontWeight="400"
+            android:lineHeight="24sp" />
 
         <LinearLayout
             android:id="@+id/socialButtons"
@@ -90,8 +91,8 @@
                     android:layout_height="wrap_content"
                     android:text="카카오로 3초 만에 시작하기"
                     android:textColor="#191919"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
+                    android:textSize="16sp"
+                    android:textFontWeight="500" />
             </LinearLayout>
 
             <LinearLayout
@@ -116,8 +117,8 @@
                     android:layout_height="wrap_content"
                     android:text="네이버로 3초 만에 시작하기"
                     android:textColor="#FFFFFF"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
+                    android:textSize="16sp"
+                    android:textFontWeight="500" />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>

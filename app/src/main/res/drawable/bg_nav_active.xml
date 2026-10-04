@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- 피그마 하단 내비게이션: 현재 탭 배경 (#0E1B4C, r16, 74x57) -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
-    <solid android:color="#1FA5A6F6" />
-    <corners android:radius="14dp" />
+    <solid android:color="#0E1B4C" />
+    <corners android:radius="16dp" />
 </shape>
