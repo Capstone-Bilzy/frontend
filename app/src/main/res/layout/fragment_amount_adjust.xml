@@ -50,7 +50,8 @@
             android:text="금액 조정하기"
             android:textColor="#FFFFFF"
             android:textSize="18sp"
-            android:textFontWeight="500" />
+            android:textFontWeight="500"
+            android:maxLines="1" />
 
     </LinearLayout>
 
@@ -81,7 +82,8 @@
                 android:textColor="#FFFFFF"
                 android:textSize="16sp"
                 android:layout_marginBottom="10dp"
-                android:textFontWeight="500" />
+                android:textFontWeight="500"
+                android:maxLines="1" />
 
             <!-- Receipt table card -->
             <LinearLayout
@@ -225,7 +227,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="선택한 항목은 내 금액에서 1인분 가격이 빠져요\n(주류제외)"
+                    android:text="선택한 항목은 내 금액에서 1인분 가격이 빠져요"
                     android:textColor="#D9DCFF"
                     android:textSize="15sp"
                     android:textFontWeight="300"
@@ -254,7 +256,13 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:textFontWeight="500" />
+        android:textFontWeight="500"
+        android:maxLines="1"
+        android:autoSizeTextType="uniform"
+        android:autoSizeMinTextSize="11sp"
+        android:autoSizeMaxTextSize="16sp"
+        android:paddingStart="6dp"
+        android:paddingEnd="6dp" />
 
     <!-- 헤더 구분선 (피그마 Header - TopAppBar: 아래 테두리 #6FA8FF 30%, 제목 아래 18) -->
     <View

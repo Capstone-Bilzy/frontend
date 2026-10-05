@@ -36,7 +36,8 @@
             android:textSize="24sp"
             android:textStyle="bold"
             android:layout_marginBottom="10dp"
-            android:textFontWeight="600" />
+            android:textFontWeight="600"
+            android:maxLines="1" />
 
         <TextView
             android:layout_width="match_parent"
@@ -60,7 +61,13 @@
             android:clickable="true"
             android:focusable="true"
             android:layout_marginBottom="12dp"
-            android:textFontWeight="500" />
+            android:textFontWeight="500"
+            android:maxLines="1"
+            android:autoSizeTextType="uniform"
+            android:autoSizeMinTextSize="11sp"
+            android:autoSizeMaxTextSize="16sp"
+            android:paddingStart="6dp"
+            android:paddingEnd="6dp" />
 
         <TextView
             android:id="@+id/btnCancel"
@@ -71,7 +78,13 @@
             android:textSize="18sp"
             android:gravity="center"
             android:clickable="true"
-            android:focusable="true" />
+            android:focusable="true"
+            android:maxLines="1"
+            android:autoSizeTextType="uniform"
+            android:autoSizeMinTextSize="11sp"
+            android:autoSizeMaxTextSize="16sp"
+            android:paddingStart="6dp"
+            android:paddingEnd="6dp" />
 
     </LinearLayout>
 

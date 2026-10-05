@@ -34,7 +34,8 @@
             android:text="스캔"
             android:textColor="#FFFFFF"
             android:textSize="18sp"
-            android:textFontWeight="500" />
+            android:textFontWeight="500"
+            android:maxLines="1" />
 
     </LinearLayout>
 

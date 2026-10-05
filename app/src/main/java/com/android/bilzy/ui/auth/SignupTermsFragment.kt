@@ -1,5 +1,8 @@
 package com.android.bilzy.ui.auth
 
+import com.android.bilzy.databinding.DialogTermsBinding
+import android.graphics.drawable.ColorDrawable
+import android.app.Dialog
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
@@ -73,10 +76,15 @@ class SignupTermsFragment : Fragment() {
             agreeTerms = next; agreePrivacy = next; agreeLocation = next; agreeMarketing = next
             renderChecks()
         }
-        binding.itemTerms1.setOnClickListener { agreeTerms = !agreeTerms; renderChecks() }
-        binding.itemTerms2.setOnClickListener { agreePrivacy = !agreePrivacy; renderChecks() }
-        binding.itemTerms3.setOnClickListener { agreeLocation = !agreeLocation; renderChecks() }
-        binding.itemTerms4.setOnClickListener { agreeMarketing = !agreeMarketing; renderChecks() }
+        // 체크 아이콘은 동의 토글, 항목(글자·화살표)을 누르면 약관 내용을 보여준다.
+        binding.icCheck1.setOnClickListener { agreeTerms = !agreeTerms; renderChecks() }
+        binding.icCheck2.setOnClickListener { agreePrivacy = !agreePrivacy; renderChecks() }
+        binding.icCheck3.setOnClickListener { agreeLocation = !agreeLocation; renderChecks() }
+        binding.icCheck4.setOnClickListener { agreeMarketing = !agreeMarketing; renderChecks() }
+        binding.itemTerms1.setOnClickListener { showTerms(TermsContent.SERVICE) }
+        binding.itemTerms2.setOnClickListener { showTerms(TermsContent.PRIVACY) }
+        binding.itemTerms3.setOnClickListener { showTerms(TermsContent.LOCATION) }
+        binding.itemTerms4.setOnClickListener { showTerms(TermsContent.MARKETING) }
 
         binding.btnBack.setOnClickListener {
             findNavController().navigateUp()
@@ -117,19 +125,41 @@ class SignupTermsFragment : Fragment() {
         }
     }
 
+    /** 약관 내용 팝업. */
+    private fun showTerms(content: TermsContent.Entry) {
+        val dialog = Dialog(requireContext())
+        val dialogBinding = DialogTermsBinding.inflate(layoutInflater)
+        dialogBinding.tvTermsTitle.text = content.title
+        dialogBinding.tvTermsBody.text = content.body
+        dialogBinding.btnTermsClose.setOnClickListener { dialog.dismiss() }
+        dialog.setContentView(dialogBinding.root)
+        dialog.window?.apply {
+            setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            setLayout(
+                (resources.displayMetrics.widthPixels * 0.86f).toInt(),
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+        }
+        dialog.show()
+    }
+
     private fun allAgreed() = agreeTerms && agreePrivacy && agreeLocation && agreeMarketing
 
     private fun renderChecks() {
-        setCheck(binding.icCheck1, agreeTerms)
-        setCheck(binding.icCheck2, agreePrivacy)
-        setCheck(binding.icCheck3, agreeLocation)
-        setCheck(binding.icCheck4, agreeMarketing)
-        setCheck(binding.icCheckAll, allAgreed())
+        setCheck(binding.icCheck1, agreeTerms, required = true)
+        setCheck(binding.icCheck2, agreePrivacy, required = true)
+        setCheck(binding.icCheck3, agreeLocation, required = false)
+        setCheck(binding.icCheck4, agreeMarketing, required = false)
+        setCheck(binding.icCheckAll, allAgreed(), required = true)
     }
 
-    /** 체크 on=진보라(#7C7AED), off=흐린 보라(30%). */
-    private fun setCheck(icon: ImageView, on: Boolean) {
-        val color = if (on) Color.parseColor("#7C7AED") else Color.parseColor("#4D7C7AED")
+    /** 피그마: 동의=#93A0F9, 미동의는 필수 항목 흰색 / 선택 항목 #C7C4D8. */
+    private fun setCheck(icon: ImageView, on: Boolean, required: Boolean) {
+        val color = when {
+            on -> Color.parseColor("#93A0F9")
+            required -> Color.WHITE
+            else -> Color.parseColor("#C7C4D8")
+        }
         icon.imageTintList = ColorStateList.valueOf(color)
     }
 

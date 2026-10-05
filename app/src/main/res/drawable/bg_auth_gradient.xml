@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 피그마 로그인/회원가입/동의 화면 배경: #020A2F 위에 지름 407 원형 글로우(#705EFA 50% → 배경색),
+     중심 (195.5, 384.5) = 화면 높이의 약 45.5% — 로고·문구 높이에 맞춘 값. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <gradient
+        android:type="radial"
+        android:centerX="50%"
+        android:centerY="45.5%"
+        android:gradientRadius="204dp"
+        android:startColor="#393495"
+        android:endColor="#020A2F" />
+</shape>

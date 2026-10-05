@@ -33,7 +33,8 @@
             android:text="스캔"
             android:textColor="#FFFFFF"
             android:textSize="18sp"
-            android:textFontWeight="500" />
+            android:textFontWeight="500"
+            android:maxLines="1" />
     </LinearLayout>
 
     <View
@@ -172,7 +173,8 @@
                 android:textSize="16sp"
                 android:clickable="true"
                 android:focusable="true"
-                android:textFontWeight="400" />
+                android:textFontWeight="400"
+                android:maxLines="1" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -189,7 +191,8 @@
                     android:textColor="#FFFFFF"
                     android:textSize="16sp"
                     android:textStyle="bold"
-                    android:textFontWeight="600" />
+                    android:textFontWeight="600"
+                    android:maxLines="1" />
 
                 <TextView
                     android:layout_width="wrap_content"

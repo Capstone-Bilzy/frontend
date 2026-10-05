@@ -19,7 +19,7 @@ import com.android.bilzy.util.setFontWeight
 /**
  * 멤버 대기/계산 대기 화면의 멤버 아바타 한 칸(피그마 "정산 인원 대기 중"/"계산중").
  * 47dp 원(테두리 3) + 우측 하단 20dp 체크 배지 + 아래 이름(14sp). [active]=false면 흐린 대기 스타일.
- * 6명까지는 피그마처럼 고정 폭(52dp, 간격 8dp)으로 왼쪽부터 놓고, 그보다 많으면 [weighted]로 균등 분배한다.
+ * 6명까지는 피그마처럼 고정 폭(52dp, 간격 8dp)으로 가운데 정렬해 놓고, 그보다 많으면 [weighted]로 균등 분배한다.
  */
 fun buildAvatarTile(
     ctx: Context,
@@ -38,7 +38,10 @@ fun buildAvatarTile(
         layoutParams = if (weighted) {
             LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f)
         } else {
-            LinearLayout.LayoutParams(dp(52), ViewGroup.LayoutParams.WRAP_CONTENT).apply { marginEnd = dp(8) }
+            LinearLayout.LayoutParams(dp(52), ViewGroup.LayoutParams.WRAP_CONTENT).apply {
+                marginStart = dp(4)
+                marginEnd = dp(4)
+            }
         }
     }
     val circle = FrameLayout(ctx).apply {

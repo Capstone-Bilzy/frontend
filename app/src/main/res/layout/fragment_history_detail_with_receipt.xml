@@ -51,7 +51,9 @@
             android:text=""
             android:textColor="#FFFFFF"
             android:textSize="20sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:maxLines="1"
+            android:ellipsize="end" />
     </LinearLayout>
 
     <View
@@ -94,7 +96,9 @@
                     android:layout_height="wrap_content"
                     android:text=""
                     android:textColor="#AAB2FF"
-                    android:textSize="16sp" />
+                    android:textSize="16sp"
+                    android:maxLines="1"
+                    android:ellipsize="end" />
 
                 <TextView
                     android:id="@+id/tvTotalAmount"
@@ -156,7 +160,8 @@
                 android:textColor="#FFFFFF"
                 android:textSize="17sp"
                 android:textStyle="bold"
-                android:layout_marginBottom="12dp" />
+                android:layout_marginBottom="12dp"
+                android:maxLines="1" />
 
             <LinearLayout
                 android:id="@+id/personsContainer"
@@ -180,7 +185,8 @@
                     android:text="첨부된 영수증"
                     android:textColor="#FFFFFF"
                     android:textSize="17sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:maxLines="1" />
 
                 <TextView
                     android:id="@+id/tvReceiptCount"
@@ -245,7 +251,7 @@
 
         <LinearLayout
             android:id="@+id/navHome"
-            android:layout_width="74dp" android:layout_height="57dp" android:layout_weight="1"
+            android:layout_width="74dp" android:layout_height="57dp"
             android:orientation="vertical" android:gravity="center" android:clickable="true" android:focusable="true"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp">
@@ -256,18 +262,19 @@
 
         <LinearLayout
             android:id="@+id/navScan"
-            android:layout_width="74dp" android:layout_height="57dp" android:layout_weight="1"
+            android:layout_width="74dp" android:layout_height="57dp"
             android:orientation="vertical" android:gravity="center" android:clickable="true" android:focusable="true"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp">
             <ImageView android:layout_width="22dp" android:layout_height="22dp" android:src="@drawable/ic_scan" app:tint="@color/white" />
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:text="스캔" android:textColor="@color/white" android:textSize="12sp"
- android:textFontWeight="500" />
+ android:textFontWeight="500"
+ android:maxLines="1" />
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/navHistory"
-            android:layout_width="74dp" android:layout_height="57dp" android:layout_weight="1"
+            android:layout_width="74dp" android:layout_height="57dp"
             android:orientation="vertical" android:gravity="center" android:clickable="true" android:focusable="true"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
@@ -282,7 +289,7 @@
 
         <LinearLayout
             android:id="@+id/navMyPage"
-            android:layout_width="74dp" android:layout_height="57dp" android:layout_weight="1"
+            android:layout_width="74dp" android:layout_height="57dp"
             android:orientation="vertical" android:gravity="center" android:clickable="true" android:focusable="true"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp">

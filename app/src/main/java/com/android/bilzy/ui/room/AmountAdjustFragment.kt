@@ -49,9 +49,6 @@ class AmountAdjustFragment : Fragment() {
     private var currentItems: List<ReceiptItem> = emptyList()
     private var baseShare = 0L
 
-    /** 주류는 차감 대상에서 제외(프로토타입 "주류제외" 규칙). */
-    private val alcoholKeywords = listOf("소주", "맥주", "막걸리", "와인", "위스키", "하이볼", "양주", "보드카", "사케", "청하", "고량주", "주류")
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
@@ -160,22 +157,19 @@ class AmountAdjustFragment : Fragment() {
     }
 
     /**
-     * 선택한(안 먹은) 항목의 1인분 가격을 내 몫에서 차감한다(주류 제외).
+     * 선택한(안 먹은) 항목의 1인분 가격을 내 몫에서 차감한다. 주류도 고르면 똑같이 뺀다
+     * (서버 정산 계산과 동일 — 예전엔 미리보기만 주류를 빼지 않아 최종 금액과 달랐다).
      * 차감 = Σ (항목 합계 / 인원수). 예) 냉면 45,000/6 + 공기밥 6,000/6 = 8,500원
      */
     private fun recompute() {
         val deduction = selectedChips.sumOf { idx ->
             val item = currentItems.getOrNull(idx) ?: return@sumOf 0L
-            if (isAlcohol(item.name)) 0L
-            else (item.price * item.quantity) / memberCount
+            (item.price * item.quantity) / memberCount
         }
         val myAmount = (baseShare - deduction).coerceAtLeast(0L)
         binding.tvAmount.text = "${nf.format(myAmount)} 원"
         binding.tvDeduction.text = "-${nf.format(deduction)}원"
     }
-
-    private fun isAlcohol(name: String): Boolean =
-        alcoholKeywords.any { name.contains(it) }
 
     /** 영수증 항목 테이블을 실제 OCR 항목으로 다시 그린다. */
     private fun renderReceiptTable(items: List<ReceiptItem>, total: Long) {

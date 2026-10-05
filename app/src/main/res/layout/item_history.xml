@@ -21,7 +21,9 @@
         android:textSize="18sp"
         android:textStyle="bold"
         android:layout_marginBottom="4dp"
-        android:textFontWeight="600" />
+        android:textFontWeight="600"
+        android:maxLines="1"
+        android:ellipsize="end" />
 
     <!-- Date -->
     <TextView

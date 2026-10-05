@@ -20,6 +20,7 @@ import com.android.bilzy.data.remote.dto.SetMemberRoundsRequest
 import com.android.bilzy.data.remote.dto.SetMemberRoundsResponse
 import com.android.bilzy.data.remote.dto.SetRoundAdjustmentRequest
 import com.android.bilzy.data.remote.dto.SocialLoginRequest
+import com.android.bilzy.data.remote.dto.SocialCheckResponse
 import com.android.bilzy.data.remote.dto.UpdateSettlementRequest
 import com.android.bilzy.data.remote.dto.UserDto
 import com.android.bilzy.data.remote.dto.UpdateStatusRequest
@@ -45,6 +46,10 @@ interface BilzyApi {
     // ── 인증 ─────────────────────────────────────────────
     @POST("auth/social")
     suspend fun socialLogin(@Body body: SocialLoginRequest): AuthResponse
+
+    /** 소셜 토큰의 주인이 이미 가입한 회원인지 확인만 한다(가입·로그인 처리 없음). */
+    @POST("auth/social/check")
+    suspend fun checkRegistered(@Body body: SocialLoginRequest): SocialCheckResponse
 
     // ── 유저 ─────────────────────────────────────────────
     @GET("users/me")

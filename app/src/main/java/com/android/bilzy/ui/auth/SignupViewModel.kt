@@ -39,6 +39,7 @@ class SignupViewModel @Inject constructor(
         data object Idle : PrepareState
         data object Loading : PrepareState
         data object Ready : PrepareState     // OAuth 완료, 동의 화면으로 진행 가능
+        data object AlreadyMember : PrepareState  // 이미 가입한 회원 — 약관 화면 없이 로그인까지 끝남
         data class Error(val message: String) : PrepareState
     }
 
@@ -66,7 +67,7 @@ class SignupViewModel @Inject constructor(
                     pendingToken = it.accessToken
                     pendingNickname = it.nickname
                     pendingProfileImageUrl = it.profileImageUrl
-                    _prepareState.value = PrepareState.Ready
+                    _prepareState.value = resolveAfterOAuth("kakao", it.accessToken)
                 }
                 .onFailure { e ->
                     _prepareState.value = PrepareState.Error(e.message ?: "카카오 인증에 실패했어요")
@@ -85,12 +86,22 @@ class SignupViewModel @Inject constructor(
                     pendingToken = it.accessToken
                     pendingNickname = it.nickname
                     pendingProfileImageUrl = it.profileImageUrl
-                    _prepareState.value = PrepareState.Ready
+                    _prepareState.value = resolveAfterOAuth("naver", it.accessToken)
                 }
                 .onFailure { e ->
                     _prepareState.value = PrepareState.Error(e.message ?: "네이버 인증에 실패했어요")
                 }
         }
+    }
+
+    /**
+     * OAuth 직후: 이미 우리 서비스에 가입(약관 동의)한 계정이면 약관 화면을 다시 보여주지 않고 바로 로그인한다.
+     * 신규이거나, 가입 여부 확인·로그인이 실패하면 기존대로 약관 동의 화면으로 보낸다.
+     */
+    private suspend fun resolveAfterOAuth(provider: String, token: String): PrepareState {
+        if (!authRepository.isRegistered(provider, token)) return PrepareState.Ready
+        return runCatching { authRepository.socialLogin(provider = provider, accessToken = token) }
+            .fold(onSuccess = { PrepareState.AlreadyMember }, onFailure = { PrepareState.Ready })
     }
 
     /** 2단계: 확보한 토큰으로 백엔드 가입/로그인(/auth/social). */

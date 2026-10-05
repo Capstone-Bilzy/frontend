@@ -28,6 +28,10 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun isRegistered(provider: String, accessToken: String): Boolean =
+        runCatching { api.checkRegistered(SocialLoginRequest(provider, accessToken)).registered }
+            .getOrDefault(false)
+
     override suspend fun logout() {
         runCatching { api.logout() }
         runCatching { kakaoLoginManager.logout() }

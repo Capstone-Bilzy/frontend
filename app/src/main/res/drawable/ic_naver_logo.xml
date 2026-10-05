@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 피그마 네이버 버튼 아이콘(N), 14x14, 흰색 -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="14dp"
+    android:height="14dp"
+    android:viewportWidth="14"
+    android:viewportHeight="14">
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M9.123,7.16L4.135,0H0V13.378H4.332V6.218L9.32,13.378H13.455V0H9.123V7.16Z" />
+</vector>

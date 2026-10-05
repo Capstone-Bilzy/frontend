@@ -72,7 +72,8 @@
                 android:text="정산 완료 현황"
                 android:textColor="#DCDAFF"
                 android:textSize="18sp"
-                android:textFontWeight="500" />
+                android:textFontWeight="500"
+                android:maxLines="1" />
 
             <TextView
                 android:id="@+id/tvStatus"
@@ -102,6 +103,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
+            android:gravity="center_horizontal"
+            android:clipChildren="false"
             android:layout_marginBottom="16dp" />
 
         <!-- 준비 안 된 멤버 안내(동적으로 채워짐, 프로토타입 .bz-pending) -->

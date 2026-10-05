@@ -1,5 +1,6 @@
 package com.android.bilzy.data.remote.dto
 
+import com.android.bilzy.util.toHttpsUrl
 import com.android.bilzy.domain.model.ExtraPhoto
 import com.android.bilzy.domain.model.InviteToken
 import com.android.bilzy.domain.model.MemberRoundAmount
@@ -167,7 +168,7 @@ fun SettlementMemberDto.toDomain() = SettlementMember(
     nickname = nickname,
     amount = amount,
     reason = reason,
-    profileImageUrl = profileImageUrl,
+    profileImageUrl = profileImageUrl?.toHttpsUrl(),
     ready = ready,
     rounds = rounds.map { it.toDomain() }
 )

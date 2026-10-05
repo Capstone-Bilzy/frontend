@@ -48,7 +48,8 @@
                     android:text="스캔"
                     android:textColor="#FFFFFF"
                     android:textSize="18sp"
-                    android:textFontWeight="500" />
+                    android:textFontWeight="500"
+                    android:maxLines="1" />
 
                 <LinearLayout
                     android:id="@+id/roundBadgeContainer"
@@ -241,7 +242,8 @@
                         android:textSize="16sp"
                         android:clickable="true"
                         android:focusable="true"
-                        android:textFontWeight="400" />
+                        android:textFontWeight="400"
+                        android:maxLines="1" />
 
                     <!-- 영수증 스캔 (중앙, 활성): 텍스트 → ▲ 순서 -->
                     <LinearLayout
@@ -259,7 +261,8 @@
                             android:textColor="#FFFFFF"
                             android:textSize="16sp"
                             android:textStyle="bold"
-                            android:textFontWeight="600" />
+                            android:textFontWeight="600"
+                            android:maxLines="1" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -372,7 +375,13 @@
                 android:background="@drawable/bg_dialog_button"
                 android:clickable="true"
                 android:focusable="true"
-                android:textFontWeight="400" />
+                android:textFontWeight="400"
+                android:maxLines="1"
+                android:autoSizeTextType="uniform"
+                android:autoSizeMinTextSize="11sp"
+                android:autoSizeMaxTextSize="16sp"
+                android:paddingStart="6dp"
+                android:paddingEnd="6dp" />
         </LinearLayout>
 
     </FrameLayout>

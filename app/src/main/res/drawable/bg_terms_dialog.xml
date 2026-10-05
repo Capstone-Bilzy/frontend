@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 약관 내용 팝업 배경 (사진 접근 모달과 같은 톤: #222535, r18) -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="#222535" />
+    <corners android:radius="18dp" />
+</shape>

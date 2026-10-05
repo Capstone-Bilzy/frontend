@@ -12,7 +12,7 @@
         android:layout_height="0dp"
         android:background="@android:color/transparent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/bottomNav"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
@@ -21,7 +21,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:paddingTop="61dp"
-            android:paddingBottom="88dp">
+            android:paddingBottom="16dp">
 
             <!-- Logo -->
             <ImageView
@@ -230,7 +230,8 @@
                         android:textColor="#FFFFFF"
                         android:textSize="18sp"
                         android:textStyle="bold"
-                        android:textFontWeight="600" />
+                        android:textFontWeight="600"
+                        android:maxLines="1" />
 
                     <TextView
                         android:id="@+id/btnSeeAll"
@@ -242,7 +243,8 @@
                         android:textSize="14sp"
                         android:clickable="true"
                         android:focusable="true"
-                        android:textFontWeight="500" />
+                        android:textFontWeight="500"
+                        android:maxLines="1" />
 
                 </RelativeLayout>
 
@@ -336,7 +338,8 @@
                 android:text="스캔"
                 android:textColor="@color/white"
                 android:textSize="12sp"
-                android:textFontWeight="500" />
+                android:textFontWeight="500"
+                android:maxLines="1" />
         </LinearLayout>
 
         <LinearLayout

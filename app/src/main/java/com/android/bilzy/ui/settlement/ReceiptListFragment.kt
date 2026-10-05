@@ -108,7 +108,7 @@ class ReceiptListFragment : Fragment() {
             setOnClickListener {
                 findNavController().navigate(
                     R.id.action_receiptList_to_roundDetail,
-                    bundleOf(ReceiptRoundDetailFragment.ARG_ROUND to receipt.round)
+                    bundleOf(OcrResultFragment.ARG_REVIEW_ROUND to receipt.round)
                 )
             }
         }
@@ -131,6 +131,8 @@ class ReceiptListFragment : Fragment() {
             setTextColor(Color.WHITE)
             setTextSize(TypedValue.COMPLEX_UNIT_SP, 18f)
             setFontWeight(400)
+            maxLines = 1
+            ellipsize = android.text.TextUtils.TruncateAt.END
             layoutParams = LinearLayout.LayoutParams(
                 0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f
             )

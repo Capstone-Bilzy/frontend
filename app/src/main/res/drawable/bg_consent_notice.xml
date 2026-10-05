@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- 피그마 동의 화면 안내 박스: 흰색 10%, r12 -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
-    <solid android:color="#FDE500" />
-    <corners android:radius="16dp" />
+    <solid android:color="#1AFFFFFF" />
+    <corners android:radius="12dp" />
 </shape>

@@ -92,7 +92,13 @@
         app:layout_constraintBottom_toTopOf="@id/bottomNav"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:textFontWeight="500" />
+        android:textFontWeight="500"
+        android:maxLines="1"
+        android:autoSizeTextType="uniform"
+        android:autoSizeMinTextSize="11sp"
+        android:autoSizeMaxTextSize="16sp"
+        android:paddingStart="6dp"
+        android:paddingEnd="6dp" />
 
     <!-- Bottom navigation -->
     <LinearLayout
@@ -131,7 +137,8 @@
             
                 <ImageView android:layout_width="22dp" android:layout_height="22dp" android:src="@drawable/ic_scan" app:tint="@color/nav_selector" />
                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:text="스캔" android:textColor="@color/nav_selector" android:textSize="12sp"
- android:textFontWeight="500" />
+ android:textFontWeight="500"
+ android:maxLines="1" />
             
         </LinearLayout>
 

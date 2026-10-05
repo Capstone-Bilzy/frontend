@@ -1,20 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- 피그마 "회원가입 및 로그인_3"(약관 동의) 기준. 좌표는 390x844 프레임 값. -->
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg_dark">
+    android:background="@drawable/bg_auth_gradient">
 
-    <!-- Back + Title -->
+    <!-- 헤더: 뒤로가기 + 제공자 이름 (제목 y=72, 구분선 y=118) -->
     <ImageView
         android:id="@+id/btnBack"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:src="@drawable/ic_back"
         android:padding="8dp"
-        android:layout_marginTop="48dp"
-        android:layout_marginStart="16dp"
+        android:layout_marginTop="66dp"
+        android:layout_marginStart="12dp"
         android:clickable="true"
         android:focusable="true"
         app:tint="#FFFFFF"
@@ -25,27 +26,26 @@
         android:id="@+id/tvTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="48dp"
         android:text="카카오"
         android:textColor="#FFFFFF"
-        android:textSize="20sp"
-        android:textStyle="bold"
+        android:textSize="18sp"
+        android:textFontWeight="500"
         app:layout_constraintTop_toTopOf="@id/btnBack"
         app:layout_constraintBottom_toBottomOf="@id/btnBack"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        android:maxLines="1" />
 
-    <!-- Divider -->
     <View
         android:id="@+id/divider"
         android:layout_width="0dp"
         android:layout_height="1dp"
-        android:background="#1AFFFFFF"
-        android:layout_marginTop="4dp"
+        android:background="#4D6FA8FF"
+        android:layout_marginTop="12dp"
         app:layout_constraintTop_toBottomOf="@id/btnBack"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Terms scroll content -->
     <androidx.core.widget.NestedScrollView
         android:id="@+id/scrollContent"
         android:layout_width="0dp"
@@ -59,55 +59,53 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingTop="30dp"
-            android:paddingStart="20dp"
-            android:paddingEnd="20dp"
+            android:paddingTop="44dp"
+            android:paddingStart="26dp"
+            android:paddingEnd="26dp"
             android:paddingBottom="20dp">
 
-            <!-- 프로토타입 .bz-terms-head: 로고 + 안내 문구. 예전엔 이 블록이 통째로 없이 빈 여백(150dp)만 있었다. -->
+            <!-- 로고 125x49 (y=163) + 안내 문구 (y=220) -->
             <ImageView
                 android:id="@+id/tvLogo"
-                android:layout_width="wrap_content"
-                android:layout_height="26dp"
+                android:layout_width="125dp"
+                android:layout_height="49dp"
                 android:src="@drawable/logo_bilzy"
-                android:adjustViewBounds="true"
-                android:scaleType="fitStart"
+                android:scaleType="fitCenter"
                 android:contentDescription="@null"
-                android:layout_gravity="center_horizontal"
-            />
+                android:layout_gravity="center_horizontal" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="26dp"
+                android:layout_marginTop="8dp"
                 android:text="Bilzy 이용을 위한\n필수 약관에 동의해주세요"
-                android:textColor="#CFCAF7"
-                android:textSize="14sp"
-                android:gravity="center"
-                android:lineSpacingExtra="4dp" />
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:textFontWeight="400"
+                android:lineHeight="24sp"
+                android:gravity="center" />
 
-            <!-- 모두 동의 -->
+            <!-- 모두 동의 338x66 (y=306) -->
             <LinearLayout
                 android:id="@+id/itemAgreeAll"
                 android:layout_width="match_parent"
-                android:layout_height="56dp"
+                android:layout_height="66dp"
+                android:layout_marginTop="38dp"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp"
+                android:paddingStart="21dp"
+                android:paddingEnd="20dp"
                 android:background="@drawable/bg_terms_item"
                 android:clickable="true"
-                android:focusable="true"
-                android:layout_marginBottom="10dp">
+                android:focusable="true">
 
                 <ImageView
                     android:id="@+id/icCheckAll"
-                    android:layout_width="22dp"
-                    android:layout_height="22dp"
-                    android:src="@drawable/ic_check"
-                    app:tint="@color/primary"
-                    android:layout_marginEnd="12dp" />
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_check_circle_filled"
+                    android:layout_marginEnd="16dp"
+                    android:contentDescription="@null" />
 
                 <TextView
                     android:layout_width="0dp"
@@ -115,172 +113,190 @@
                     android:layout_weight="1"
                     android:text="모두 확인하였으며 동의합니다."
                     android:textColor="#FFFFFF"
-                    android:textSize="17sp"
-                    android:textStyle="bold" />
+                    android:textSize="16sp"
+                    android:textFontWeight="400" />
+
             </LinearLayout>
 
-            <!-- 이용약관 -->
+            <!-- 이용약관 (필수) : 체크 아이콘은 동의 토글, 나머지 영역은 약관 내용 보기 -->
             <LinearLayout
                 android:id="@+id/itemTerms1"
                 android:layout_width="match_parent"
-                android:layout_height="56dp"
+                android:layout_height="62dp"
+                android:layout_marginTop="18dp"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp"
-                android:background="@drawable/bg_terms_item"
+                android:paddingEnd="24dp"
                 android:clickable="true"
-                android:focusable="true"
-                android:layout_marginBottom="8dp">
+                android:focusable="true">
 
                 <ImageView
                     android:id="@+id/icCheck1"
-                    android:layout_width="22dp"
-                    android:layout_height="22dp"
-                    android:src="@drawable/ic_check"
-                    app:tint="@color/primary"
-                    android:layout_marginEnd="12dp" />
+                    android:layout_width="57dp"
+                    android:layout_height="match_parent"
+                    android:paddingStart="21dp"
+                    android:paddingEnd="16dp"
+                    android:paddingTop="21dp"
+                    android:paddingBottom="21dp"
+                    android:src="@drawable/ic_check_circle_filled"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:contentDescription="@null" />
 
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="이용약관 (필수)"
-                    android:textColor="#CCFFFFFF"
-                    android:textSize="17sp" />
+                    android:textColor="#FFFFFF"
+                    android:textSize="16sp"
+                    android:textFontWeight="400" />
 
                 <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@drawable/ic_back"
-                    app:tint="#80FFFFFF"
-                    android:rotation="180" />
+                    android:layout_width="7dp"
+                    android:layout_height="12dp"
+                    android:src="@drawable/ic_chevron_right"
+                    android:contentDescription="@null" />
+
             </LinearLayout>
 
-            <!-- 개인정보 수집 및 이용 -->
+            <!-- 개인정보 수집 및 이용 (필수) : 체크 아이콘은 동의 토글, 나머지 영역은 약관 내용 보기 -->
             <LinearLayout
                 android:id="@+id/itemTerms2"
                 android:layout_width="match_parent"
-                android:layout_height="56dp"
+                android:layout_height="62dp"
+                android:layout_marginTop="0dp"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp"
-                android:background="@drawable/bg_terms_item"
+                android:paddingEnd="24dp"
                 android:clickable="true"
-                android:focusable="true"
-                android:layout_marginBottom="8dp">
+                android:focusable="true">
 
                 <ImageView
                     android:id="@+id/icCheck2"
-                    android:layout_width="22dp"
-                    android:layout_height="22dp"
-                    android:src="@drawable/ic_check"
-                    app:tint="@color/primary"
-                    android:layout_marginEnd="12dp" />
+                    android:layout_width="57dp"
+                    android:layout_height="match_parent"
+                    android:paddingStart="21dp"
+                    android:paddingEnd="16dp"
+                    android:paddingTop="21dp"
+                    android:paddingBottom="21dp"
+                    android:src="@drawable/ic_check_circle_filled"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:contentDescription="@null" />
 
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="개인정보 수집 및 이용 (필수)"
-                    android:textColor="#CCFFFFFF"
-                    android:textSize="17sp" />
+                    android:textColor="#FFFFFF"
+                    android:textSize="16sp"
+                    android:textFontWeight="400" />
 
                 <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@drawable/ic_back"
-                    app:tint="#80FFFFFF"
-                    android:rotation="180" />
+                    android:layout_width="7dp"
+                    android:layout_height="12dp"
+                    android:src="@drawable/ic_chevron_right"
+                    android:contentDescription="@null" />
+
             </LinearLayout>
 
-            <!-- 위치기반 서비스 -->
+            <!-- 위치기반 서비스 이용약관 (선택) : 체크 아이콘은 동의 토글, 나머지 영역은 약관 내용 보기 -->
             <LinearLayout
                 android:id="@+id/itemTerms3"
                 android:layout_width="match_parent"
-                android:layout_height="56dp"
+                android:layout_height="62dp"
+                android:layout_marginTop="0dp"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp"
-                android:background="@drawable/bg_terms_item"
+                android:paddingEnd="24dp"
                 android:clickable="true"
-                android:focusable="true"
-                android:layout_marginBottom="8dp">
+                android:focusable="true">
 
                 <ImageView
                     android:id="@+id/icCheck3"
-                    android:layout_width="22dp"
-                    android:layout_height="22dp"
-                    android:src="@drawable/ic_check"
-                    app:tint="#4D7C7AED"
-                    android:layout_marginEnd="12dp" />
+                    android:layout_width="57dp"
+                    android:layout_height="match_parent"
+                    android:paddingStart="21dp"
+                    android:paddingEnd="16dp"
+                    android:paddingTop="21dp"
+                    android:paddingBottom="21dp"
+                    android:src="@drawable/ic_check_circle_filled"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:contentDescription="@null" />
 
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="위치기반 서비스 이용약관 (선택)"
-                    android:textColor="#80FFFFFF"
-                    android:textSize="17sp" />
+                    android:textColor="#FFFFFF"
+                    android:textSize="16sp"
+                    android:textFontWeight="400" />
 
                 <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@drawable/ic_back"
-                    app:tint="#80FFFFFF"
-                    android:rotation="180" />
+                    android:layout_width="7dp"
+                    android:layout_height="12dp"
+                    android:src="@drawable/ic_chevron_right"
+                    android:contentDescription="@null" />
+
             </LinearLayout>
 
-            <!-- 마케팅 정보 수신 -->
+            <!-- 마케팅 정보 수신 동의 (선택) : 체크 아이콘은 동의 토글, 나머지 영역은 약관 내용 보기 -->
             <LinearLayout
                 android:id="@+id/itemTerms4"
                 android:layout_width="match_parent"
-                android:layout_height="56dp"
+                android:layout_height="62dp"
+                android:layout_marginTop="0dp"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp"
-                android:background="@drawable/bg_terms_item"
+                android:paddingEnd="24dp"
                 android:clickable="true"
                 android:focusable="true">
 
                 <ImageView
                     android:id="@+id/icCheck4"
-                    android:layout_width="22dp"
-                    android:layout_height="22dp"
-                    android:src="@drawable/ic_check"
-                    app:tint="#4D7C7AED"
-                    android:layout_marginEnd="12dp" />
+                    android:layout_width="57dp"
+                    android:layout_height="match_parent"
+                    android:paddingStart="21dp"
+                    android:paddingEnd="16dp"
+                    android:paddingTop="21dp"
+                    android:paddingBottom="21dp"
+                    android:src="@drawable/ic_check_circle_filled"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:contentDescription="@null" />
 
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="마케팅 정보 수신 동의 (선택)"
-                    android:textColor="#80FFFFFF"
-                    android:textSize="17sp" />
+                    android:textColor="#FFFFFF"
+                    android:textSize="16sp"
+                    android:textFontWeight="400" />
 
                 <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@drawable/ic_back"
-                    app:tint="#80FFFFFF"
-                    android:rotation="180" />
+                    android:layout_width="7dp"
+                    android:layout_height="12dp"
+                    android:src="@drawable/ic_chevron_right"
+                    android:contentDescription="@null" />
+
             </LinearLayout>
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
-    <!-- Confirm button (provider-specific color set in Fragment) -->
+    <!-- 확인 버튼 318x52 (제공자별 색/아이콘/문구는 Fragment에서 지정) -->
     <LinearLayout
         android:id="@+id/btnConfirm"
         android:layout_width="0dp"
-        android:layout_height="56dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
-        android:layout_marginBottom="40dp"
+        android:layout_height="52dp"
+        android:layout_marginStart="36dp"
+        android:layout_marginEnd="36dp"
+        android:layout_marginBottom="36dp"
         android:gravity="center"
         android:orientation="horizontal"
         android:background="@drawable/bg_button_kakao"
@@ -292,9 +308,9 @@
 
         <ImageView
             android:id="@+id/ivConfirmIcon"
-            android:layout_width="22dp"
-            android:layout_height="22dp"
-            android:layout_marginEnd="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
             android:src="@drawable/ic_kakao_logo"
             android:contentDescription="@null" />
 
@@ -304,8 +320,10 @@
             android:layout_height="wrap_content"
             android:text="동의하고 계속하기"
             android:textColor="#191919"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+            android:textSize="16sp"
+            android:textFontWeight="500"
+            android:maxLines="1" />
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

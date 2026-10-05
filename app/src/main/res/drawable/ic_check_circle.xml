@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 피그마 동의 화면 요청 항목 체크(원 테두리 + 체크), 22x22 -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="22dp"
+    android:height="22dp"
+    android:viewportWidth="22"
+    android:viewportHeight="22">
+    <path
+        android:pathData="M11,1.75a9.25,9.25 0,1 0,0 18.5a9.25,9.25 0,1 0,0 -18.5z"
+        android:strokeColor="#93A0F9"
+        android:strokeWidth="1.5" />
+    <path
+        android:pathData="M6.8,11.3l2.8,2.8l5.6,-5.9"
+        android:strokeColor="#93A0F9"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+</vector>

@@ -1,5 +1,8 @@
 package com.android.bilzy.ui.settlement
 
+import com.android.bilzy.domain.model.ReceiptItemDraft
+import androidx.navigation.NavOptions
+import androidx.activity.addCallback
 import android.os.Bundle
 import android.text.Editable
 import android.text.InputType
@@ -34,6 +37,12 @@ class OcrResultFragment : Fragment() {
     private val viewModel: ScanFlowViewModel by hiltNavGraphViewModels(R.id.nav_graph)
     private lateinit var adapter: OcrItemAdapter
 
+    /** 0이면 일반 OCR 결과, 1 이상이면 그 차수를 다시 보는 검토 모드. */
+    private val reviewRound: Int get() = arguments?.getInt(ARG_REVIEW_ROUND, 0) ?: 0
+    private var reviewItems: List<ReceiptItemDraft> = emptyList()
+    private var reviewStoreName: String = ""
+    private var reviewTitle: String = ""
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
@@ -51,6 +60,29 @@ class OcrResultFragment : Fragment() {
         binding.rvItems.layoutManager = LinearLayoutManager(requireContext())
         binding.rvItems.adapter = adapter
 
+        // 검토 모드(영수증 목록에서 차수를 눌러 들어옴): 확정돼 있는 그 차수 내역을 그대로 보여주고
+        // 하단 버튼만 "다시 찍기" 하나로 바꾼다(피그마 "OCR 인식결과(입력됨)" 다시 찍기 화면).
+        if (reviewRound > 0) {
+            if (savedInstanceState == null) {
+                reviewStoreName = viewModel.startReview(reviewRound)
+                reviewItems = viewModel.items.value
+                reviewTitle = viewModel.settlementTitle
+                binding.etStoreName.setText(reviewStoreName)
+            }
+            binding.btnComplete.visibility = View.GONE
+            binding.btnMore.visibility = View.GONE
+            binding.btnRetake.visibility = View.VISIBLE
+            binding.btnRetake.setOnClickListener {
+                viewModel.startRescan(reviewRound)
+                findNavController().navigate(
+                    R.id.scanCameraFragment,
+                    null,
+                    NavOptions.Builder().setPopUpTo(R.id.receiptListFragment, true).build()
+                )
+            }
+            requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) { leaveReview() }
+        }
+
         binding.tvRoundBadge.text = "${viewModel.currentRound}차"
 
         val prefillName = viewModel.pendingGroupName.ifEmpty { viewModel.settlementTitle }
@@ -66,7 +98,8 @@ class OcrResultFragment : Fragment() {
         })
 
         binding.btnBack.setOnClickListener {
-            findNavController().navigate(R.id.action_ocrResult_to_home)
+            if (reviewRound > 0) leaveReview()
+            else findNavController().navigate(R.id.action_ocrResult_to_home)
         }
         binding.btnAddItem.setOnClickListener { showAddItemDialog() }
         binding.btnComplete.setOnClickListener {
@@ -113,7 +146,10 @@ class OcrResultFragment : Fragment() {
                         is ScanFlowViewModel.ConfirmState.Success -> {
                             setButtonsEnabled(true)
                             viewModel.consumeConfirmState()
-                            if (viewModel.lastConfirmWasFinalRound) {
+                            if (reviewRound > 0) {
+                                // 검토 모드에서 고친 내용을 저장했으면 목록으로 되돌아간다(목록이 다시 불러옴).
+                                findNavController().popBackStack()
+                            } else if (viewModel.lastConfirmWasFinalRound) {
                                 findNavController().navigate(R.id.action_ocrResult_to_receiptList)
                             } else {
                                 viewModel.advanceToNextRound()
@@ -130,6 +166,26 @@ class OcrResultFragment : Fragment() {
                 }
             }
         }
+    }
+
+    /**
+     * 검토 모드에서 뒤로가기: 모임 이름·가게 이름·품목을 고쳤으면 그 차수를 다시 확정(저장)한 뒤 목록으로,
+     * 그대로면 바로 목록으로 돌아간다. 저장 버튼이 따로 없는 화면이라 고친 내용이 조용히 사라지지 않게 한다.
+     */
+    private fun leaveReview() {
+        val title = binding.etGroupName.text.toString().trim()
+        val storeName = binding.etStoreName.text.toString().trim()
+        val changed = viewModel.items.value != reviewItems ||
+            storeName != reviewStoreName.trim() || title != reviewTitle.trim()
+        if (!changed) {
+            findNavController().popBackStack()
+            return
+        }
+        if (title.isEmpty()) {
+            Toast.makeText(requireContext(), "모임 이름을 입력해주세요", Toast.LENGTH_SHORT).show()
+            return
+        }
+        viewModel.confirm(title, storeName, isFinalRound = true)
     }
 
     private fun setButtonsEnabled(enabled: Boolean) {
@@ -175,5 +231,9 @@ class OcrResultFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    companion object {
+        const val ARG_REVIEW_ROUND = "reviewRound"
     }
 }

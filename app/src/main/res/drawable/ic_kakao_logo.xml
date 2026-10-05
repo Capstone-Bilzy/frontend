@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 피그마 카카오 버튼 아이콘(말풍선), 20x18, #3C1E1E -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="20dp"
+    android:height="18dp"
+    android:viewportWidth="20"
+    android:viewportHeight="18">
+    <path
+        android:fillColor="#3C1E1E"
+        android:pathData="M10,0C4.477,0 0,3.477 0,7.75C0,10.57 1.947,13.03 4.887,14.39C4.711,15.047 4.254,16.763 4.163,17.134C4.051,17.587 4.33,17.581 4.513,17.46C4.656,17.365 6.787,15.917 7.71,15.29C8.444,15.427 9.203,15.5 10,15.5C15.523,15.5 20,12.023 20,7.75C20,3.477 15.523,0 10,0Z" />
+</vector>

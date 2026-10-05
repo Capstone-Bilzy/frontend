@@ -47,7 +47,8 @@
             android:text="영수증 저장"
             android:textColor="#FFFFFF"
             android:textSize="18sp"
-            android:textFontWeight="500" />
+            android:textFontWeight="500"
+            android:maxLines="1" />
 
     </LinearLayout>
 

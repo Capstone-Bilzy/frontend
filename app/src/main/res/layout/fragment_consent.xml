@@ -1,20 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- 피그마 "회원가입 및 로그인_2"(동의 화면) 기준. 좌표는 390x844 프레임 값. -->
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg_dark">
+    android:background="@drawable/bg_auth_gradient">
 
-    <!-- Back + Title(provider) -->
+    <!-- 헤더: 뒤로가기 + 제공자 이름 (제목 y=72, 구분선 y=118) -->
     <ImageView
         android:id="@+id/btnBack"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:src="@drawable/ic_back"
         android:padding="8dp"
-        android:layout_marginTop="48dp"
-        android:layout_marginStart="16dp"
+        android:layout_marginTop="66dp"
+        android:layout_marginStart="12dp"
         android:clickable="true"
         android:focusable="true"
         app:tint="#FFFFFF"
@@ -25,12 +26,23 @@
         android:id="@+id/tvTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="48dp"
         android:text="카카오"
         android:textColor="#FFFFFF"
-        android:textSize="20sp"
-        android:textStyle="bold"
+        android:textSize="18sp"
+        android:textFontWeight="500"
         app:layout_constraintTop_toTopOf="@id/btnBack"
         app:layout_constraintBottom_toBottomOf="@id/btnBack"
+        app:layout_constraintStart_toStartOf="parent"
+        android:maxLines="1" />
+
+    <View
+        android:id="@+id/headerDivider"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginTop="12dp"
+        android:background="#4D6FA8FF"
+        app:layout_constraintTop_toBottomOf="@id/btnBack"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -38,7 +50,7 @@
         android:id="@+id/scrollContent"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@id/btnBack"
+        app:layout_constraintTop_toBottomOf="@id/headerDivider"
         app:layout_constraintBottom_toTopOf="@id/btnConfirm"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -47,59 +59,64 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingTop="24dp"
-            android:paddingStart="20dp"
-            android:paddingEnd="20dp"
+            android:paddingTop="34dp"
+            android:paddingStart="23dp"
+            android:paddingEnd="23dp"
             android:paddingBottom="20dp">
 
-            <!-- 프로토타입 .bz-consent-head: 로고 + "{provider}로 간편하게 시작하세요" -->
+            <!-- 로고 125x49 (y=153) + "{provider}로 간편하게 시작하세요" (y=214) -->
             <ImageView
                 android:id="@+id/tvLogo"
-                android:layout_width="wrap_content"
-                android:layout_height="22dp"
+                android:layout_width="125dp"
+                android:layout_height="49dp"
                 android:src="@drawable/logo_bilzy"
-                android:adjustViewBounds="true"
-                android:scaleType="fitStart"
+                android:scaleType="fitCenter"
                 android:contentDescription="@null"
-                android:layout_gravity="center_horizontal"
-            />
+                android:layout_gravity="center_horizontal" />
 
             <TextView
                 android:id="@+id/tvHeadline"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="24dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="18dp"
                 android:text="카카오로 간편하게 시작하세요"
-                android:textColor="#CFCAF7"
-                android:textSize="15sp"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:textFontWeight="400"
+                android:lineHeight="24sp"
                 android:gravity="center" />
 
-            <!-- 프로토타입 .bz-card-consent -->
+            <!-- 동의 카드 344x400 (r20, 흰색 10%) -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="@drawable/bg_history_card"
-                android:padding="20dp">
+                android:background="@drawable/bg_round_pick_card"
+                android:paddingTop="31dp"
+                android:paddingBottom="28dp"
+                android:paddingStart="18dp"
+                android:paddingEnd="18dp">
 
-                <!-- 프로토타입 .bz-profile: 아바타(원형 placeholder) + 이름 + 부제 -->
+                <!-- 아바타(원형 placeholder) + 이름 + 부제 -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="9dp"
                     android:orientation="horizontal"
                     android:gravity="center_vertical">
 
                     <View
-                        android:layout_width="52dp"
-                        android:layout_height="52dp"
-                        android:background="@drawable/bg_avatar_circle" />
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:background="@drawable/bg_avatar_done" />
 
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:layout_marginStart="14dp"
+                        android:layout_marginStart="18dp"
                         android:orientation="vertical">
 
                         <TextView
@@ -108,8 +125,9 @@
                             android:layout_height="wrap_content"
                             android:text="Bilzy 사용자"
                             android:textColor="#FFFFFF"
-                            android:textSize="17sp"
-                            android:textStyle="bold" />
+                            android:textSize="20sp"
+                            android:textStyle="bold"
+                            android:textFontWeight="600" />
 
                         <TextView
                             android:id="@+id/tvNameSub"
@@ -117,148 +135,188 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
                             android:text="Kakao 계정 정보 활용 동의"
-                            android:textColor="#8888BB"
-                            android:textSize="13sp" />
+                            android:textColor="#D7D7D7"
+                            android:textSize="14sp"
+                            android:textFontWeight="300" />
+
                     </LinearLayout>
+
                 </LinearLayout>
 
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:layout_marginTop="18dp"
-                    android:layout_marginBottom="14dp"
-                    android:background="#1AFFFFFF" />
+                    android:layout_marginTop="24dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="11dp"
+                    android:background="#4DFFFFFF" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="26dp"
+                    android:layout_marginStart="16dp"
                     android:text="요청 항목"
                     android:textColor="#FFFFFF"
-                    android:textSize="15sp"
+                    android:textSize="16sp"
                     android:textStyle="bold"
-                    android:layout_marginBottom="10dp" />
+                    android:textFontWeight="600"
+                    android:maxLines="1" />
 
                 <!-- 요청 항목: 이름 -->
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="22dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="9dp"
+                    android:layout_marginTop="14dp"
                     android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:paddingTop="8dp"
-                    android:paddingBottom="8dp">
+                    android:gravity="center_vertical">
 
                     <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
+                        android:layout_width="17dp"
+                        android:layout_height="17dp"
                         android:src="@drawable/ic_person"
-                        app:tint="#BFBFEE"
+                        app:tint="#FFFFFF"
                         android:contentDescription="@null" />
 
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:layout_marginStart="12dp"
+                        android:layout_marginStart="10dp"
                         android:text="이름"
-                        android:textColor="#FFFFFF"
-                        android:textSize="15sp" />
+                        android:textColor="#E2E8F0"
+                        android:textSize="16sp"
+                        android:textFontWeight="400" />
 
                     <ImageView
-                        android:layout_width="18dp"
-                        android:layout_height="18dp"
-                        android:src="@drawable/ic_check"
-                        app:tint="#7C7AED"
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:src="@drawable/ic_check_circle"
                         android:contentDescription="@null" />
+
                 </LinearLayout>
 
                 <!-- 요청 항목: 프로필 이미지 -->
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="22dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="9dp"
+                    android:layout_marginTop="18dp"
                     android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:paddingTop="8dp"
-                    android:paddingBottom="8dp">
+                    android:gravity="center_vertical">
 
                     <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
+                        android:layout_width="17dp"
+                        android:layout_height="17dp"
                         android:src="@drawable/ic_consent_profile_image"
-                        app:tint="#BFBFEE"
+                        app:tint="#FFFFFF"
                         android:contentDescription="@null" />
 
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:layout_marginStart="12dp"
+                        android:layout_marginStart="10dp"
                         android:text="프로필 이미지"
-                        android:textColor="#FFFFFF"
-                        android:textSize="15sp" />
+                        android:textColor="#E2E8F0"
+                        android:textSize="16sp"
+                        android:textFontWeight="400" />
 
                     <ImageView
-                        android:layout_width="18dp"
-                        android:layout_height="18dp"
-                        android:src="@drawable/ic_check"
-                        app:tint="#7C7AED"
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:src="@drawable/ic_check_circle"
                         android:contentDescription="@null" />
+
                 </LinearLayout>
 
                 <!-- 요청 항목: 이메일 -->
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="22dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="9dp"
+                    android:layout_marginTop="18dp"
                     android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:paddingTop="8dp"
-                    android:paddingBottom="8dp">
+                    android:gravity="center_vertical">
 
                     <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
+                        android:layout_width="17dp"
+                        android:layout_height="17dp"
                         android:src="@drawable/ic_consent_email"
-                        app:tint="#BFBFEE"
+                        app:tint="#FFFFFF"
                         android:contentDescription="@null" />
 
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:layout_marginStart="12dp"
+                        android:layout_marginStart="10dp"
                         android:text="이메일"
-                        android:textColor="#FFFFFF"
-                        android:textSize="15sp" />
+                        android:textColor="#E2E8F0"
+                        android:textSize="16sp"
+                        android:textFontWeight="400" />
 
                     <ImageView
-                        android:layout_width="18dp"
-                        android:layout_height="18dp"
-                        android:src="@drawable/ic_check"
-                        app:tint="#7C7AED"
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:src="@drawable/ic_check_circle"
                         android:contentDescription="@null" />
+
                 </LinearLayout>
 
-                <TextView
+                <!-- 안내 박스 309x74 (r12, 흰색 10%) -->
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:text="계정 연동을 진행하면\n이용약관 및 개인정보처리방침에 동의하게 됩니다."
-                    android:textColor="#8888BB"
-                    android:textSize="12sp"
-                    android:gravity="center"
-                    android:lineSpacingExtra="3dp" />
+                    android:layout_marginTop="28dp"
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal"
+                    android:background="@drawable/bg_consent_notice"
+                    android:paddingTop="15dp"
+                    android:paddingBottom="16dp"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="계정 연동을 진행하면"
+                        android:textColor="#FFFFFF"
+                        android:textSize="14sp"
+                        android:textFontWeight="400"
+                        android:lineHeight="21sp"
+                        android:gravity="center" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="이용약관 및 개인정보처리방침에 동의하게 됩니다."
+                        android:textColor="#FFFFFF"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textFontWeight="600"
+                        android:lineHeight="21sp"
+                        android:gravity="center" />
+
+                </LinearLayout>
 
             </LinearLayout>
+
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
-    <!-- Confirm button (provider-specific color/icon/text set in Fragment) -->
+    <!-- 확인 버튼 318x52 (제공자별 색/아이콘/문구는 Fragment에서 지정) -->
     <LinearLayout
         android:id="@+id/btnConfirm"
         android:layout_width="0dp"
-        android:layout_height="56dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
-        android:layout_marginBottom="40dp"
+        android:layout_height="52dp"
+        android:layout_marginStart="36dp"
+        android:layout_marginEnd="36dp"
+        android:layout_marginBottom="36dp"
         android:gravity="center"
         android:orientation="horizontal"
         android:background="@drawable/bg_button_kakao"
@@ -270,9 +328,9 @@
 
         <ImageView
             android:id="@+id/ivConfirmIcon"
-            android:layout_width="22dp"
-            android:layout_height="22dp"
-            android:layout_marginEnd="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
             android:src="@drawable/ic_kakao_logo"
             android:contentDescription="@null" />
 
@@ -282,8 +340,10 @@
             android:layout_height="wrap_content"
             android:text="동의하고 계속하기"
             android:textColor="#191919"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+            android:textSize="16sp"
+            android:textFontWeight="500"
+            android:maxLines="1" />
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

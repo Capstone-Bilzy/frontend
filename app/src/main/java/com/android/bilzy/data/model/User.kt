@@ -1,5 +1,6 @@
 package com.android.bilzy.data.model
 
+import com.android.bilzy.util.toHttpsUrl
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.DocumentSnapshot
 
@@ -17,7 +18,7 @@ fun DocumentSnapshot.toUser() = User(
     uid = id,
     email = getString("email") ?: "",
     nickname = getString("nickname") ?: "",
-    profileImageUrl = getString("profile_image_url") ?: "",
+    profileImageUrl = (getString("profile_image_url") ?: "").toHttpsUrl(),
     language = getString("language") ?: "ko",
     createdAt = getTimestamp("created_at"),
     lastLoginAt = getTimestamp("last_login_at")

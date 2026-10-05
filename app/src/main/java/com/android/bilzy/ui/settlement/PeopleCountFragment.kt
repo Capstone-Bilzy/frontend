@@ -12,6 +12,7 @@ import androidx.navigation.fragment.findNavController
 import com.android.bilzy.R
 import com.android.bilzy.databinding.FragmentPeopleCountBinding
 import com.android.bilzy.ui.room.RoomViewModel
+import com.android.bilzy.ui.scan.ScanFlowViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -23,6 +24,7 @@ class PeopleCountFragment : Fragment() {
     private var count = 2
 
     private val roomViewModel: RoomViewModel by hiltNavGraphViewModels(R.id.nav_graph)
+    private val scanViewModel: ScanFlowViewModel by hiltNavGraphViewModels(R.id.nav_graph)
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -48,6 +50,9 @@ class PeopleCountFragment : Fragment() {
 
         binding.btnNext.setOnClickListener {
             roomViewModel.expectedCount = count
+            // 정원 저장은 RoomViewModel이 정산방 id를 알아야 하는데, 예전엔 id를 다음 화면(초대 QR)에서야
+            // 넘겨줘서 여기서는 항상 id가 없어 요청도 못 보내고 "저장 실패"가 떴다. 먼저 id를 넘긴다.
+            roomViewModel.setRoom(scanViewModel.settlementId)
             viewLifecycleOwner.lifecycleScope.launch {
                 if (!roomViewModel.saveMemberCapacity(count)) {
                     Toast.makeText(requireContext(), "정원 설정 저장에 실패했어요. 정원 제한 없이 진행돼요", Toast.LENGTH_SHORT).show()

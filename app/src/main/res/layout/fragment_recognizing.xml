@@ -35,7 +35,8 @@
             android:text="스캔"
             android:textColor="#FFFFFF"
             android:textSize="18sp"
-            android:textFontWeight="500" />
+            android:textFontWeight="500"
+            android:maxLines="1" />
 
         <LinearLayout
             android:id="@+id/roundBadgeContainer"
@@ -377,7 +378,13 @@
             app:layout_constraintBottom_toTopOf="@id/btnManualInput"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:textFontWeight="500" />
+            android:textFontWeight="500"
+            android:maxLines="1"
+            android:autoSizeTextType="uniform"
+            android:autoSizeMinTextSize="11sp"
+            android:autoSizeMaxTextSize="16sp"
+            android:paddingStart="6dp"
+            android:paddingEnd="6dp" />
 
         <TextView
             android:id="@+id/btnManualInput"
@@ -396,7 +403,8 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:textFontWeight="300" />
+            android:textFontWeight="300"
+            android:maxLines="1" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

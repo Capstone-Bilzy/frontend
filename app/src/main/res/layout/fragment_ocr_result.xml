@@ -53,7 +53,8 @@
             android:text="OCR 결과"
             android:textColor="#FFFFFF"
             android:textSize="18sp"
-            android:textFontWeight="500" />
+            android:textFontWeight="500"
+            android:maxLines="1" />
 
         <LinearLayout
             android:id="@+id/roundBadgeContainer"
@@ -114,7 +115,8 @@
                 android:textColor="#FFFFFF"
                 android:textSize="16sp"
                 android:layout_marginBottom="8dp"
-                android:textFontWeight="500" />
+                android:textFontWeight="500"
+                android:maxLines="1" />
 
             <EditText
                 android:id="@+id/etGroupName"
@@ -140,7 +142,8 @@
                 android:textColor="#FFFFFF"
                 android:textSize="16sp"
                 android:layout_marginBottom="8dp"
-                android:textFontWeight="500" />
+                android:textFontWeight="500"
+                android:maxLines="1" />
 
             <EditText
                 android:id="@+id/etStoreName"
@@ -165,7 +168,8 @@
                 android:textColor="#FFFFFF"
                 android:textSize="16sp"
                 android:layout_marginBottom="8dp"
-                android:textFontWeight="500" />
+                android:textFontWeight="500"
+                android:maxLines="1" />
 
             <!-- 프로토타입 .bz-ocr-card: 품목 목록/항목 추가/합계를 하나의 카드로 묶는다 -->
             <LinearLayout
@@ -224,7 +228,8 @@
                         android:textColor="#FFFFFF"
                         android:textSize="18sp"
                         android:textStyle="bold"
-                        android:textFontWeight="600" />
+                        android:textFontWeight="600"
+                        android:maxLines="1" />
 
                     <TextView
                         android:id="@+id/tvTotal"
@@ -270,7 +275,13 @@
             android:background="@drawable/bg_button_ghost"
             android:clickable="true"
             android:focusable="true"
-            android:textFontWeight="500" />
+            android:textFontWeight="500"
+            android:maxLines="1"
+            android:autoSizeTextType="uniform"
+            android:autoSizeMinTextSize="11sp"
+            android:autoSizeMaxTextSize="16sp"
+            android:paddingStart="6dp"
+            android:paddingEnd="6dp" />
 
         <TextView
             android:id="@+id/btnMore"
@@ -286,7 +297,36 @@
             android:background="@drawable/bg_button_glass"
             android:clickable="true"
             android:focusable="true"
-            android:textFontWeight="500" />
+            android:textFontWeight="500"
+            android:maxLines="1"
+            android:autoSizeTextType="uniform"
+            android:autoSizeMinTextSize="11sp"
+            android:autoSizeMaxTextSize="16sp"
+            android:paddingStart="6dp"
+            android:paddingEnd="6dp" />
+
+        <!-- 검토 모드(영수증 목록에서 차수를 눌러 들어옴) 전용: 위 두 버튼 대신 이것 하나만 보인다 -->
+        <TextView
+            android:id="@+id/btnRetake"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:layout_weight="1"
+            android:elevation="5dp"
+            android:text="다시 찍기"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:textFontWeight="500"
+            android:gravity="center"
+            android:background="@drawable/bg_button_glass"
+            android:clickable="true"
+            android:focusable="true"
+            android:visibility="gone"
+            android:maxLines="1"
+            android:autoSizeTextType="uniform"
+            android:autoSizeMinTextSize="11sp"
+            android:autoSizeMaxTextSize="16sp"
+            android:paddingStart="6dp"
+            android:paddingEnd="6dp" />
 
     </LinearLayout>
 

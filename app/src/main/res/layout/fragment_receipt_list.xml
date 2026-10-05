@@ -49,7 +49,8 @@
             android:text="영수증 목록"
             android:textColor="#FFFFFF"
             android:textSize="18sp"
-            android:textFontWeight="500" />
+            android:textFontWeight="500"
+            android:maxLines="1" />
 
     </LinearLayout>
 
@@ -90,7 +91,8 @@
                 android:textColor="#FFFFFF"
                 android:textSize="16sp"
                 android:layout_marginBottom="18dp"
-                android:textFontWeight="500" />
+                android:textFontWeight="500"
+                android:maxLines="1" />
 
             <!-- 영수증 목록(동적 생성) -->
             <LinearLayout
@@ -207,7 +209,13 @@
             android:background="@drawable/bg_button_ghost"
             android:clickable="true"
             android:focusable="true"
-            android:textFontWeight="500" />
+            android:textFontWeight="500"
+            android:maxLines="1"
+            android:autoSizeTextType="uniform"
+            android:autoSizeMinTextSize="11sp"
+            android:autoSizeMaxTextSize="16sp"
+            android:paddingStart="6dp"
+            android:paddingEnd="6dp" />
 
         <TextView
             android:id="@+id/btnPeople"
@@ -223,7 +231,13 @@
             android:background="@drawable/bg_button_glass"
             android:clickable="true"
             android:focusable="true"
-            android:textFontWeight="500" />
+            android:textFontWeight="500"
+            android:maxLines="1"
+            android:autoSizeTextType="uniform"
+            android:autoSizeMinTextSize="11sp"
+            android:autoSizeMaxTextSize="16sp"
+            android:paddingStart="6dp"
+            android:paddingEnd="6dp" />
 
     </LinearLayout>
 

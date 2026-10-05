@@ -189,7 +189,8 @@
                 android:text="이번 달 정산 내역"
                 android:textColor="#FFFFFF"
                 android:textSize="18sp"
-                android:textFontWeight="500" />
+                android:textFontWeight="500"
+                android:maxLines="1" />
 
             <!-- History items (RecyclerView) -->
             <androidx.recyclerview.widget.RecyclerView
@@ -207,7 +208,8 @@
                 android:text="과거 정산 내역"
                 android:textColor="#FFFFFF"
                 android:textSize="18sp"
-                android:textFontWeight="500" />
+                android:textFontWeight="500"
+                android:maxLines="1" />
 
             <!-- Past history items -->
             <androidx.recyclerview.widget.RecyclerView
@@ -283,7 +285,8 @@
                 android:text="스캔"
                 android:textColor="@color/white"
                 android:textSize="12sp"
-                android:textFontWeight="500" />
+                android:textFontWeight="500"
+                android:maxLines="1" />
         </LinearLayout>
 
         <LinearLayout

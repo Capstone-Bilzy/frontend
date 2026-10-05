@@ -88,6 +88,12 @@ class SignupConsentFragment : Fragment() {
                                 bundleOf(SignupTermsFragment.ARG_IS_KAKAO to viewModel.isKakao)
                             )
                         }
+                        is SignupViewModel.PrepareState.AlreadyMember -> {
+                            // 이미 가입한 회원: 약관 동의 화면을 건너뛰고 로그인 완료 화면으로
+                            setLoading(false)
+                            viewModel.consumePrepareState()
+                            findNavController().navigate(R.id.loginLoadingFragment)
+                        }
                         is SignupViewModel.PrepareState.Error -> {
                             setLoading(false)
                             Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()

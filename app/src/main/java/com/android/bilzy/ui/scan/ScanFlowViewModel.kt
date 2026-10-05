@@ -211,6 +211,20 @@ class ScanFlowViewModel @Inject constructor(
         resetForNextScan()
     }
 
+    /**
+     * 영수증 목록에서 고른 차수를 OCR 결과 화면으로 다시 연다(검토 모드): 서버에 확정돼 있는 그 차수의
+     * 항목을 편집 목록에 채우고 가게 이름을 돌려준다. 화면은 이 값과 비교해 바뀐 게 있을 때만 다시 확정한다.
+     */
+    fun startReview(round: Int): String {
+        val receipt = _settlement.value?.receipts?.firstOrNull { it.round == round }
+        currentRound = round
+        scannedReceipt = null
+        _items.value = receipt?.items.orEmpty().map { ReceiptItemDraft(it.name, it.price, it.quantity) }
+        _scanState.value = ScanState.Idle
+        _confirmState.value = ConfirmState.Idle
+        return receipt?.storeName.orEmpty()
+    }
+
     /** 영수증 목록에서 고른 차수를 다시 스캔한다. 확정하면 그 차수만 새 내역으로 교체된다. */
     fun startRescan(round: Int) {
         currentRound = round

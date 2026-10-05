@@ -52,7 +52,8 @@
             android:text="계좌 정보 관리"
             android:textColor="#FFFFFF"
             android:textSize="18sp"
-            android:textFontWeight="500" />
+            android:textFontWeight="500"
+            android:maxLines="1" />
     </LinearLayout>
 
     <!-- Divider -->
@@ -128,12 +129,13 @@
                     android:layout_marginBottom="8dp">
 
                     <TextView
-                        android:layout_width="56dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="대표 계좌"
                         android:textColor="#AAB2FF"
                         android:textSize="16sp"
-                        android:textFontWeight="400" />
+                        android:textFontWeight="400"
+                        android:maxLines="1" />
 
                     <View
                         android:layout_width="1dp"
@@ -149,7 +151,9 @@
                         android:text="-"
                         android:textColor="#FFFFFF"
                         android:textSize="18sp"
-                        android:textFontWeight="500" />
+                        android:textFontWeight="500"
+                        android:maxLines="1"
+                        android:ellipsize="end" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -160,12 +164,13 @@
                     android:layout_marginBottom="8dp">
 
                     <TextView
-                        android:layout_width="56dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="계좌 번호"
                         android:textColor="#AAB2FF"
                         android:textSize="16sp"
-                        android:textFontWeight="400" />
+                        android:textFontWeight="400"
+                        android:maxLines="1" />
 
                     <View
                         android:layout_width="1dp"
@@ -181,7 +186,9 @@
                         android:text="-"
                         android:textColor="#FFFFFF"
                         android:textSize="18sp"
-                        android:textFontWeight="500" />
+                        android:textFontWeight="500"
+                        android:maxLines="1"
+                        android:ellipsize="end" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -191,12 +198,13 @@
                     android:gravity="center_vertical">
 
                     <TextView
-                        android:layout_width="56dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="계좌 명의"
                         android:textColor="#AAB2FF"
                         android:textSize="16sp"
-                        android:textFontWeight="400" />
+                        android:textFontWeight="400"
+                        android:maxLines="1" />
 
                     <View
                         android:layout_width="1dp"
@@ -212,7 +220,9 @@
                         android:text="-"
                         android:textColor="#FFFFFF"
                         android:textSize="18sp"
-                        android:textFontWeight="500" />
+                        android:textFontWeight="500"
+                        android:maxLines="1"
+                        android:ellipsize="end" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -224,7 +234,8 @@
                 android:textColor="#CBD5E1"
                 android:textSize="16sp"
                 android:layout_marginBottom="8dp"
-                android:textFontWeight="500" />
+                android:textFontWeight="500"
+                android:maxLines="1" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -257,7 +268,8 @@
                 android:textColor="#CBD5E1"
                 android:textSize="16sp"
                 android:layout_marginBottom="8dp"
-                android:textFontWeight="500" />
+                android:textFontWeight="500"
+                android:maxLines="1" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -297,7 +309,8 @@
                 android:textColor="#CBD5E1"
                 android:textSize="16sp"
                 android:layout_marginBottom="8dp"
-                android:textFontWeight="500" />
+                android:textFontWeight="500"
+                android:maxLines="1" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -350,6 +363,12 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:textFontWeight="500" />
+        android:textFontWeight="500"
+        android:maxLines="1"
+        android:autoSizeTextType="uniform"
+        android:autoSizeMinTextSize="11sp"
+        android:autoSizeMaxTextSize="16sp"
+        android:paddingStart="6dp"
+        android:paddingEnd="6dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 약관 항목을 눌렀을 때 내용을 보여주는 팝업 -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/bg_terms_dialog"
+    android:paddingTop="24dp"
+    android:paddingBottom="16dp"
+    android:paddingStart="22dp"
+    android:paddingEnd="22dp">
+
+    <TextView
+        android:id="@+id/tvTermsTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#FFFFFF"
+        android:textSize="18sp"
+        android:textFontWeight="500" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="320dp"
+        android:layout_marginTop="14dp"
+        android:scrollbars="vertical"
+        android:fadeScrollbars="false">
+
+        <TextView
+            android:id="@+id/tvTermsBody"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#E2E2E3"
+            android:textSize="14sp"
+            android:textFontWeight="300"
+            android:lineHeight="21sp" />
+
+    </ScrollView>
+
+    <TextView
+        android:id="@+id/btnTermsClose"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginTop="16dp"
+        android:gravity="center"
+        android:text="확인"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+        android:textFontWeight="500"
+        android:background="@drawable/bg_button_glass"
+        android:clickable="true"
+        android:focusable="true"
+        android:maxLines="1"
+        android:autoSizeTextType="uniform"
+        android:autoSizeMinTextSize="11sp"
+        android:autoSizeMaxTextSize="16sp"
+        android:paddingStart="6dp"
+        android:paddingEnd="6dp" />
+
+</LinearLayout>

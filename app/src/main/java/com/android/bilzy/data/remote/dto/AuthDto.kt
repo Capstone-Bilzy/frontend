@@ -1,5 +1,6 @@
 package com.android.bilzy.data.remote.dto
 
+import com.android.bilzy.util.toHttpsUrl
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -13,6 +14,12 @@ import kotlinx.serialization.Serializable
 data class SocialLoginRequest(
     val provider: String,
     @SerialName("access_token") val accessToken: String
+)
+
+/** POST /auth/social/check 응답 — 이미 가입한 회원인지 여부. */
+@Serializable
+data class SocialCheckResponse(
+    val registered: Boolean = false
 )
 
 /** POST /auth/refresh */
@@ -46,6 +53,6 @@ data class UserDto(
 fun UserDto.toProfile() = com.android.bilzy.domain.model.UserProfile(
     id = id,
     nickname = nickname,
-    profileImageUrl = profileImageUrl,
+    profileImageUrl = profileImageUrl.toHttpsUrl(),
     provider = provider
 )
