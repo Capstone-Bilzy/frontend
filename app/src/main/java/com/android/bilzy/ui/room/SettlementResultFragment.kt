@@ -78,7 +78,7 @@ class SettlementResultFragment : Fragment() {
         val members = settlement.members
         val n = members.size.coerceAtLeast(1)
         val total = if (settlement.totalAmount > 0) settlement.totalAmount
-        else settlement.items.sumOf { it.price * it.quantity }
+        else settlement.items.sumOf { it.total }
 
         binding.tvMemberChip.text = "${members.size}명 참여"
         val date = formatDate(settlement.createdAt)
@@ -95,6 +95,7 @@ class SettlementResultFragment : Fragment() {
 
         val container = binding.personsContainer
         container.removeAllViews()
+        roundParticipants = settlement.receipts.associate { it.round to settlement.roundParticipantCount(it.round) }
         val receipts = settlement.receipts
         members.forEachIndexed { i, m ->
             val amount = if (hasStored) m.amount else shares.getOrElse(i) { 0L }
@@ -220,6 +221,9 @@ class SettlementResultFragment : Fragment() {
         binding.tvPayerAmount.text = "${nf.format(receive)}원"
     }
 
+    /** 차수별 참여 인원. 제외 항목 칩에 품목 전체 금액이 아니라 내 몫에서 실제로 빠진 금액(품목÷인원)을 보여주는 데 쓴다. */
+    private var roundParticipants: Map<Int, Int> = emptyMap()
+
     private fun personCard(
         name: String,
         amount: Long,
@@ -296,10 +300,13 @@ class SettlementResultFragment : Fragment() {
                 if (ra != null) {
                     val itemTags = ra.excludedItemNames.mapNotNull { itemName ->
                         receipt.items.find { it.name == itemName }
-                            ?.let { "$itemName -${nf.format(it.price * it.quantity)}원" }
+                            ?.let { "$itemName -${nf.format(it.total / (roundParticipants[receipt.round] ?: 1).coerceAtLeast(1))}원" }
                     }
+                    // 안 먹은 메뉴가 있으면 그것만("맥주 -5,000원"), 없으면 먹은 메뉴 이름만("피자", "맥주") 칩으로 보여준다.
+                    // 예전엔 AI가 쓴 계산 설명 문장("피자(20000원/2명) 10000원 + …")이 통째로 들어갔다.
                     val tags = itemTags.ifEmpty {
-                        listOf(ra.reason?.takeIf(String::isNotBlank) ?: "1/N 정산")
+                        receipt.items.map { it.name }.filter(String::isNotBlank).distinct()
+                            .ifEmpty { listOf("1/N 정산") }
                     }
                     RoundRow("${receipt.round}차", ra.amount, tags)
                 } else {

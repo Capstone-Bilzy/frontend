@@ -86,7 +86,9 @@ data class SettlementDto(
     val members: List<SettlementMemberDto> = emptyList(),
     val items: List<ReceiptItemDto> = emptyList(),
     val receipts: List<ReceiptDto> = emptyList(),
-    @SerialName("extra_photos") val extraPhotos: List<ExtraPhotoDto> = emptyList()
+    @SerialName("extra_photos") val extraPhotos: List<ExtraPhotoDto> = emptyList(),
+    @SerialName("payer_account") val payerAccount: AccountDto? = null,
+    @SerialName("member_capacity") val memberCapacity: Int? = null
 )
 
 /** 라운드와 무관하게 순수 기록용으로 첨부된 영수증 사진(정산 계산에 영향 없음). */
@@ -118,6 +120,7 @@ data class ReceiptItemDto(
     val name: String = "",
     val price: Long = 0,
     val quantity: Int = 1,
+    @SerialName("line_amount") val lineAmount: Long? = null,
     @SerialName("created_at") val createdAt: String? = null
 )
 
@@ -158,7 +161,9 @@ fun SettlementDto.toDomain() = Settlement(
     members = members.map { it.toDomain() },
     items = items.map { it.toDomain() },
     receipts = receipts.map { it.toDomain() },
-    extraPhotos = extraPhotos.map { it.toDomain() }
+    extraPhotos = extraPhotos.map { it.toDomain() },
+    payerAccount = payerAccount?.toDomain()?.takeIf { !it.isEmpty },
+    memberCapacity = memberCapacity
 )
 
 fun SettlementMemberDto.toDomain() = SettlementMember(
@@ -178,7 +183,8 @@ fun ReceiptItemDto.toDomain() = ReceiptItem(
     settlementId = settlementId,
     name = name,
     price = price,
-    quantity = quantity
+    quantity = quantity,
+    lineAmount = lineAmount
 )
 
 fun ReceiptDto.toDomain() = Receipt(

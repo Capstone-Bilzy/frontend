@@ -5,6 +5,7 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.Toast
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
@@ -89,6 +90,15 @@ class HomeFragment : Fragment() {
     }
 
     private fun observeHistory() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.loadFailed.collect {
+                    Toast.makeText(requireContext(), "불러오지 못했어요", Toast.LENGTH_SHORT).show()
+                    // 보여줄 내역(캐시)도 없으면 "내역이 없어요" 문구는 숨긴다 — 없는 게 아니라 못 불러온 것.
+                    if (viewModel.history.value == null) binding.tvHistoryEmpty.visibility = View.GONE
+                }
+            }
+        }
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.history.collect { list ->

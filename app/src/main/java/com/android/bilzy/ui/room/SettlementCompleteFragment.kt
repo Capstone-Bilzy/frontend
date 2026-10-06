@@ -16,6 +16,8 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.android.bilzy.R
 import com.android.bilzy.databinding.FragmentSettlementCompleteBinding
+import com.android.bilzy.domain.model.BankAccount
+import com.android.bilzy.domain.model.MemberRoundAmount
 import com.android.bilzy.domain.model.Settlement
 import com.android.bilzy.domain.model.SettlementStatus
 import com.android.bilzy.ui.scan.ScanFlowViewModel
@@ -31,6 +33,9 @@ class SettlementCompleteFragment : Fragment() {
 
     private val roomViewModel: RoomViewModel by hiltNavGraphViewModels(R.id.nav_graph)
     private val scanFlowViewModel: ScanFlowViewModel by hiltNavGraphViewModels(R.id.nav_graph)
+
+    private var myAccount: BankAccount? = null
+    private var iAmOwner = false
     private val nf = NumberFormat.getInstance()
 
     override fun onCreateView(
@@ -53,6 +58,13 @@ class SettlementCompleteFragment : Fragment() {
         roomViewModel.loadMyAccount()
         observeRoom()
         observeAccount()
+        viewLifecycleOwner.lifecycleScope.launch {
+            iAmOwner = roomViewModel.isOwner()
+            if (_binding != null) {
+                roomViewModel.settlement.value?.let { render(it) }
+                renderAccount()
+            }
+        }
     }
 
     private fun observeRoom() {
@@ -61,6 +73,7 @@ class SettlementCompleteFragment : Fragment() {
                 roomViewModel.settlement.collect { settlement ->
                     settlement ?: return@collect
                     render(settlement)
+                    renderAccount()
                 }
             }
         }
@@ -70,14 +83,24 @@ class SettlementCompleteFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 roomViewModel.myAccount.collect { account ->
-                    if (account != null && !account.isEmpty) {
-                        binding.tvAccount.text =
-                            "${account.bankName} ${account.accountNumber} ${account.accountHolder}".trim()
-                    } else {
-                        binding.tvAccount.text = "계좌 정보 없음"
-                    }
+                    myAccount = account
+                    renderAccount()
                 }
             }
+        }
+    }
+
+    /**
+     * "송금 계좌"는 돈을 받을 사람, 즉 결제자(방장)의 계좌다. 예전엔 누구에게나 본인 계좌를 보여줘서
+     * 참여자는 보낼 계좌를 볼 수 없었다(본인 계좌가 없으면 "계좌 정보 없음").
+     * 서버가 내려준 결제자 계좌를 쓰고, 그 값이 없을 때 방장 본인에게만 자기 계좌를 대신 보여준다.
+     */
+    private fun renderAccount() {
+        val account = roomViewModel.settlement.value?.payerAccount ?: myAccount.takeIf { iAmOwner }
+        binding.tvAccount.text = if (account != null && !account.isEmpty) {
+            "${account.bankName} ${account.accountNumber} ${account.accountHolder}".trim()
+        } else {
+            "계좌 정보 없음"
         }
     }
 
@@ -85,7 +108,7 @@ class SettlementCompleteFragment : Fragment() {
         val members = settlement.members
         val n = members.size.coerceAtLeast(1)
         val total = if (settlement.totalAmount > 0) settlement.totalAmount
-        else settlement.items.sumOf { it.price * it.quantity }
+        else settlement.items.sumOf { it.total }
 
         binding.tvTotalAmount.text = "${nf.format(total)}원"
         binding.tvSubtitle.text = "${settlement.title.ifBlank { "정산" }} · ${members.size}명"
@@ -101,17 +124,38 @@ class SettlementCompleteFragment : Fragment() {
         val myIndex = members.indexOfFirst { it.nickname == myNick }.takeIf { it >= 0 } ?: 0
         val myMember = members.getOrNull(myIndex)
         val myAmount = if (calculated) (myMember?.amount ?: 0L) else shares.getOrElse(myIndex) { 0L }
-        binding.tvMyAmount.text = "${nf.format(myAmount)}원"
+        // 방장은 이미 전액을 결제한 사람이라 낼 돈이 아니라 받을 돈(총액 − 내 몫)을 보여준다. 참여자는 그대로 낼 금액.
+        if (iAmOwner) {
+            binding.tvMyAmountLabel.text = "받을 금액"
+            binding.tvMyAmount.text = "${nf.format((total - myAmount).coerceAtLeast(0L))}원"
+        } else {
+            binding.tvMyAmountLabel.text = "내가 낼 금액"
+            binding.tvMyAmount.text = "${nf.format(myAmount)}원"
+        }
 
         val myRoundAmounts = if (calculated) myMember?.rounds.orEmpty() else emptyList()
         val rounds: List<Pair<String, String>> = if (myRoundAmounts.isNotEmpty()) {
-            myRoundAmounts.map { "${it.round}차" to (it.reason?.takeIf(String::isNotBlank) ?: "1/N 정산") }
+            myRoundAmounts.map { "${it.round}차" to roundTag(settlement, it) }
         } else {
             val myReason = myMember?.reason?.takeIf { it.isNotBlank() }
             listOf("1차" to (myReason ?: "1/N 정산"))
         }
         binding.roundsContainer.removeAllViews()
         rounds.forEach { (round, tag) -> binding.roundsContainer.addView(roundBadge(round, tag)) }
+    }
+
+    /**
+     * 차수 옆 초록 칩 문구 — 결과·정산내역 화면과 같은 규칙: 안 먹은 메뉴가 있으면 그것만("맥주 -5,000원"),
+     * 없으면 먹은 메뉴 이름만("피자, 맥주"). AI가 쓴 계산 설명 문장은 쓰지 않는다.
+     */
+    private fun roundTag(settlement: Settlement, ra: MemberRoundAmount): String {
+        val receipt = settlement.receipts.firstOrNull { it.round == ra.round } ?: return "1/N 정산"
+        val n = settlement.roundParticipantCount(ra.round).coerceAtLeast(1)
+        val excluded = ra.excludedItemNames.mapNotNull { name ->
+            receipt.items.find { it.name == name }?.let { "$name -${nf.format(it.total / n)}원" }
+        }
+        val tags = excluded.ifEmpty { receipt.items.map { it.name }.filter(String::isNotBlank).distinct() }
+        return tags.joinToString(", ").ifEmpty { "1/N 정산" }
     }
 
     private fun roundBadge(round: String, tag: String): View {

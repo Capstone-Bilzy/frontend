@@ -1,5 +1,6 @@
 package com.android.bilzy.ui.room
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.bilzy.data.local.TokenStore
@@ -19,21 +20,33 @@ import javax.inject.Inject
  * 정산방 입장 이후 화면들(입장→멤버대기→금액조정→계산→결과→완료)이 공유하는 ViewModel.
  * nav_graph 스코프(hiltNavGraphViewModels(R.id.nav_graph))로 주입해 settlement_id와 조회 결과를 공유한다.
  * 진입 경로(호스트: QrInvite, 게스트: QrScan) 양쪽에서 setRoom()으로 id를 넣는다.
+ *
+ * 정산방 id·정원·내 이름·고른 차수 같은 진행 상태는 SavedStateHandle에도 적어 둔다. 앱이 백그라운드에서
+ * 종료됐다가(초대 링크를 카카오톡으로 보내러 나간 사이 등) 화면이 복원되면 그 값으로 정산방을 다시 불러온다.
+ * 안 그러면 복원된 화면들이 빈 상태로 남아 방으로 돌아갈 방법이 없었다.
  */
 @HiltViewModel
 class RoomViewModel @Inject constructor(
     private val settlementRepository: SettlementRepository,
     private val accountRepository: AccountRepository,
     private val userRepository: UserRepository,
-    private val tokenStore: TokenStore
+    private val tokenStore: TokenStore,
+    private val savedState: SavedStateHandle
 ) : ViewModel() {
 
     /** 현재 보고 있는 정산방 id. */
-    var settlementId: String? = null
-        private set
+    var settlementId: String? = savedState[KEY_SETTLEMENT_ID]
+        private set(value) {
+            field = value
+            savedState[KEY_SETTLEMENT_ID] = value
+        }
 
     /** 정산 인원 설정 화면에서 고른 인원수(호스트). 멤버 대기 게이팅에 사용. 0이면 미설정(게스트 등). */
-    var expectedCount: Int = 0
+    var expectedCount: Int = savedState[KEY_EXPECTED_COUNT] ?: 0
+        set(value) {
+            field = value
+            savedState[KEY_EXPECTED_COUNT] = value
+        }
 
     private val _settlement = MutableStateFlow<Settlement?>(null)
     val settlement = _settlement.asStateFlow()
@@ -47,7 +60,21 @@ class RoomViewModel @Inject constructor(
     val myAccount = _myAccount.asStateFlow()
 
     /** 참여자 입력 화면에서 직접 입력한 표시 이름. 있으면 join·식별에 로그인 닉네임보다 우선. */
-    private var myNameOverride: String? = null
+    private var myNameOverride: String? = savedState[KEY_MY_NAME]
+        set(value) {
+            field = value
+            savedState[KEY_MY_NAME] = value
+        }
+
+    init {
+        // 프로세스 종료 뒤 복원된 경우: 저장해 둔 id로 정산방과 내 이름을 다시 채운다.
+        if (settlementId != null) {
+            viewModelScope.launch {
+                _myNickname.value = myNameOverride ?: tokenStore.currentNickname()
+            }
+            load()
+        }
+    }
 
     /** 참여자 입력 화면에서 호출. 입력한 이름은 TokenStore에 저장해 이후 입장(호스트·게스트)에 재사용한다. */
     fun setMyName(name: String) {
@@ -71,14 +98,25 @@ class RoomViewModel @Inject constructor(
     }
 
     /** 금액 조정 화면에서 만든 특이사항(칩 선택 등) → AI 계산에 전달. */
-    var aiNote: String = ""
+    var aiNote: String = savedState[KEY_AI_NOTE] ?: ""
+        set(value) {
+            field = value
+            savedState[KEY_AI_NOTE] = value
+        }
 
     // ── 다차 정산(n차): 내가 참여한 라운드 선택/조정 상태 ─────────────
-    private val _pickedRounds = MutableStateFlow<Set<Int>>(emptySet())
+    private val _pickedRounds = MutableStateFlow<Set<Int>>(
+        savedState.get<IntArray>(KEY_PICKED_ROUNDS)?.toSet().orEmpty()
+    )
     val pickedRounds = _pickedRounds.asStateFlow()
 
+    private fun setPickedRounds(rounds: Set<Int>) {
+        _pickedRounds.value = rounds
+        savedState[KEY_PICKED_ROUNDS] = rounds.toIntArray()
+    }
+
     fun togglePickedRound(round: Int) {
-        _pickedRounds.value = if (round in _pickedRounds.value) _pickedRounds.value - round else _pickedRounds.value + round
+        setPickedRounds(if (round in _pickedRounds.value) _pickedRounds.value - round else _pickedRounds.value + round)
     }
 
     /** RoundPick "선택 완료": 고른 라운드 집합을 서버에 반영하고 상세를 다시 불러온다. */
@@ -90,7 +128,11 @@ class RoomViewModel @Inject constructor(
     }
 
     /** AmountAdjust 화면에서 지금 보고 있는 라운드 인덱스(pickedReceipts 기준). 라운드 넘어갈 때마다 증가. */
-    var adjIdx: Int = 0
+    var adjIdx: Int = savedState[KEY_ADJ_IDX] ?: 0
+        set(value) {
+            field = value
+            savedState[KEY_ADJ_IDX] = value
+        }
 
     /** AmountAdjust "다음"/"정산 시작하기": 이 라운드에서 안 먹은 항목을 서버에 반영한다. */
     suspend fun submitRoundAdjustment(round: Int, excludedItemNames: List<String>): Boolean {
@@ -115,8 +157,11 @@ class RoomViewModel @Inject constructor(
     }
 
     /** true면 AI 계산이 적용된 멤버 금액(저장값), false면 클라이언트 엔빵으로 표시. */
-    var aiApplied: Boolean = false
-        private set
+    var aiApplied: Boolean = savedState[KEY_AI_APPLIED] ?: false
+        private set(value) {
+            field = value
+            savedState[KEY_AI_APPLIED] = value
+        }
 
     fun setRoom(id: String?) {
         if (id.isNullOrBlank()) return
@@ -124,7 +169,7 @@ class RoomViewModel @Inject constructor(
             settlementId = id
             _settlement.value = null
             // 다른 정산방으로 전환되는 경우 이전 방의 라운드 선택/AI 특이사항이 새 방에 새어들지 않도록 초기화
-            _pickedRounds.value = emptySet()
+            setPickedRounds(emptySet())
             aiNote = ""
             aiApplied = false
             adjIdx = 0
@@ -219,8 +264,12 @@ class RoomViewModel @Inject constructor(
     suspend fun markDone(): Boolean {
         val id = settlementId ?: return false
         return runCatching { settlementRepository.markDone(id) }
-            .onSuccess {
-                _settlement.value = it
+            .onSuccess { done ->
+                // /done 응답은 멤버·영수증이 빠진 정산방 행뿐이다. 그대로 덮어쓰면 바로 다음 완료 화면이
+                // "0명 · 내가 낼 금액 0원"으로 나왔다(방장만 — 참여자는 /done이 403이라 덮어쓰지 않음).
+                // 전체 상세를 다시 받고, 그게 실패하면 지금 들고 있는 상세에 상태만 반영한다.
+                val full = runCatching { settlementRepository.getSettlement(id) }.getOrNull()
+                _settlement.value = full ?: _settlement.value?.copy(status = done.status) ?: done
                 userRepository.clearCache()
             }
             .isSuccess
@@ -240,12 +289,20 @@ class RoomViewModel @Inject constructor(
         myNameOverride = null
         _suggestedName.value = null
         aiNote = ""
-        _pickedRounds.value = emptySet()
+        setPickedRounds(emptySet())
         aiApplied = false
         adjIdx = 0
     }
 
     companion object {
+        private const val KEY_SETTLEMENT_ID = "room_settlement_id"
+        private const val KEY_EXPECTED_COUNT = "room_expected_count"
+        private const val KEY_MY_NAME = "room_my_name"
+        private const val KEY_AI_NOTE = "room_ai_note"
+        private const val KEY_PICKED_ROUNDS = "room_picked_rounds"
+        private const val KEY_ADJ_IDX = "room_adj_idx"
+        private const val KEY_AI_APPLIED = "room_ai_applied"
+
         /**
          * 총액을 n명에게 엔빵(원 단위). 나머지는 앞사람부터 1원씩 더해 합이 총액과 정확히 일치한다.
          * 예) 100,000원 / 3명 → [33,334, 33,333, 33,333]

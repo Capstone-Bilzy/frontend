@@ -10,7 +10,9 @@ import kotlinx.serialization.Serializable
 data class OcrItemDto(
     val name: String = "",
     val price: Long = 0,
-    val quantity: Int = 1
+    val quantity: Int = 1,
+    // 그 줄의 금액이 수량으로 나누어떨어지지 않을 때만 보낸다(null이면 JSON에서 빠짐).
+    @SerialName("line_amount") val lineAmount: Long? = null
 )
 
 /** POST /ocr/scan 응답 */
@@ -59,8 +61,8 @@ data class AttachPhotoResponse(
 )
 
 // ── 매퍼 ─────────────────────────────────────────────
-fun OcrItemDto.toDraft() = ReceiptItemDraft(name = name, price = price, quantity = quantity)
-fun ReceiptItemDraft.toDto() = OcrItemDto(name = name, price = price, quantity = quantity)
+fun OcrItemDto.toDraft() = ReceiptItemDraft(name = name, price = price, quantity = quantity, lineAmount = lineAmount)
+fun ReceiptItemDraft.toDto() = OcrItemDto(name = name, price = price, quantity = quantity, lineAmount = lineAmount)
 
 fun OcrScanResponse.toDomain() = ScannedReceipt(
     settlementId = settlementId,

@@ -25,8 +25,10 @@ import coil.load
 import coil.transform.CircleCropTransformation
 import com.android.bilzy.R
 import com.android.bilzy.databinding.FragmentMemberWaitingBinding
+import com.android.bilzy.domain.model.Settlement
 import com.android.bilzy.domain.model.SettlementMember
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -39,13 +41,21 @@ class MemberWaitingFragment : Fragment() {
     private val roomViewModel: RoomViewModel by hiltNavGraphViewModels(R.id.nav_graph)
 
     private var advanced = false
+    private var fallbackScheduled = false
 
-    /** 멤버 합류 폴링(서버 재조회). 내가 멤버에 포함되면 진행. */
-    private val pollTick = object : Runnable {
-        override fun run() {
-            if (_binding == null || advanced) return
-            roomViewModel.load()
-            handler.postDelayed(this, 1500L)
+    /**
+     * 멤버 합류 폴링(서버 재조회). 응답을 받은 뒤에 다음 요청까지 쉬므로 서버가 느려도 요청이 겹쳐 쌓이지 않고,
+     * 화면이 보이는 동안(STARTED)에만 돈다 — 예전엔 1.5초마다 무조건 쏴서 응답이 2~4초 걸리면 요청이 겹쳤고
+     * 홈 버튼으로 나가 있어도 계속 돌았다.
+     */
+    private fun startPolling() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                while (!advanced) {
+                    roomViewModel.refresh()
+                    delay(POLL_INTERVAL_MS)
+                }
+            }
         }
     }
 
@@ -76,12 +86,15 @@ class MemberWaitingFragment : Fragment() {
         )
 
         observeRoom()
-        handler.post(pollTick)
-        // 인원수를 설정하지 않은 경우(게스트 등)에만 안전장치로 일정 시간 뒤 진행
-        if (roomViewModel.expectedCount <= 0) {
-            handler.postDelayed({ advance() }, 7000L)
-        }
+        startPolling()
     }
+
+    /**
+     * 모여야 하는 인원. 방장은 인원 설정 화면에서 고른 값을, 참여자는 서버에 저장된 정원을 쓴다.
+     * 예전엔 참여자가 정원을 몰라(0) 혼자여도 곧장 금액 조정으로 넘어갔고, 그 화면이 "1명" 기준으로 계산됐다.
+     */
+    private fun targetCount(settlement: Settlement?): Int =
+        roomViewModel.expectedCount.takeIf { it > 0 } ?: settlement?.memberCapacity ?: 0
 
     private fun observeRoom() {
         viewLifecycleOwner.lifecycleScope.launch {
@@ -89,8 +102,13 @@ class MemberWaitingFragment : Fragment() {
                 roomViewModel.settlement.collect { settlement ->
                     settlement ?: return@collect
                     val members = settlement.members
-                    val target = roomViewModel.expectedCount
-                    renderMembers(members)
+                    val target = targetCount(settlement)
+                    renderMembers(members, target)
+                    // 정원이 없는 방(구버전 데이터 등)에서만 안전장치로 일정 시간 뒤 진행
+                    if (target <= 0 && !fallbackScheduled) {
+                        fallbackScheduled = true
+                        handler.postDelayed({ advance() }, 7000L)
+                    }
                     binding.tvStatus.text =
                         if (target > 0) "${members.size} / ${target}명" else "${members.size}명"
                     binding.progressBar.progress = when {
@@ -113,7 +131,6 @@ class MemberWaitingFragment : Fragment() {
     private fun advance() {
         if (advanced || _binding == null) return
         advanced = true
-        handler.removeCallbacks(pollTick)
         findNavController().navigate(R.id.action_memberWaiting_to_amountAdjust)
     }
 
@@ -122,10 +139,9 @@ class MemberWaitingFragment : Fragment() {
      * 정원만큼 빈 슬롯을 전부 보여주고, 실제로 합류한 멤버 수만큼 앞에서부터 채운다.
      * 정원을 모르는 경우(게스트 — expectedCount<=0)는 기존처럼 합류한 멤버만 표시한다.
      */
-    private fun renderMembers(members: List<SettlementMember>) {
+    private fun renderMembers(members: List<SettlementMember>, target: Int) {
         val row = binding.avatarRow
         row.removeAllViews()
-        val target = roomViewModel.expectedCount
         val myNick = roomViewModel.myNickname.value
         val ctx = requireContext()
 
@@ -153,6 +169,10 @@ class MemberWaitingFragment : Fragment() {
                 }
             )
         }
+    }
+
+    private companion object {
+        const val POLL_INTERVAL_MS = 1500L
     }
 
     private fun dp(value: Int): Int =

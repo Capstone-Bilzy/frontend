@@ -16,11 +16,14 @@ import java.io.ByteArrayOutputStream
  */
 object ImageCompressor {
 
-    /** 긴 변 기준 최대 픽셀. 영수증 글자 인식엔 이 정도면 충분하다. */
-    private const val MAX_DIMENSION = 1600
+    /**
+     * 긴 변 기준 최대 픽셀. 영수증은 세로로 길어서 1600이면 가로가 900px 안팎밖에 안 남아
+     * 화질이 애매한 영수증의 한글 품목명이 뭉개졌다 — 글자가 1.5배 크게 남도록 2400으로 둔다.
+     */
+    private const val MAX_DIMENSION = 2400
 
-    /** JPEG 품질(0~100). 영수증은 글자만 읽으면 되므로 손실 무관. */
-    private const val JPEG_QUALITY = 80
+    /** JPEG 품질(0~100). 작은 한글 획이 압축 잡음에 묻히지 않게 90. */
+    private const val JPEG_QUALITY = 90
 
     /**
      * 압축 결과. 성공하면 항상 JPEG이므로 mime은 "image/jpeg".

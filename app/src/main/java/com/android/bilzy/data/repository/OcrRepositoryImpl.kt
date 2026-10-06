@@ -42,14 +42,20 @@ class OcrRepositoryImpl @Inject constructor(
         storeName: String,
         items: List<ReceiptItemDraft>
     ): OcrConfirmResult {
-        val response = api.confirmOcr(
+        suspend fun send(list: List<ReceiptItemDraft>) = api.confirmOcr(
             OcrConfirmRequest(
                 settlementId = settlementId,
                 round = round,
                 storeName = storeName,
-                items = items.map { it.toDto() }
+                items = list.map { it.toDto() }
             )
         )
+        var response = send(items)
+        // 구버전 서버는 line_amount를 무시하고 단가×수량으로 저장해 합계가 1원씩 틀어진다(3개 10,000원 → 9,999원).
+        // 서버가 돌려준 합계가 화면 합계와 다르면 예전 방식(금액×1개)으로 한 번 더 확정해 금액을 맞춘다.
+        if (response.totalAmount != items.sumOf { it.subtotal } && items.any { it.lineAmount != null }) {
+            response = send(items.map { it.normalized() })
+        }
         return OcrConfirmResult(
             round = response.round,
             totalAmount = response.totalAmount,

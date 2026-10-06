@@ -25,6 +25,7 @@ import com.android.bilzy.domain.model.Receipt
 import com.android.bilzy.domain.model.ReceiptItem
 import com.android.bilzy.domain.model.Settlement
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.text.NumberFormat
 
@@ -44,6 +45,10 @@ class AmountAdjustFragment : Fragment() {
      * 방어적으로 전체 라운드를 참여한 것으로 간주한다. */
     private var pickedReceipts: List<Receipt> = emptyList()
     private var memberCount = 1
+    private var currentSettlement: Settlement? = null
+
+    /** 지금 보고 있는 차수를 나누는 인원 — 그 차수를 고른 멤버 수(아직 아무도 안 골랐으면 방 전체 인원). */
+    private var roundCount = 1
 
     // 현재 보고 있는 라운드(pickedReceipts[roomViewModel.adjIdx]) 관련 상태
     private var currentItems: List<ReceiptItem> = emptyList()
@@ -66,6 +71,19 @@ class AmountAdjustFragment : Fragment() {
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) { handleBack() }
 
         observeRoom()
+        keepRoomFresh()
+    }
+
+    /** 다른 멤버가 뒤늦게 차수를 고르면 나누는 인원이 달라지므로, 화면이 보이는 동안 가끔 다시 불러온다. */
+    private fun keepRoomFresh() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                while (true) {
+                    roomViewModel.refresh()
+                    delay(REFRESH_INTERVAL_MS)
+                }
+            }
+        }
     }
 
     /** 라운드 도중이면 화면을 나가지 않고 이전 라운드로만 돌아간다(완주 강제) — 첫 라운드에서만 실제로 나간다. */
@@ -117,6 +135,7 @@ class AmountAdjustFragment : Fragment() {
 
     private fun render(settlement: Settlement) {
         memberCount = settlement.members.size.coerceAtLeast(1)
+        currentSettlement = settlement
         val picked = roomViewModel.pickedRounds.value
         val allReceipts = settlement.receipts.sortedBy { it.round }
         // 정상 경로에서는 RoundPick에서 최소 1개를 골라야 넘어올 수 있지만, 방어적으로 비어 있으면 전체 라운드를 참여한 것으로 본다.
@@ -137,12 +156,15 @@ class AmountAdjustFragment : Fragment() {
         val receipt = pickedReceipts.getOrNull(roomViewModel.adjIdx) ?: return
         val items = receipt.items
         currentItems = items
-        val total = if (receipt.totalAmount > 0) receipt.totalAmount else items.sumOf { it.price * it.quantity }
+        val total = if (receipt.totalAmount > 0) receipt.totalAmount else items.sumOf { it.total }
 
         renderReceiptTable(items, total)
 
-        baseShare = RoomViewModel.evenSplit(total, memberCount).firstOrNull() ?: 0L
-        binding.tvSplitLabel.text = "기본 1/N (${memberCount}명)"
+        // 방 전체 인원이 아니라 이 차수에 참여한 사람끼리 나눈다(서버 계산과 동일).
+        // 예전엔 혼자 간 2차 9,000원이 "2명 · 4,500원"으로 보였다.
+        roundCount = currentSettlement?.roundParticipantCount(receipt.round)?.takeIf { it > 0 } ?: memberCount
+        baseShare = RoomViewModel.evenSplit(total, roundCount).firstOrNull() ?: 0L
+        binding.tvSplitLabel.text = "기본 1/N (${roundCount}명)"
 
         renderChips(items)
         recompute()
@@ -164,7 +186,7 @@ class AmountAdjustFragment : Fragment() {
     private fun recompute() {
         val deduction = selectedChips.sumOf { idx ->
             val item = currentItems.getOrNull(idx) ?: return@sumOf 0L
-            (item.price * item.quantity) / memberCount
+            item.total / roundCount
         }
         val myAmount = (baseShare - deduction).coerceAtLeast(0L)
         binding.tvAmount.text = "${nf.format(myAmount)} 원"
@@ -176,7 +198,7 @@ class AmountAdjustFragment : Fragment() {
         val table = binding.receiptTable
         table.removeAllViews()
         items.forEach { item ->
-            table.addView(itemRow(item.name, item.quantity.toString(), "${nf.format(item.price * item.quantity)}원"))
+            table.addView(itemRow(item.name, item.quantity.toString(), "${nf.format(item.total)}원"))
         }
         table.addView(divider())
         table.addView(totalRow(total))
@@ -280,5 +302,9 @@ class AmountAdjustFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private companion object {
+        const val REFRESH_INTERVAL_MS = 3000L
     }
 }

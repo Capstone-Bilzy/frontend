@@ -1,5 +1,6 @@
 package com.android.bilzy.ui.scan
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.bilzy.domain.model.ReceiptItemDraft
@@ -17,37 +18,58 @@ import javax.inject.Inject
 /**
  * 영수증 스캔 → OCR → 확정에 걸친 화면들이 공유하는 ViewModel.
  * nav_graph 스코프(hiltNavGraphViewModels(R.id.nav_graph))로 주입해 settlement_id·스캔결과를 공유한다.
+ *
+ * 정산방 id·제목·차수·편집 중인 품목은 SavedStateHandle에도 적어 둬서, 앱이 백그라운드에서 종료됐다가
+ * 화면이 복원돼도 같은 정산방을 이어서 볼 수 있게 한다(촬영한 사진 바이트는 커서 저장하지 않는다).
  */
 @HiltViewModel
 class ScanFlowViewModel @Inject constructor(
     private val settlementRepository: SettlementRepository,
-    private val ocrRepository: OcrRepository
+    private val ocrRepository: OcrRepository,
+    private val savedState: SavedStateHandle
 ) : ViewModel() {
 
     /** 현재 진행 중인 정산방 id (스캔/확정 시 지연 생성되어 채워짐) */
-    var settlementId: String? = null
-        private set
+    var settlementId: String? = savedState[KEY_SETTLEMENT_ID]
+        private set(value) {
+            field = value
+            savedState[KEY_SETTLEMENT_ID] = value
+        }
     /** 사용자가 OCR 결과 화면에서 정한 모임 이름. 정해지기 전엔 비어 있음. */
-    var settlementTitle: String = ""
-        private set
+    var settlementTitle: String = savedState[KEY_TITLE] ?: ""
+        private set(value) {
+            field = value
+            savedState[KEY_TITLE] = value
+        }
 
     /**
      * OCR 결과 화면의 모임 이름 입력값(서버 confirm 여부와 무관하게 유지).
      * "추가 스캔하기"는 confirm()을 호출하지 않아 settlementTitle이 안 채워지므로,
      * 라운드가 넘어가도 화면 프리필이 유지되도록 별도로 들고 있는다.
      */
-    var pendingGroupName: String = ""
+    var pendingGroupName: String = savedState[KEY_PENDING_GROUP_NAME] ?: ""
+        set(value) {
+            field = value
+            savedState[KEY_PENDING_GROUP_NAME] = value
+        }
 
     /** /ocr/scan 결과(사용자 확인·수정 대상) */
     var scannedReceipt: ScannedReceipt? = null
         private set
 
     /** 현재 스캔/확정 대상 라운드(영수증). "추가 스캔하기"로 넘어갈 때마다 1씩 증가한다. */
-    var currentRound: Int = 1
-        private set
+    var currentRound: Int = savedState[KEY_CURRENT_ROUND] ?: 1
+        private set(value) {
+            field = value
+            savedState[KEY_CURRENT_ROUND] = value
+        }
 
     /** 지금까지 서버에 확정된 가장 큰 차수. 앞 차수를 다시 찍어도 다음 새 차수 번호가 꼬이지 않게 한다. */
-    private var highestConfirmedRound: Int = 0
+    private var highestConfirmedRound: Int = savedState[KEY_HIGHEST_ROUND] ?: 0
+        set(value) {
+            field = value
+            savedState[KEY_HIGHEST_ROUND] = value
+        }
 
     // ── 정산방 지연 생성 ──────────────────────────────────
     /**
@@ -110,7 +132,7 @@ class ScanFlowViewModel @Inject constructor(
             }
                 .onSuccess {
                     scannedReceipt = it
-                    _items.value = it.items
+                    setItems(it.items)
                     pendingImage = null
                     _scanState.value = ScanState.Success
                 }
@@ -123,23 +145,43 @@ class ScanFlowViewModel @Inject constructor(
     }
 
     // ── OCR 결과 항목 편집 + 확정 ──────────────────────────
-    private val _items = MutableStateFlow<List<ReceiptItemDraft>>(emptyList())
+    private val _items = MutableStateFlow(restoreItems())
     val items = _items.asStateFlow()
+
+    private fun setItems(items: List<ReceiptItemDraft>) {
+        _items.value = items
+        savedState[KEY_ITEM_NAMES] = items.map { it.name }.toTypedArray()
+        savedState[KEY_ITEM_PRICES] = items.map { it.price }.toLongArray()
+        savedState[KEY_ITEM_QUANTITIES] = items.map { it.quantity }.toIntArray()
+        savedState[KEY_ITEM_LINE_AMOUNTS] = items.map { it.lineAmount ?: NO_LINE_AMOUNT }.toLongArray()
+    }
+
+    private fun restoreItems(): List<ReceiptItemDraft> {
+        val names = savedState.get<Array<String>>(KEY_ITEM_NAMES) ?: return emptyList()
+        val prices = savedState.get<LongArray>(KEY_ITEM_PRICES) ?: return emptyList()
+        val quantities = savedState.get<IntArray>(KEY_ITEM_QUANTITIES) ?: return emptyList()
+        if (names.size != prices.size || names.size != quantities.size) return emptyList()
+        val lineAmounts = savedState.get<LongArray>(KEY_ITEM_LINE_AMOUNTS)
+        return names.indices.map {
+            val lineAmount = lineAmounts?.getOrNull(it)?.takeIf { v -> v != NO_LINE_AMOUNT }
+            ReceiptItemDraft(names[it], prices[it], quantities[it], lineAmount)
+        }
+    }
 
     /** 화면에 보이는 항목들의 총액(단가×수량 합) — 백엔드 confirm 계산과 동일. */
     fun currentTotal(): Long = _items.value.sumOf { it.subtotal }
 
     fun addItem(name: String, price: Long, quantity: Int) {
-        _items.value = _items.value + ReceiptItemDraft(name, price, quantity)
+        setItems(_items.value + ReceiptItemDraft(name, price, quantity))
     }
 
     fun removeItem(index: Int) {
-        _items.value = _items.value.toMutableList().also { if (index in it.indices) it.removeAt(index) }
+        setItems(_items.value.toMutableList().also { if (index in it.indices) it.removeAt(index) })
     }
 
     /** 직접 입력 화면의 인라인 편집(품목명/수량/가격)을 반영한다. */
     fun updateItem(index: Int, item: ReceiptItemDraft) {
-        _items.value = _items.value.toMutableList().also { if (index in it.indices) it[index] = item }
+        setItems(_items.value.toMutableList().also { if (index in it.indices) it[index] = item })
     }
 
     sealed interface ConfirmState {
@@ -166,6 +208,17 @@ class ScanFlowViewModel @Inject constructor(
         if (_confirmState.value == ConfirmState.Loading) return
         if (_items.value.isEmpty()) {
             _confirmState.value = ConfirmState.Error("항목이 최소 1개는 필요해요")
+            return
+        }
+        // 서버(/ocr/confirm)가 이름 없는 항목을 거절하므로 보내기 전에 걸러 직접 입력 화면과 같은 안내를 띄운다.
+        // 0원인 줄은 품목으로 두지 않는다(스캔 결과에서도 서버가 0원 줄을 빼고 내려준다).
+        if (_items.value.any { it.name.isBlank() || it.subtotal <= 0L }) {
+            _confirmState.value = ConfirmState.Error("모든 항목의 이름과 가격을 입력해주세요")
+            return
+        }
+        // 서버 제한(단가 1,000만 원 이하)을 넘는 줄은 보내 봐야 거절되므로 여기서 멈춘다.
+        if (_items.value.any { it.normalized().price > MAX_UNIT_PRICE }) {
+            _confirmState.value = ConfirmState.Error("확정에 실패했습니다")
             return
         }
         viewModelScope.launch {
@@ -197,7 +250,7 @@ class ScanFlowViewModel @Inject constructor(
 
     /** 다음 영수증을 스캔하기 전 현재 편집 화면 상태를 비운다. */
     fun resetForNextScan() {
-        _items.value = emptyList()
+        setItems(emptyList())
         scannedReceipt = null
     }
 
@@ -219,7 +272,7 @@ class ScanFlowViewModel @Inject constructor(
         val receipt = _settlement.value?.receipts?.firstOrNull { it.round == round }
         currentRound = round
         scannedReceipt = null
-        _items.value = receipt?.items.orEmpty().map { ReceiptItemDraft(it.name, it.price, it.quantity) }
+        setItems(receipt?.items.orEmpty().map { ReceiptItemDraft(it.name, it.price, it.quantity, it.lineAmount) })
         _scanState.value = ScanState.Idle
         _confirmState.value = ConfirmState.Idle
         return receipt?.storeName.orEmpty()
@@ -238,7 +291,16 @@ class ScanFlowViewModel @Inject constructor(
     val settlement = _settlement.asStateFlow()
 
     /** 다차 정산 영수증 목록 화면의 "영수증 저장하기" 완료 여부(서버 호출 없는 순수 표시 상태). */
-    var receiptListSaved: Boolean = false
+    var receiptListSaved: Boolean = savedState[KEY_RECEIPT_LIST_SAVED] ?: false
+        set(value) {
+            field = value
+            savedState[KEY_RECEIPT_LIST_SAVED] = value
+        }
+
+    init {
+        // 프로세스 종료 뒤 복원된 경우: 저장해 둔 id로 정산방(영수증 목록)을 다시 불러온다.
+        if (settlementId != null) loadSettlement()
+    }
 
     /** ReceiptListFragment 진입 시 정산방 상세(receipts 포함)를 다시 불러온다. */
     fun loadSettlement() {
@@ -283,7 +345,7 @@ class ScanFlowViewModel @Inject constructor(
         pendingImage = null
         capturedImage = null
         _scanState.value = ScanState.Idle
-        _items.value = emptyList()
+        setItems(emptyList())
         _confirmState.value = ConfirmState.Idle
         lastConfirmWasFinalRound = true
         _settlement.value = null
@@ -293,5 +355,18 @@ class ScanFlowViewModel @Inject constructor(
     private companion object {
         /** 모임 이름을 정하기 전 정산방 생성에 쓰는 임시 제목. 확정 시 사용자 입력으로 교체됨. */
         const val PLACEHOLDER_TITLE = "정산"
+
+        const val KEY_SETTLEMENT_ID = "scan_settlement_id"
+        const val KEY_TITLE = "scan_title"
+        const val KEY_PENDING_GROUP_NAME = "scan_pending_group_name"
+        const val KEY_CURRENT_ROUND = "scan_current_round"
+        const val KEY_HIGHEST_ROUND = "scan_highest_round"
+        const val KEY_RECEIPT_LIST_SAVED = "scan_receipt_list_saved"
+        const val KEY_ITEM_NAMES = "scan_item_names"
+        const val KEY_ITEM_PRICES = "scan_item_prices"
+        const val KEY_ITEM_QUANTITIES = "scan_item_quantities"
+        const val KEY_ITEM_LINE_AMOUNTS = "scan_item_line_amounts"
+        const val NO_LINE_AMOUNT = -1L
+        const val MAX_UNIT_PRICE = 10_000_000L
     }
 }

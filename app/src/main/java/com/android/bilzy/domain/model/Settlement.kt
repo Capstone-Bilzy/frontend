@@ -24,8 +24,15 @@ data class Settlement(
     val members: List<SettlementMember> = emptyList(),
     val items: List<ReceiptItem> = emptyList(),
     val receipts: List<Receipt> = emptyList(),
-    val extraPhotos: List<ExtraPhoto> = emptyList()
-)
+    val extraPhotos: List<ExtraPhoto> = emptyList(),
+    /** 결제자(방장)의 송금 계좌. 금액이 확정된 뒤(calculated/done)에만 서버가 내려주고, 미등록이면 null. */
+    val payerAccount: BankAccount? = null,
+    /** 방장이 정한 정원(총 인원). 미설정이면 null. */
+    val memberCapacity: Int? = null
+) {
+    /** 그 차수를 고른(참여한) 멤버 수. */
+    fun roundParticipantCount(round: Int): Int = members.count { m -> m.rounds.any { it.round == round } }
+}
 
 /** 라운드와 무관하게 순수 기록용으로 첨부된 영수증 사진(정산 계산에 영향 없음). */
 data class ExtraPhoto(
@@ -50,8 +57,13 @@ data class ReceiptItem(
     val settlementId: String,
     val name: String,
     val price: Long,
-    val quantity: Int
-)
+    val quantity: Int,
+    /** 그 줄의 금액이 단가×수량으로 표현되지 않을 때만 값이 있다(3개 10,000원). */
+    val lineAmount: Long? = null
+) {
+    /** 그 줄의 금액. 화면·계산에서는 price*quantity 대신 이 값을 쓴다. */
+    val total: Long get() = lineAmount ?: (price * quantity)
+}
 
 /** 라운드(영수증) 1건 — 다차 정산의 실제 데이터. */
 data class Receipt(

@@ -16,6 +16,8 @@ import com.android.bilzy.domain.model.ReceiptItemDraft
  * 가격 칸은 단가가 아니라 그 줄의 금액(단가×수량)을 보여주고 입력받는다(영수증의 "금액" 열과 동일).
  * 저장 모델([ReceiptItemDraft.price])은 그대로 단가라서, 금액을 고치면 단가=금액÷수량으로 환산해 저장하고
  * 수량을 고치면 단가는 유지한 채 금액 칸만 다시 계산해 보여준다.
+ * 금액이 수량으로 나누어떨어지지 않으면(3개 10,000원) 단가로는 표현할 수 없으므로 입력한 금액을
+ * [ReceiptItemDraft.lineAmount]에 그대로 둔다 — 이때는 수량을 고쳐도 금액은 사용자가 넣은 값을 유지한다.
  */
 class OcrItemAdapter(
     private val onDelete: (Int) -> Unit,
@@ -63,7 +65,17 @@ class OcrItemAdapter(
         }.also { binding.etName.addTextChangedListener(it) }
 
         holder.qtyWatcher = simpleWatcher { text ->
-            val updated = emitChange(holder) { it.copy(quantity = (text.toIntOrNull() ?: 1).coerceAtLeast(1)) }
+            val updated = emitChange(holder) {
+                val quantity = (text.toIntOrNull() ?: 1).coerceAtLeast(1)
+                val amount = it.lineAmount
+                when {
+                    amount == null -> it.copy(quantity = quantity)
+                    // 수량 칸을 지우고 다시 쓰는 중간(빈 칸)에는 넣어 둔 금액을 건드리지 않는다.
+                    text.isBlank() -> it.copy(quantity = quantity)
+                    // 금액을 직접 넣어 둔 줄은 그 금액을 유지하고, 새 수량 기준으로 단가만 다시 환산한다.
+                    else -> withAmount(it.copy(quantity = quantity), amount)
+                }
+            }
             // 수량이 바뀌면 금액 칸(단가×수량)도 따라 바뀐다. 리스트를 다시 그리지 않으므로 직접 갱신.
             if (updated != null) {
                 val amountText = lineAmountText(updated)
@@ -77,7 +89,7 @@ class OcrItemAdapter(
 
         holder.priceWatcher = simpleWatcher { text ->
             val amount = (text.toLongOrNull() ?: 0L).coerceAtLeast(0L)
-            emitChange(holder) { it.copy(price = amount / it.quantity.coerceAtLeast(1)) }
+            emitChange(holder) { withAmount(it, amount) }
         }.also { binding.etPrice.addTextChangedListener(it) }
 
         binding.btnDelete.setOnClickListener {
@@ -87,7 +99,16 @@ class OcrItemAdapter(
     }
 
     private fun lineAmountText(item: ReceiptItemDraft): String =
-        if (item.price == 0L) "" else item.subtotal.toString()
+        if (item.subtotal == 0L) "" else item.subtotal.toString()
+
+    /** 그 줄의 금액을 [amount]로 맞춘다. 수량으로 나누어떨어지면 단가만, 아니면 금액도 함께 들고 있는다. */
+    private fun withAmount(item: ReceiptItemDraft, amount: Long): ReceiptItemDraft {
+        val quantity = item.quantity.coerceAtLeast(1)
+        return item.copy(
+            price = amount / quantity,
+            lineAmount = amount.takeIf { it % quantity != 0L }
+        )
+    }
 
     /** 변경을 알리고 변경된 항목을 돌려준다(위치가 유효하지 않으면 null). */
     private fun emitChange(

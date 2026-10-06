@@ -70,7 +70,7 @@ class ManualInputFragment : Fragment() {
             return
         }
         val items = viewModel.items.value
-        if (items.isEmpty() || items.any { it.name.isBlank() || it.price <= 0L }) {
+        if (items.isEmpty() || items.any { it.name.isBlank() || it.subtotal <= 0L }) {
             Toast.makeText(requireContext(), "모든 항목의 이름과 가격을 입력해주세요", Toast.LENGTH_SHORT).show()
             return
         }
