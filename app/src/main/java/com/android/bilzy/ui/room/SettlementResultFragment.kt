@@ -37,6 +37,9 @@ class SettlementResultFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val roomViewModel: RoomViewModel by hiltNavGraphViewModels(R.id.nav_graph)
+
+    /** 지금 로그인한 유저 id(요약 줄을 누구 기준으로 보여줄지 정한다). 불러오기 전엔 null. */
+    private var myUserId: String? = null
     private val nf = NumberFormat.getInstance()
 
     override fun onCreateView(
@@ -61,6 +64,10 @@ class SettlementResultFragment : Fragment() {
         }
 
         observeRoom()
+        viewLifecycleOwner.lifecycleScope.launch {
+            myUserId = roomViewModel.myUserId()
+            if (_binding != null) roomViewModel.settlement.value?.let { render(it) }
+        }
     }
 
     private fun observeRoom() {
@@ -208,17 +215,17 @@ class SettlementResultFragment : Fragment() {
         return col
     }
 
-    /** "{결제자} 전액 결제 · 받을 금액 {금액}"(프로토타입 .bz-res-payer). 결제자를 찾을 수 없으면 숨김. */
+    /** "{결제자} 전액 결제 · 받을 금액/내가 낼 금액 {금액}"(프로토타입 .bz-res-payer). 결제자를 찾을 수 없으면 숨김. */
     private fun renderPayerLine(settlement: Settlement, total: Long) {
-        val payer = settlement.members.find { it.userId == settlement.createdBy }
-        if (payer == null) {
+        // 결제자가 보면 "받을 금액", 참여자가 보면 "내가 낼 금액"(ui/room/PayerLine.kt)
+        val line = payerLine(settlement, total, myUserId)
+        if (line == null) {
             binding.payerRow.visibility = View.GONE
             return
         }
         binding.payerRow.visibility = View.VISIBLE
-        val receive = (total - payer.amount).coerceAtLeast(0)
-        binding.tvPayerPrefix.text = "${payer.nickname} 전액 결제 · 받을 금액 "
-        binding.tvPayerAmount.text = "${nf.format(receive)}원"
+        binding.tvPayerPrefix.text = line.first
+        binding.tvPayerAmount.text = "${nf.format(line.second)}원"
     }
 
     /** 차수별 참여 인원. 제외 항목 칩에 품목 전체 금액이 아니라 내 몫에서 실제로 빠진 금액(품목÷인원)을 보여주는 데 쓴다. */

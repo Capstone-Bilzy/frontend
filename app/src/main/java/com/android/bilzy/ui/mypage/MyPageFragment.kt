@@ -1,10 +1,14 @@
 package com.android.bilzy.ui.mypage
 
+import android.content.ActivityNotFoundException
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
@@ -16,6 +20,7 @@ import coil.load
 import coil.transform.CircleCropTransformation
 import com.android.bilzy.R
 import com.android.bilzy.databinding.FragmentMyPageBinding
+import com.android.bilzy.ui.common.showConfirmDialog
 import com.android.bilzy.ui.room.RoomViewModel
 import com.android.bilzy.ui.scan.ScanFlowViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -52,9 +57,19 @@ class MyPageFragment : Fragment() {
             findNavController().navigate(R.id.action_myPage_to_myPageAccount)
         }
 
+        binding.menuEmail.setOnClickListener { openEmailInquiry() }
+
         binding.menuLogout.setOnClickListener {
-            // 토큰 클리어가 끝나면 observeLogout()에서 온보딩으로 이동한다.
-            viewModel.logout()
+            // 잘못 눌러 바로 로그아웃되지 않도록 한 번 확인한다.
+            showConfirmDialog(
+                requireContext(),
+                title = "로그아웃",
+                message = "로그아웃할까요?",
+                confirmText = "로그아웃"
+            ) {
+                // 토큰 클리어가 끝나면 observeLogout()에서 온보딩으로 이동한다.
+                viewModel.logout()
+            }
         }
 
         binding.navHome.setOnClickListener {
@@ -121,8 +136,22 @@ class MyPageFragment : Fragment() {
         }
     }
 
+    /** 문의 메일 작성 화면을 연다(받는 사람이 채워진 상태). 메일 앱이 없으면 주소를 알려준다. */
+    private fun openEmailInquiry() {
+        val intent = Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:$INQUIRY_EMAIL"))
+        try {
+            startActivity(intent)
+        } catch (e: ActivityNotFoundException) {
+            Toast.makeText(requireContext(), "메일 앱이 없어요. $INQUIRY_EMAIL 로 보내주세요", Toast.LENGTH_LONG).show()
+        }
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private companion object {
+        const val INQUIRY_EMAIL = "bilzyapp2026@gmail.com"
     }
 }

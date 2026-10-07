@@ -14,7 +14,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
@@ -22,6 +21,7 @@ import androidx.fragment.app.Fragment
 import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.android.bilzy.ui.common.showConfirmDialog
 import com.android.bilzy.R
 import com.android.bilzy.databinding.FragmentQrInviteBinding
 import com.android.bilzy.domain.repository.SettlementRepository
@@ -149,12 +149,12 @@ class QrInviteFragment : Fragment() {
         val id = scanViewModel.settlementId
         if (id.isNullOrBlank()) return
 
-        AlertDialog.Builder(requireContext())
-            .setTitle("QR 다시 만들기")
-            .setMessage("기존 초대 링크는 더 이상 사용할 수 없게 돼요. 새로 만들까요?")
-            .setNegativeButton("취소", null)
-            .setPositiveButton("확인") { _, _ -> regenerateQr(id) }
-            .show()
+        showConfirmDialog(
+            requireContext(),
+            title = "QR 다시 만들기",
+            message = "기존 초대 링크는 더 이상 사용할 수 없게 돼요. 새로 만들까요?",
+            confirmText = "확인"
+        ) { regenerateQr(id) }
     }
 
     private fun regenerateQr(id: String) {

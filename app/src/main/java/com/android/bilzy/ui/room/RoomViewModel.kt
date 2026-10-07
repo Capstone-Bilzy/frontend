@@ -150,11 +150,13 @@ class RoomViewModel @Inject constructor(
     /** 현재 로그인한 유저가 이 정산방의 방장(생성자)인지. 프로필 조회 실패 시 false로 안전하게 처리. */
     suspend fun isOwner(): Boolean {
         val createdBy = _settlement.value?.createdBy ?: return false
-        val myId = userRepository.cachedProfile()?.id
-            ?: runCatching { userRepository.getMyProfile() }.getOrNull()?.id
-            ?: return false
-        return myId == createdBy
+        return myUserId() == createdBy
     }
+
+    /** 현재 로그인한 유저의 id. 프로필을 못 불러오면 null. */
+    suspend fun myUserId(): String? =
+        userRepository.cachedProfile()?.id
+            ?: runCatching { userRepository.getMyProfile() }.getOrNull()?.id
 
     /** true면 AI 계산이 적용된 멤버 금액(저장값), false면 클라이언트 엔빵으로 표시. */
     var aiApplied: Boolean = savedState[KEY_AI_APPLIED] ?: false

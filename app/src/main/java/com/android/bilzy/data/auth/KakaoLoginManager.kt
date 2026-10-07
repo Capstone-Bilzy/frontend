@@ -113,7 +113,8 @@ class KakaoLoginManager @Inject constructor(
                 }
                 val account = user.kakaoAccount
                 val profile = account?.profile
-                Log.d(TAG, "me(): nickname=${profile?.nickname} " +
+                // 닉네임(개인정보)은 로그에 남기지 않는다 — 동의 필요 여부만 기록.
+                Log.d(TAG, "me(): hasNickname=${!profile?.nickname.isNullOrBlank()} " +
                     "nickNeed=${account?.profileNicknameNeedsAgreement} imgNeed=${account?.profileImageNeedsAgreement}")
                 val scopes = buildList {
                     if (account?.profileNicknameNeedsAgreement == true || profile?.nickname.isNullOrBlank()) {

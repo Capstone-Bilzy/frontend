@@ -38,6 +38,7 @@ import com.android.bilzy.databinding.FragmentHistoryDetailWithReceiptBinding
 import com.android.bilzy.domain.model.MemberRoundAmount
 import com.android.bilzy.domain.model.Receipt
 import com.android.bilzy.domain.model.Settlement
+import com.android.bilzy.ui.room.payerLine
 import com.android.bilzy.util.ImageCompressor
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -125,6 +126,7 @@ class HistoryDetailWithReceiptFragment : Fragment() {
         }
 
         observeSettlement()
+        observeMyUserId()
         arguments?.getString("settlementId")?.let { viewModel.load(it) }
     }
 
@@ -135,6 +137,15 @@ class HistoryDetailWithReceiptFragment : Fragment() {
                     settlement ?: return@collect
                     render(settlement)
                 }
+            }
+        }
+    }
+
+    /** 내 id를 뒤늦게 알게 되면(프로필 캐시가 없던 경우) 요약 줄을 다시 그린다. */
+    private fun observeMyUserId() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.myUserId.collect { viewModel.settlement.value?.let { s -> renderPayerLine(s) } }
             }
         }
     }
@@ -207,17 +218,17 @@ class HistoryDetailWithReceiptFragment : Fragment() {
         return col
     }
 
-    /** "{결제자} 전액 결제 · 받을 금액 {금액}". 결제자를 찾을 수 없으면 숨김. */
+    /** "{결제자} 전액 결제 · 받을 금액/내가 낼 금액 {금액}". 결제자를 찾을 수 없으면 숨김. */
     private fun renderPayerLine(settlement: Settlement) {
-        val payer = settlement.members.find { it.userId == settlement.createdBy }
-        if (payer == null) {
+        // 결제자가 보면 "받을 금액", 참여자가 보면 "내가 낼 금액"(ui/room/PayerLine.kt)
+        val line = payerLine(settlement, settlement.totalAmount, viewModel.myUserId.value)
+        if (line == null) {
             binding.payerRow.visibility = View.GONE
             return
         }
         binding.payerRow.visibility = View.VISIBLE
-        val receive = (settlement.totalAmount - payer.amount).coerceAtLeast(0)
-        binding.tvPayerPrefix.text = "${payer.nickname} 전액 결제 · 받을 금액 "
-        binding.tvPayerAmount.text = "${nf.format(receive)}원"
+        binding.tvPayerPrefix.text = line.first
+        binding.tvPayerAmount.text = "${nf.format(line.second)}원"
     }
 
     /** 차수별 참여 인원. 제외 항목 칩에 품목 전체 금액이 아니라 내 몫에서 실제로 빠진 금액(품목÷인원)을 보여주는 데 쓴다. */

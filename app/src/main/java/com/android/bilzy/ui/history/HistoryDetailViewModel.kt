@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.android.bilzy.domain.model.Settlement
 import com.android.bilzy.domain.repository.OcrRepository
 import com.android.bilzy.domain.repository.SettlementRepository
+import com.android.bilzy.domain.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -15,8 +16,21 @@ import javax.inject.Inject
 @HiltViewModel
 class HistoryDetailViewModel @Inject constructor(
     private val settlementRepository: SettlementRepository,
-    private val ocrRepository: OcrRepository
+    private val ocrRepository: OcrRepository,
+    private val userRepository: UserRepository
 ) : ViewModel() {
+
+    /** 지금 로그인한 유저 id — 요약 줄을 결제자/참여자 중 누구 기준으로 보여줄지 정하는 데 쓴다. */
+    private val _myUserId = MutableStateFlow(userRepository.cachedProfile()?.id)
+    val myUserId = _myUserId.asStateFlow()
+
+    init {
+        if (_myUserId.value == null) {
+            viewModelScope.launch {
+                _myUserId.value = runCatching { userRepository.getMyProfile() }.getOrNull()?.id
+            }
+        }
+    }
 
     private val _settlement = MutableStateFlow<Settlement?>(null)
     val settlement = _settlement.asStateFlow()

@@ -31,8 +31,11 @@ object NetworkModule {
         coerceInputValues = true
     }
 
+    // 디버그 빌드에서도 요청 줄과 응답 코드만 남긴다(BASIC). 예전의 BODY는 로그인 토큰(Authorization 헤더,
+    // /auth/social 응답)과 결제자 계좌번호까지 로그캣에 찍었는데, 디버그 APK를 팀원 실기기에 배포하고 있다.
     private fun logging() = HttpLoggingInterceptor().apply {
-        level = if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY
+        redactHeader("Authorization")
+        level = if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BASIC
                 else HttpLoggingInterceptor.Level.NONE
     }
 
