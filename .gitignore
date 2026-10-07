@@ -8,3 +8,6 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+# 작업 메모(내부 기록·점검 결과 포함) — 저장소에 올리지 않는다
+CLAUDE.md
