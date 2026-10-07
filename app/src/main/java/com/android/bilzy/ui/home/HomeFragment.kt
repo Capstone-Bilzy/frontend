@@ -17,6 +17,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.android.bilzy.ui.common.loading
 import com.android.bilzy.R
 import com.android.bilzy.databinding.FragmentHomeBinding
 import com.android.bilzy.ui.scan.ScanFlowViewModel
@@ -93,6 +94,7 @@ class HomeFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.loadFailed.collect {
+                    loading.hide()
                     Toast.makeText(requireContext(), "불러오지 못했어요", Toast.LENGTH_SHORT).show()
                     // 보여줄 내역(캐시)도 없으면 "내역이 없어요" 문구는 숨긴다 — 없는 게 아니라 못 불러온 것.
                     if (viewModel.history.value == null) binding.tvHistoryEmpty.visibility = View.GONE
@@ -102,6 +104,7 @@ class HomeFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.history.collect { list ->
+                    loading.set(list == null)
                     list ?: return@collect  // 로딩 중
                     historyAdapter.submit(list)
                     binding.rvHistory.visibility = if (list.isEmpty()) View.GONE else View.VISIBLE

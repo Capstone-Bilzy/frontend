@@ -7,6 +7,7 @@ import android.util.TypedValue
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.Toast
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
@@ -17,6 +18,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import com.android.bilzy.ui.common.loading
 import com.android.bilzy.R
 import com.android.bilzy.databinding.FragmentHistoryDetailBinding
 import com.android.bilzy.domain.model.MemberRoundAmount
@@ -76,6 +78,7 @@ class HistoryDetailFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.settlement.collect { settlement ->
+                    loading.set(settlement == null)
                     settlement ?: return@collect
                     render(settlement)
                 }
@@ -85,6 +88,14 @@ class HistoryDetailFragment : Fragment() {
 
     /** 내 id를 뒤늦게 알게 되면(프로필 캐시가 없던 경우) 요약 줄을 다시 그린다. */
     private fun observeMyUserId() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.loadFailed.collect {
+                    loading.hide()
+                    Toast.makeText(requireContext(), "불러오지 못했어요", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.myUserId.collect { viewModel.settlement.value?.let { s -> renderPayerLine(s) } }

@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.android.bilzy.ui.common.loading
 import com.android.bilzy.R
 import com.android.bilzy.databinding.FragmentPeopleCountBinding
 import com.android.bilzy.ui.room.RoomViewModel
@@ -74,8 +75,14 @@ class PeopleCountFragment : Fragment() {
             // 정원 저장은 RoomViewModel이 정산방 id를 알아야 하는데, 예전엔 id를 다음 화면(초대 QR)에서야
             // 넘겨줘서 여기서는 항상 id가 없어 요청도 못 보내고 "저장 실패"가 떴다. 먼저 id를 넘긴다.
             roomViewModel.setRoom(scanViewModel.settlementId)
+            binding.btnNext.isEnabled = false
+            loading.show()
             viewLifecycleOwner.lifecycleScope.launch {
-                if (!roomViewModel.saveMemberCapacity(count)) {
+                val saved = roomViewModel.saveMemberCapacity(count)
+                loading.hide()
+                if (_binding == null) return@launch
+                binding.btnNext.isEnabled = true
+                if (!saved) {
                     Toast.makeText(requireContext(), "정원 설정 저장에 실패했어요. 정원 제한 없이 진행돼요", Toast.LENGTH_SHORT).show()
                 }
                 findNavController().navigate(R.id.action_peopleCount_to_qrInvite)

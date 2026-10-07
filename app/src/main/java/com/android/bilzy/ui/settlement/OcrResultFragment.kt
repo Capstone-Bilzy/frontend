@@ -1,19 +1,16 @@
 package com.android.bilzy.ui.settlement
 
+import com.android.bilzy.ui.common.loading
 import com.android.bilzy.domain.model.ReceiptItemDraft
 import androidx.navigation.NavOptions
 import androidx.activity.addCallback
 import android.os.Bundle
 import android.text.Editable
-import android.text.InputType
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
-import android.widget.LinearLayout
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
 import androidx.lifecycle.Lifecycle
@@ -101,7 +98,8 @@ class OcrResultFragment : Fragment() {
             if (reviewRound > 0) leaveReview()
             else findNavController().navigate(R.id.action_ocrResult_to_home)
         }
-        binding.btnAddItem.setOnClickListener { showAddItemDialog() }
+        // 직접 입력 화면과 같게, 빈 줄을 목록에 바로 추가해 그 자리에서 채운다(예전엔 흰색 기본 입력창이 떴다).
+        binding.btnAddItem.setOnClickListener { viewModel.addItem("", 0L, 1) }
         binding.btnComplete.setOnClickListener {
             val title = binding.etGroupName.text.toString().trim()
             if (title.isEmpty()) {
@@ -141,6 +139,7 @@ class OcrResultFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.confirmState.collect { state ->
+                    loading.set(state is ScanFlowViewModel.ConfirmState.Loading)
                     when (state) {
                         is ScanFlowViewModel.ConfirmState.Loading -> setButtonsEnabled(false)
                         is ScanFlowViewModel.ConfirmState.Success -> {
@@ -191,39 +190,6 @@ class OcrResultFragment : Fragment() {
     private fun setButtonsEnabled(enabled: Boolean) {
         binding.btnComplete.isEnabled = enabled
         binding.btnMore.isEnabled = enabled
-    }
-
-    private fun showAddItemDialog() {
-        val ctx = requireContext()
-        val pad = (16 * resources.displayMetrics.density).toInt()
-        val nameInput = EditText(ctx).apply {
-            hint = "항목명"
-            inputType = InputType.TYPE_CLASS_TEXT
-        }
-        val priceInput = EditText(ctx).apply {
-            hint = "가격(원)"
-            inputType = InputType.TYPE_CLASS_NUMBER
-        }
-        val container = LinearLayout(ctx).apply {
-            orientation = LinearLayout.VERTICAL
-            setPadding(pad, pad / 2, pad, 0)
-            addView(nameInput)
-            addView(priceInput)
-        }
-        AlertDialog.Builder(ctx)
-            .setTitle("항목 추가")
-            .setView(container)
-            .setPositiveButton("추가") { _, _ ->
-                val name = nameInput.text.toString().trim()
-                val price = priceInput.text.toString().trim().toLongOrNull() ?: 0L
-                if (name.isEmpty() || price <= 0L) {
-                    Toast.makeText(ctx, "항목명과 가격을 입력해주세요", Toast.LENGTH_SHORT).show()
-                } else {
-                    viewModel.addItem(name, price, 1)
-                }
-            }
-            .setNegativeButton("취소", null)
-            .show()
     }
 
     private fun won(value: Long) = NumberFormat.getInstance().format(value) + "원"

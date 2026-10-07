@@ -12,6 +12,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import com.android.bilzy.ui.common.loading
 import com.android.bilzy.R
 import com.android.bilzy.databinding.FragmentParticipantInputBinding
 import com.android.bilzy.ui.room.RoomViewModel
@@ -70,12 +71,15 @@ class ParticipantInputFragment : Fragment() {
             if (pendingId != null) {
                 // 게스트 흐름: 이 화면에서 입력받은 이름으로 곧바로 join API 호출
                 binding.btnNext.isEnabled = false
+                loading.show()
                 qrScanViewModel.join(pendingId, pendingToken, nickname = name)
             } else {
                 // 호스트 흐름(QR초대 화면에서 넘어옴): 방금 확정한 이름으로 멤버십을 생성한다.
                 binding.btnNext.isEnabled = false
+                loading.show()
                 viewLifecycleOwner.lifecycleScope.launch {
                     val ok = roomViewModel.ensureMyMembershipAndAwait()
+                    loading.hide()
                     if (!isAdded || _binding == null) return@launch
                     binding.btnNext.isEnabled = true
                     if (ok) {
@@ -100,6 +104,7 @@ class ParticipantInputFragment : Fragment() {
                             findNavController().navigate(R.id.action_participantInput_to_roundPick)
                         }
                         is QrScanViewModel.JoinState.Error -> {
+                            loading.hide()
                             binding.btnNext.isEnabled = true
                             Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
                             qrScanViewModel.consumeState()

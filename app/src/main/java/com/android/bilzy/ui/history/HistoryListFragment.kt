@@ -13,6 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.android.bilzy.ui.common.loading
 import com.android.bilzy.R
 import com.android.bilzy.databinding.FragmentHistoryListBinding
 import com.android.bilzy.domain.model.SettlementHistory
@@ -61,6 +62,7 @@ class HistoryListFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.loadFailed.collect {
+                    loading.hide()
                     Toast.makeText(requireContext(), "불러오지 못했어요", Toast.LENGTH_SHORT).show()
                 }
             }
@@ -68,6 +70,7 @@ class HistoryListFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.history.collect { list ->
+                    loading.set(list == null)
                     list ?: return@collect
                     render(list)
                 }

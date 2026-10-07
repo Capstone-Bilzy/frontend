@@ -12,6 +12,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import com.android.bilzy.ui.common.loading
 import com.android.bilzy.R
 import com.android.bilzy.databinding.FragmentJoinConfirmBinding
 import com.android.bilzy.ui.scan.QrScanViewModel
@@ -99,9 +100,10 @@ class JoinConfirmFragment : Fragment() {
         }
     }
 
-    private fun setLoading(loading: Boolean) {
-        binding.btnJoin.isEnabled = !loading
-        binding.btnCancel.isEnabled = !loading
+    private fun setLoading(isLoading: Boolean) {
+        binding.btnJoin.isEnabled = !isLoading
+        binding.btnCancel.isEnabled = !isLoading
+        loading.set(isLoading)
     }
 
     private fun goHome() {

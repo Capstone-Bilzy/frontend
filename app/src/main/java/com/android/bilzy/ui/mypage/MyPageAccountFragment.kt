@@ -14,6 +14,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import com.android.bilzy.ui.common.loading
 import com.android.bilzy.databinding.FragmentMyPageAccountBinding
 import com.android.bilzy.domain.model.BankAccount
 import dagger.hilt.android.AndroidEntryPoint
@@ -102,6 +103,7 @@ class MyPageAccountFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.saveState.collect { state ->
+                    loading.set(state is MyPageAccountViewModel.SaveState.Saving)
                     when (state) {
                         is MyPageAccountViewModel.SaveState.Success -> {
                             toast("계좌 정보를 저장했어요")

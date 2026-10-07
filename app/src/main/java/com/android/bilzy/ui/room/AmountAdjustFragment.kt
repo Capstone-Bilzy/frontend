@@ -19,6 +19,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import com.android.bilzy.ui.common.loading
 import com.android.bilzy.R
 import com.android.bilzy.databinding.FragmentAmountAdjustBinding
 import com.android.bilzy.domain.model.Receipt
@@ -103,8 +104,10 @@ class AmountAdjustFragment : Fragment() {
         val isLastRound = roomViewModel.adjIdx >= pickedReceipts.size - 1
 
         binding.btnSettle.isEnabled = false
+        loading.show()
         viewLifecycleOwner.lifecycleScope.launch {
             val ok = roomViewModel.submitRoundAdjustment(receipt.round, excludedNames)
+            loading.hide()
             if (!isAdded || _binding == null) return@launch
             binding.btnSettle.isEnabled = true
             if (!ok) {

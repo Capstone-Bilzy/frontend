@@ -21,6 +21,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import coil.load
 import coil.transform.CircleCropTransformation
+import com.android.bilzy.ui.common.loading
 import com.android.bilzy.R
 import com.android.bilzy.databinding.FragmentSettlementResultBinding
 import com.android.bilzy.domain.model.MemberRoundAmount
@@ -55,8 +56,11 @@ class SettlementResultFragment : Fragment() {
         binding.btnBack.setOnClickListener { findNavController().navigateUp() }
         binding.btnConfirm.setOnClickListener {
             // 정산 완료 처리 후 완료 화면으로 (실패해도 화면은 진행)
+            binding.btnConfirm.isEnabled = false
+            loading.show()
             viewLifecycleOwner.lifecycleScope.launch {
                 roomViewModel.markDone()
+                loading.hide()
                 if (isAdded && _binding != null) {
                     findNavController().navigate(R.id.action_settlementResult_to_complete)
                 }

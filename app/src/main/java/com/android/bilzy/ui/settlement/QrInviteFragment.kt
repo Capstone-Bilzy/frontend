@@ -21,6 +21,7 @@ import androidx.fragment.app.Fragment
 import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.android.bilzy.ui.common.loading
 import com.android.bilzy.ui.common.showConfirmDialog
 import com.android.bilzy.R
 import com.android.bilzy.databinding.FragmentQrInviteBinding
@@ -116,8 +117,11 @@ class QrInviteFragment : Fragment() {
             return
         }
 
+        loading.show()
         viewLifecycleOwner.lifecycleScope.launch {
-            runCatching { settlementRepository.createInviteToken(id, regenerate) }
+            val issued = runCatching { settlementRepository.createInviteToken(id, regenerate) }
+            loading.hide()
+            issued
                 .onSuccess { invite ->
                     if (_binding == null) return@onSuccess
                     joinLink = invite.deepLink
@@ -159,8 +163,11 @@ class QrInviteFragment : Fragment() {
 
     private fun regenerateQr(id: String) {
         binding.btnRegenerateQr.isEnabled = false
+        loading.show()
         viewLifecycleOwner.lifecycleScope.launch {
-            runCatching { settlementRepository.createInviteToken(id, regenerate = true) }
+            val issued = runCatching { settlementRepository.createInviteToken(id, regenerate = true) }
+            loading.hide()
+            issued
                 .onSuccess { invite ->
                     if (_binding == null) return@onSuccess
                     joinLink = invite.deepLink

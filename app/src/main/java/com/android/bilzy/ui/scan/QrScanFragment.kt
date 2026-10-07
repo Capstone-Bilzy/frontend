@@ -25,6 +25,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import com.android.bilzy.ui.common.loading
 import com.android.bilzy.R
 import com.android.bilzy.databinding.FragmentQrScanBinding
 import com.google.mlkit.vision.barcode.BarcodeScannerOptions
@@ -112,6 +113,7 @@ class QrScanFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.joinState.collect { state ->
+                    loading.set(state is QrScanViewModel.JoinState.Loading)
                     when (state) {
                         is QrScanViewModel.JoinState.Success -> {
                             roomViewModel.expectedCount = 0  // 게스트: 인원 게이팅 없음

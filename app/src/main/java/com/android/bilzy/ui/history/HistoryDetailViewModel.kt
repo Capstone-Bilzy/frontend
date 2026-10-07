@@ -7,7 +7,9 @@ import com.android.bilzy.domain.repository.OcrRepository
 import com.android.bilzy.domain.repository.SettlementRepository
 import com.android.bilzy.domain.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -35,6 +37,10 @@ class HistoryDetailViewModel @Inject constructor(
     private val _settlement = MutableStateFlow<Settlement?>(null)
     val settlement = _settlement.asStateFlow()
 
+    /** 상세를 불러오지 못했을 때 한 번 울린다(화면이 로딩 표시를 내리고 토스트로 알림). */
+    private val _loadFailed = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
+    val loadFailed = _loadFailed.asSharedFlow()
+
     private var loadedId: String? = null
 
     fun load(id: String) {
@@ -43,6 +49,7 @@ class HistoryDetailViewModel @Inject constructor(
         viewModelScope.launch {
             runCatching { settlementRepository.getSettlement(id) }
                 .onSuccess { _settlement.value = it }
+                .onFailure { _loadFailed.tryEmit(Unit) }
         }
     }
 

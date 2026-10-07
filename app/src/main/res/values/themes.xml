@@ -6,6 +6,19 @@
         <item name="fontFamily">@font/pretendard</item>
     </style>
 
+    <!-- 팝업 메뉴(정산내역 사진의 ⋯)를 앱 톤으로: 어두운 카드 + 흰 글자. 기본값은 흰 배경이라 화면과 따로 놀았다. -->
+    <style name="ThemeOverlay.Bilzy.PopupMenu" parent="ThemeOverlay.Material3.Dark">
+        <item name="popupMenuStyle">@style/Widget.Bilzy.PopupMenu</item>
+        <item name="android:popupMenuStyle">@style/Widget.Bilzy.PopupMenu</item>
+        <item name="android:textColorPrimary">#FFFFFF</item>
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:fontFamily">@font/pretendard</item>
+    </style>
+
+    <style name="Widget.Bilzy.PopupMenu" parent="Widget.Material3.PopupMenu">
+        <item name="android:popupBackground">@drawable/bg_terms_dialog</item>
+    </style>
+
     <!-- 런치(스플래시) 테마: 네이비 배경 + 중앙 로고. onCreate에서 Theme.Bilzy로 전환. -->
     <style name="Theme.Bilzy.Splash" parent="Theme.Bilzy">
         <item name="android:windowBackground">@drawable/splash_background</item>

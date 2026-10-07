@@ -12,6 +12,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.android.bilzy.ui.common.loading
 import com.android.bilzy.R
 import com.android.bilzy.databinding.FragmentManualInputBinding
 import com.android.bilzy.ui.scan.ScanFlowViewModel
@@ -95,6 +96,7 @@ class ManualInputFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.confirmState.collect { state ->
+                    loading.set(state is ScanFlowViewModel.ConfirmState.Loading)
                     when (state) {
                         is ScanFlowViewModel.ConfirmState.Loading -> setButtonsEnabled(false)
                         is ScanFlowViewModel.ConfirmState.Success -> {

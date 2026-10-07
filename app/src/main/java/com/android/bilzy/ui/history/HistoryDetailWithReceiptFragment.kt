@@ -15,6 +15,7 @@ import android.provider.MediaStore
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.LayoutInflater
+import android.view.ContextThemeWrapper
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -33,6 +34,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import coil.load
+import com.android.bilzy.ui.common.loading
 import com.android.bilzy.R
 import com.android.bilzy.databinding.FragmentHistoryDetailWithReceiptBinding
 import com.android.bilzy.domain.model.MemberRoundAmount
@@ -78,9 +80,11 @@ class HistoryDetailWithReceiptFragment : Fragment() {
 
     private fun uploadReceiptPhoto(bytes: ByteArray, mime: String) {
         binding.btnAddReceipt.isEnabled = false
+        loading.show()
         viewLifecycleOwner.lifecycleScope.launch {
             val compressed = ImageCompressor.compress(bytes, mime)
             val ok = viewModel.attachPhoto(compressed.bytes, compressed.mime)
+            loading.hide()
             if (isAdded && _binding != null) {
                 binding.btnAddReceipt.isEnabled = true
                 if (!ok) {
@@ -134,6 +138,7 @@ class HistoryDetailWithReceiptFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.settlement.collect { settlement ->
+                    loading.set(settlement == null)
                     settlement ?: return@collect
                     render(settlement)
                 }
@@ -143,6 +148,14 @@ class HistoryDetailWithReceiptFragment : Fragment() {
 
     /** 내 id를 뒤늦게 알게 되면(프로필 캐시가 없던 경우) 요약 줄을 다시 그린다. */
     private fun observeMyUserId() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.loadFailed.collect {
+                    loading.hide()
+                    Toast.makeText(requireContext(), "불러오지 못했어요", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.myUserId.collect { viewModel.settlement.value?.let { s -> renderPayerLine(s) } }
@@ -517,7 +530,7 @@ class HistoryDetailWithReceiptFragment : Fragment() {
     }
 
     private fun showReceiptOptions(anchor: View, url: String) {
-        PopupMenu(requireContext(), anchor).apply {
+        PopupMenu(ContextThemeWrapper(requireContext(), R.style.ThemeOverlay_Bilzy_PopupMenu), anchor).apply {
             menu.add(0, 0, 0, "크게 보기")
             menu.add(0, 1, 1, "이미지 저장")
             setOnMenuItemClickListener { item ->
