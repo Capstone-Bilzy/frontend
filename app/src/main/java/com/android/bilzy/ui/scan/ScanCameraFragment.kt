@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
@@ -19,6 +20,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import com.android.bilzy.R
 import com.android.bilzy.databinding.FragmentScanCameraBinding
@@ -90,7 +92,8 @@ class ScanCameraFragment : Fragment() {
 
         binding.tvRoundBadge.text = "${viewModel.currentRound}차"
 
-        binding.btnBack.setOnClickListener { findNavController().navigateUp() }
+        binding.btnBack.setOnClickListener { goBack() }
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) { goBack() }
         binding.btnShutter.setOnClickListener { capture() }
         binding.btnGallery.setOnClickListener {
             if (PhotoAccessPrefs.isAllowed(requireContext())) {
@@ -144,6 +147,20 @@ class ScanCameraFragment : Fragment() {
 
     private fun hidePhotoAccessOverlay() {
         binding.photoAccessOverlay.visibility = View.GONE
+    }
+
+    /**
+     * 뒤로가기: 추가 스캔 중이면 방금 확정한 차수의 결과 화면으로, 앞 차수를 다시 찍는 중이면 영수증 목록으로
+     * 돌아간다(둘 다 백스택에서는 이미 빠져 있어 그냥 올라가면 홈이 나온다). 첫 스캔이면 원래대로 이전 화면.
+     */
+    private fun goBack() {
+        val nav = findNavController()
+        val popCamera = NavOptions.Builder().setPopUpTo(R.id.scanCameraFragment, true).build()
+        when {
+            viewModel.returnToConfirmedRound() -> nav.navigate(R.id.ocrResultFragment, null, popCamera)
+            viewModel.isRescanning -> nav.navigate(R.id.receiptListFragment, null, popCamera)
+            else -> nav.navigateUp()
+        }
     }
 
     private fun startCamera() {

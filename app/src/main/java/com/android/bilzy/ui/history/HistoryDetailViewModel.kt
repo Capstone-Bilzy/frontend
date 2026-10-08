@@ -53,6 +53,16 @@ class HistoryDetailViewModel @Inject constructor(
         }
     }
 
+    /** 첨부한 영수증 사진 이름 변경(방장만). 성공하면 상세를 다시 불러온다. */
+    suspend fun renamePhoto(photoId: String, name: String): Boolean {
+        val id = loadedId ?: return false
+        return runCatching { settlementRepository.renameExtraPhoto(id, photoId, name) }
+            .onSuccess {
+                runCatching { settlementRepository.getSettlement(id) }.onSuccess { _settlement.value = it }
+            }
+            .isSuccess
+    }
+
     /** 완료된 정산방에도 쓸 수 있는 순수 사진 첨부(OCR·금액 계산 없음). 성공하면 상세를 다시 불러온다. */
     suspend fun attachPhoto(imageBytes: ByteArray, mimeType: String): Boolean {
         val id = loadedId ?: return false

@@ -15,6 +15,7 @@ import com.android.bilzy.data.remote.dto.RefreshRequest
 import com.android.bilzy.data.remote.dto.SettlementDto
 import com.android.bilzy.data.remote.dto.SettlementMemberDto
 import com.android.bilzy.data.remote.dto.SettlementMemberRoundDto
+import com.android.bilzy.data.remote.dto.RenameExtraPhotoRequest
 import com.android.bilzy.data.remote.dto.SetMemberCapacityRequest
 import com.android.bilzy.data.remote.dto.SetMemberRoundsRequest
 import com.android.bilzy.data.remote.dto.SetMemberRoundsResponse
@@ -95,6 +96,14 @@ interface BilzyApi {
 
     @DELETE("settlements/{id}")
     suspend fun deleteSettlement(@Path("id") id: String)
+
+    /** 첨부한 영수증 사진 이름 변경(방장만 가능). */
+    @PATCH("settlements/{id}/extra-photos/{photoId}")
+    suspend fun renameExtraPhoto(
+        @Path("id") id: String,
+        @Path("photoId") photoId: String,
+        @Body body: RenameExtraPhotoRequest
+    )
 
     /** PeopleCount 화면에서 정한 정원(총 인원) 저장(방장만 가능). 이후 join이 이 값을 넘지 못하게 막는다. */
     @PATCH("settlements/{id}/capacity")

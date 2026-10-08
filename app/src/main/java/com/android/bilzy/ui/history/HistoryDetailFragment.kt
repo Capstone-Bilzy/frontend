@@ -98,7 +98,7 @@ class HistoryDetailFragment : Fragment() {
         }
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.myUserId.collect { viewModel.settlement.value?.let { s -> renderPayerLine(s) } }
+                viewModel.myUserId.collect { viewModel.settlement.value?.let { s -> render(s) } }
             }
         }
     }
@@ -114,7 +114,9 @@ class HistoryDetailFragment : Fragment() {
         val container = binding.personsContainer
         container.removeAllViews()
         roundParticipants = s.receipts.associate { it.round to s.roundParticipantCount(it.round) }
-        s.members.forEach { m ->
+        // 내 내역이 맨 위(나머지는 서버가 준 순서 그대로)
+        val myId = viewModel.myUserId.value
+        s.members.sortedByDescending { it.userId == myId }.forEach { m ->
             container.addView(personCard(m.nickname, m.amount, m.rounds, s.receipts))
         }
     }

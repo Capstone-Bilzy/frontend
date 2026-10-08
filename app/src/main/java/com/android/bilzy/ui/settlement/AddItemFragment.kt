@@ -1,5 +1,6 @@
 package com.android.bilzy.ui.settlement
 
+import com.android.bilzy.ui.common.hideWhileKeyboardShown
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -22,6 +23,7 @@ class AddItemFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        hideWhileKeyboardShown(binding.btnDone)
 
         binding.btnBack.setOnClickListener { findNavController().navigateUp() }
 

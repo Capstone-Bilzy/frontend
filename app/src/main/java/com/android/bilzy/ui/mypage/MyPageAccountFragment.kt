@@ -1,5 +1,6 @@
 package com.android.bilzy.ui.mypage
 
+import com.android.bilzy.ui.common.hideWhileKeyboardShown
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -42,6 +43,7 @@ class MyPageAccountFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        hideWhileKeyboardShown(binding.btnSave)
 
         setupBankSpinner()
         observeAccount()

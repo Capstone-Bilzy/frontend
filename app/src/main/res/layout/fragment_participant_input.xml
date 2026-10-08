@@ -111,6 +111,8 @@
             android:textSize="18sp"
             android:background="@android:color/transparent"
             android:inputType="text"
+            android:imeOptions="actionDone"
+            android:maxLines="1"
             android:maxLength="20"
             android:textFontWeight="500" />
 

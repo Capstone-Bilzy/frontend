@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.android.bilzy.ui.common.loading
 import com.android.bilzy.R
 import com.android.bilzy.databinding.FragmentHomeBinding
+import com.android.bilzy.ui.room.RoomViewModel
 import com.android.bilzy.ui.scan.ScanFlowViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -32,6 +33,7 @@ class HomeFragment : Fragment() {
 
     private val viewModel: HomeViewModel by viewModels()
     private val scanFlowViewModel: ScanFlowViewModel by hiltNavGraphViewModels(R.id.nav_graph)
+    private val roomViewModel: RoomViewModel by hiltNavGraphViewModels(R.id.nav_graph)
     private lateinit var historyAdapter: HomeHistoryAdapter
 
     override fun onCreateView(
@@ -49,6 +51,8 @@ class HomeFragment : Fragment() {
         // 정산을 하다 말고 홈으로 나왔으면 그 스캔 흐름은 끝난 것 — 다음 스캔이 이전 정산방의
         // 다음 차수(4차 등)로 이어지지 않고 새 정산방 1차부터 시작하도록 상태를 비운다.
         scanFlowViewModel.reset()
+        // 정산방 상태도 같이 비운다. 남겨 두면 다음에 다른 방에 들어갈 때 이전 방의 정보가 섞여 보일 수 있다.
+        roomViewModel.reset()
 
         binding.cardPayer.setOnClickListener { startReceiptScan() }
 

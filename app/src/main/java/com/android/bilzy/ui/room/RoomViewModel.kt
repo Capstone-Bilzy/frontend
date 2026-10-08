@@ -193,7 +193,7 @@ class RoomViewModel @Inject constructor(
                 ?: "참여자"
             runCatching { settlementRepository.joinByQr(id, nick) } // 이미 참여 중이면 무시
             runCatching { settlementRepository.getSettlement(id) }
-                .onSuccess { _settlement.value = it }
+                .onSuccess { accept(it) }
         }
     }
 
@@ -210,7 +210,7 @@ class RoomViewModel @Inject constructor(
         val result = runCatching { settlementRepository.joinByQr(id, nick) }
         val ok = result.isSuccess || (result.exceptionOrNull() as? HttpException)?.code() == 409
         if (ok) {
-            runCatching { settlementRepository.getSettlement(id) }.onSuccess { _settlement.value = it }
+            runCatching { settlementRepository.getSettlement(id) }.onSuccess { accept(it) }
         }
         return ok
     }
@@ -219,8 +219,22 @@ class RoomViewModel @Inject constructor(
     suspend fun saveMemberCapacity(capacity: Int): Boolean {
         val id = settlementId ?: return false
         return runCatching { settlementRepository.setMemberCapacity(id, capacity) }
-            .onSuccess { _settlement.value = it }
+            .onSuccess { accept(it) }
             .isSuccess
+    }
+
+    /**
+     * 서버에서 받은 정산방 상세를 화면 상태로 반영한다 — 단, 지금 보고 있는 방의 것일 때만.
+     *
+     * 요청을 보낸 뒤 응답이 오기 전에 다른 방으로 바뀔 수 있다(이전 방을 불러오는 중에 새 방에 입장,
+     * 앱 복원 직후 예전 방을 다시 불러오는 중에 초대 링크로 다른 방 입장 등). 서버가 느리면 그 간격이 수 초~수십 초라,
+     * 예전엔 늦게 도착한 이전 방의 응답이 새 방 화면을 덮어써서 **다른 정산방의 영수증·차수가 보였다**.
+     * 반영했으면 true.
+     */
+    private fun accept(settlement: Settlement): Boolean {
+        if (settlement.id != settlementId) return false
+        _settlement.value = settlement
+        return true
     }
 
     /** 정산방 상세를 다시 불러온다(멤버·항목·총액 포함). 멤버 대기 폴링에도 사용. */
@@ -228,7 +242,7 @@ class RoomViewModel @Inject constructor(
         val id = settlementId ?: return
         viewModelScope.launch {
             runCatching { settlementRepository.getSettlement(id) }
-                .onSuccess { _settlement.value = it }
+                .onSuccess { accept(it) }
         }
     }
 
@@ -236,7 +250,7 @@ class RoomViewModel @Inject constructor(
     suspend fun refresh() {
         val id = settlementId ?: return
         runCatching { settlementRepository.getSettlement(id) }
-            .onSuccess { _settlement.value = it }
+            .onSuccess { accept(it) }
     }
 
     /**
@@ -247,7 +261,7 @@ class RoomViewModel @Inject constructor(
         val id = settlementId ?: return false
         return runCatching { settlementRepository.calculate(id, aiNote) }
             .onSuccess {
-                _settlement.value = it
+                if (!accept(it)) return@onSuccess
                 aiApplied = it.members.any { m -> m.amount > 0 }
             }
             .isSuccess
@@ -271,7 +285,9 @@ class RoomViewModel @Inject constructor(
                 // "0명 · 내가 낼 금액 0원"으로 나왔다(방장만 — 참여자는 /done이 403이라 덮어쓰지 않음).
                 // 전체 상세를 다시 받고, 그게 실패하면 지금 들고 있는 상세에 상태만 반영한다.
                 val full = runCatching { settlementRepository.getSettlement(id) }.getOrNull()
-                _settlement.value = full ?: _settlement.value?.copy(status = done.status) ?: done
+                if (settlementId == id) {
+                    _settlement.value = full ?: _settlement.value?.copy(status = done.status) ?: done
+                }
                 userRepository.clearCache()
             }
             .isSuccess

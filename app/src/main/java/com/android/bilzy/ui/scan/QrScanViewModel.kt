@@ -48,7 +48,12 @@ class QrScanViewModel @Inject constructor(
      */
     fun join(settlementId: String, inviteToken: String? = null, nickname: String? = null) {
         if (_joinState.value == JoinState.Loading) return
-        if (settlementId == joinedSettlementId) return // 같은 QR 중복 인식 무시
+        if (settlementId == joinedSettlementId) {
+            // 이미 이 방에 들어온 상태에서 다시 누른 경우(차수 선택에서 뒤로 왔다가 다시 진행 등).
+            // 예전엔 아무 반응 없이 끝나서 버튼이 비활성화된 채 멈췄다 — 입장 성공으로 다시 알린다.
+            _joinState.value = JoinState.Success(settlementId)
+            return
+        }
         joinedSettlementId = settlementId
         viewModelScope.launch {
             _joinState.value = JoinState.Loading

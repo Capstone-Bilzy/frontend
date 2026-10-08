@@ -29,7 +29,8 @@
         android:fillViewport="true"
         android:overScrollMode="never"
         android:clipToPadding="false"
-        android:paddingBottom="16dp"
+        android:paddingBottom="8dp"
+        android:layout_marginBottom="12dp"
         app:layout_constraintTop_toBottomOf="@id/tvLogo"
         app:layout_constraintBottom_toTopOf="@id/btnHome"
         app:layout_constraintStart_toStartOf="parent"
@@ -60,7 +61,7 @@
             <ImageView
                 android:id="@+id/successIcon"
                 android:layout_width="wrap_content"
-                android:layout_height="190dp"
+                android:layout_height="173dp"
                 android:adjustViewBounds="true"
                 android:src="@drawable/ic_done_3d"
                 android:scaleType="fitCenter" />
@@ -159,8 +160,11 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical" />
 
-            <!-- Bank account row -->
+            <!-- Bank account row — 누르면 계좌를 복사한다(프로토타입 .bz-account) -->
             <LinearLayout
+                android:id="@+id/accountRow"
+                android:clickable="true"
+                android:focusable="true"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
@@ -189,26 +193,44 @@
                     android:textSize="17sp"
                     android:layout_marginEnd="8dp" />
 
-                <HorizontalScrollView
+                <!-- 계좌가 길면 가로 스크롤 대신 글자를 줄여 한 줄에 다 보이게 한다(복사 아이콘 자리 확보) -->
+                <TextView
+                    android:id="@+id/tvAccount"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="22dp"
                     android:layout_weight="1"
-                    android:scrollbars="none"
-                    android:overScrollMode="never">
+                    android:gravity="center_vertical"
+                    android:text=""
+                    android:textColor="#FFFFFF"
+                    android:textSize="16sp"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    android:autoSizeTextType="uniform"
+                    android:autoSizeMinTextSize="11sp"
+                    android:autoSizeMaxTextSize="16sp"
+                    android:textFontWeight="400" />
 
-                    <TextView
-                        android:id="@+id/tvAccount"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text=""
-                        android:textColor="#FFFFFF"
-                        android:textSize="16sp"
-                        android:singleLine="true"
-                        android:textFontWeight="400" />
-
-                </HorizontalScrollView>
+                <ImageView
+                    android:id="@+id/icCopyAccount"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_marginStart="8dp"
+                    android:src="@drawable/ic_copy"
+                    android:contentDescription="@null"
+                    app:tint="#C9C3FF" />
 
             </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvCopyHint"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:layout_marginBottom="8dp"
+                android:gravity="center"
+                android:text="계좌를 눌러 복사할 수 있어요"
+                android:textColor="#66FFFFFF"
+                android:textSize="12sp" />
 
         </LinearLayout>
 

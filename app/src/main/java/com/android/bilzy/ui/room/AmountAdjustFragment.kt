@@ -1,5 +1,7 @@
 package com.android.bilzy.ui.room
 
+import com.android.bilzy.util.setFontWeight
+import android.text.TextUtils
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
@@ -192,7 +194,7 @@ class AmountAdjustFragment : Fragment() {
             item.total / roundCount
         }
         val myAmount = (baseShare - deduction).coerceAtLeast(0L)
-        binding.tvAmount.text = "${nf.format(myAmount)} 원"
+        binding.tvAmount.text = nf.format(myAmount)
         binding.tvDeduction.text = "-${nf.format(deduction)}원"
     }
 
@@ -207,50 +209,56 @@ class AmountAdjustFragment : Fragment() {
         table.addView(totalRow(total))
     }
 
+    // 피그마 "금액조정" 영수증 내역 표: 품목 줄 16sp(이름·수량 400, 금액 500), 줄 높이 24 + 간격 11,
+    // 합계 줄 18sp 600(금액 #BFAFFF). 줄은 카드 안쪽 여백에서 16dp 더 들어가 있고 구분선만 여백 끝까지 간다.
     private fun itemRow(name: String, qty: String, price: String): View {
-        val ctx = requireContext()
-        val rl = RelativeLayout(ctx).apply {
-            layoutParams = LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT
-            ).apply { bottomMargin = dp(6) }
-        }
-        rl.addView(cell(name, Color.WHITE, false).apply {
-            (layoutParams as RelativeLayout.LayoutParams).addRule(RelativeLayout.ALIGN_PARENT_START)
+        val row = tableRow(bottomMargin = 11)
+        row.addView(cell(name, 16f, 400, Color.WHITE).apply {
+            layoutParams = LinearLayout.LayoutParams(0, dp(24), 1f)
+            ellipsize = TextUtils.TruncateAt.END
         })
-        rl.addView(cell(qty, Color.parseColor("#BEBEF7"), false).apply {
-            (layoutParams as RelativeLayout.LayoutParams).addRule(RelativeLayout.CENTER_HORIZONTAL)
+        row.addView(cell(qty, 16f, 400, Color.WHITE).apply {
+            layoutParams = LinearLayout.LayoutParams(dp(30), dp(24))
+            gravity = Gravity.CENTER
         })
-        rl.addView(cell(price, Color.WHITE, false).apply {
-            (layoutParams as RelativeLayout.LayoutParams).addRule(RelativeLayout.ALIGN_PARENT_END)
+        row.addView(cell(price, 16f, 500, Color.WHITE).apply {
+            layoutParams = LinearLayout.LayoutParams(dp(95), dp(24))
+            gravity = Gravity.END or Gravity.CENTER_VERTICAL
         })
-        return rl
+        return row
     }
 
     private fun totalRow(total: Long): View {
-        val ctx = requireContext()
-        val rl = RelativeLayout(ctx).apply {
-            layoutParams = LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT
-            )
-        }
-        rl.addView(cell("합계", Color.WHITE, true).apply {
-            (layoutParams as RelativeLayout.LayoutParams).addRule(RelativeLayout.ALIGN_PARENT_START)
+        val row = tableRow(bottomMargin = 0)
+        row.addView(cell("합계", 18f, 600, Color.WHITE).apply {
+            layoutParams = LinearLayout.LayoutParams(0, dp(24), 1f)
         })
-        rl.addView(cell("${nf.format(total)}원", Color.parseColor("#A5A6F6"), true).apply {
-            (layoutParams as RelativeLayout.LayoutParams).addRule(RelativeLayout.ALIGN_PARENT_END)
+        row.addView(cell("${nf.format(total)}원", 18f, 600, Color.parseColor("#BFAFFF")).apply {
+            layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, dp(24))
+            gravity = Gravity.END or Gravity.CENTER_VERTICAL
         })
-        return rl
+        return row
     }
 
-    private fun cell(text: String, color: Int, bold: Boolean): TextView {
+    private fun tableRow(bottomMargin: Int): LinearLayout =
+        LinearLayout(requireContext()).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = Gravity.CENTER_VERTICAL
+            setPadding(dp(16), 0, dp(16), 0)
+            layoutParams = LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT
+            ).apply { this.bottomMargin = dp(bottomMargin) }
+        }
+
+    private fun cell(text: String, sizeSp: Float, weight: Int, color: Int): TextView {
         return TextView(requireContext()).apply {
             this.text = text
             setTextColor(color)
-            setTextSize(TypedValue.COMPLEX_UNIT_SP, if (bold) 14f else 13f)
-            if (bold) setTypeface(typeface, Typeface.BOLD)
-            layoutParams = RelativeLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
-            )
+            setTextSize(TypedValue.COMPLEX_UNIT_SP, sizeSp)
+            setFontWeight(weight)
+            maxLines = 1
+            includeFontPadding = false
+            gravity = Gravity.CENTER_VERTICAL
         }
     }
 
@@ -259,7 +267,7 @@ class AmountAdjustFragment : Fragment() {
             setBackgroundColor(Color.parseColor("#33FFFFFF"))
             layoutParams = LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, dp(1)
-            ).apply { topMargin = dp(2); bottomMargin = dp(8) }
+            ).apply { bottomMargin = dp(10) }
         }
     }
 
@@ -271,12 +279,14 @@ class AmountAdjustFragment : Fragment() {
             val chip = TextView(requireContext()).apply {
                 text = item.name
                 setTextColor(android.graphics.Color.WHITE)
-                setTextSize(TypedValue.COMPLEX_UNIT_SP, 13f)
+                setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
+                includeFontPadding = false
+                maxLines = 1
                 gravity = Gravity.CENTER
-                setPadding(dp(16), 0, dp(16), 0)
+                setPadding(dp(20), 0, dp(20), 0)
                 layoutParams = LinearLayout.LayoutParams(
-                    ViewGroup.LayoutParams.WRAP_CONTENT, dp(38)
-                ).apply { marginEnd = dp(8) }
+                    ViewGroup.LayoutParams.WRAP_CONTENT, dp(40)
+                )
                 isClickable = true
                 isFocusable = true
             }
@@ -291,12 +301,13 @@ class AmountAdjustFragment : Fragment() {
         }
     }
 
-    /** 선택된 칩은 보라색 채움, 미선택은 외곽선. */
+    /** 선택된 칩은 보라색 채움 + 흰 굵은 글자, 미선택은 연보라 외곽선(피그마 값). */
     private fun styleChip(chip: android.widget.TextView, selected: Boolean) {
         chip.setBackgroundResource(
             if (selected) R.drawable.bg_item_chip_selected else R.drawable.bg_chip_outline
         )
-        chip.setTypeface(chip.typeface, if (selected) Typeface.BOLD else Typeface.NORMAL)
+        chip.setTextColor(if (selected) Color.WHITE else Color.parseColor("#D4C7FF"))
+        chip.setFontWeight(if (selected) 600 else 400)
     }
 
     private fun dp(value: Int): Int =

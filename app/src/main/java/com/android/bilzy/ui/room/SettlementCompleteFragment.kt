@@ -1,6 +1,9 @@
 package com.android.bilzy.ui.room
 
 import android.graphics.Color
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.LayoutInflater
@@ -8,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
 import androidx.lifecycle.Lifecycle
@@ -35,6 +39,8 @@ class SettlementCompleteFragment : Fragment() {
     private val scanFlowViewModel: ScanFlowViewModel by hiltNavGraphViewModels(R.id.nav_graph)
 
     private var myAccount: BankAccount? = null
+    /** 화면에 보이는 계좌 문구(복사 대상). 계좌가 없으면 null. */
+    private var accountText: String? = null
     private var iAmOwner = false
     private val nf = NumberFormat.getInstance()
 
@@ -54,6 +60,8 @@ class SettlementCompleteFragment : Fragment() {
             scanFlowViewModel.reset()
             findNavController().navigate(R.id.action_settlementComplete_to_home)
         }
+
+        binding.accountRow.setOnClickListener { copyAccount() }
 
         roomViewModel.loadMyAccount()
         observeRoom()
@@ -97,11 +105,49 @@ class SettlementCompleteFragment : Fragment() {
      */
     private fun renderAccount() {
         val account = roomViewModel.settlement.value?.payerAccount ?: myAccount.takeIf { iAmOwner }
-        binding.tvAccount.text = if (account != null && !account.isEmpty) {
-            "${account.bankName} ${account.accountNumber} ${account.accountHolder}".trim()
+        val hasAccount = account != null && !account.isEmpty
+        accountText = if (hasAccount) {
+            "${account!!.bankName} ${account.accountNumber} ${account.accountHolder}".trim()
         } else {
-            "계좌 정보 없음"
+            null
         }
+        binding.tvAccount.text = accountText ?: "계좌 정보 없음"
+        // 복사할 계좌가 없으면 복사 아이콘과 안내 문구를 감춘다.
+        binding.icCopyAccount.visibility = if (hasAccount) View.VISIBLE else View.GONE
+        binding.tvCopyHint.visibility = if (hasAccount) View.VISIBLE else View.GONE
+        fitCardToViewport()
+    }
+
+    /**
+     * 화면이 짧거나 하단 내비게이션 바(3버튼)가 있는 기기에서는 카드가 다 안 들어가 송금 계좌 줄이
+     * 아래 버튼에 바짝 붙거나 가려졌다. 카드가 보이는 영역보다 크면 위쪽 그림을 그만큼 줄여 한 화면에 맞춘다
+     * (그래도 안 들어가면 스크롤).
+     */
+    private fun fitCardToViewport() {
+        val b = _binding ?: return
+        b.scrollContent.post {
+            val bind = _binding ?: return@post
+            val icon = bind.successIcon
+            val full = dp(ICON_FULL_DP)
+            val min = dp(ICON_MIN_DP)
+            val content = bind.scrollContent.getChildAt(0) ?: return@post
+            val lp = content.layoutParams as ViewGroup.MarginLayoutParams
+            val available = bind.scrollContent.height - bind.scrollContent.paddingTop - bind.scrollContent.paddingBottom
+            // 그림을 원래 크기로 뒀을 때 필요한 높이를 기준으로 계산한다(이미 줄여 둔 상태에서 다시 불려도 같은 결과).
+            val needed = content.height + lp.topMargin + lp.bottomMargin + (full - icon.layoutParams.height)
+            val target = (full - (needed - available).coerceAtLeast(0)).coerceIn(min, full)
+            if (icon.layoutParams.height != target) {
+                icon.layoutParams = icon.layoutParams.apply { height = target }
+            }
+        }
+    }
+
+    /** 송금 계좌 줄을 누르면 "은행 계좌번호 예금주"를 클립보드에 복사한다(프로토타입 .bz-account). */
+    private fun copyAccount() {
+        val text = accountText ?: return
+        val clipboard = requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        clipboard.setPrimaryClip(ClipData.newPlainText("송금 계좌", text))
+        Toast.makeText(requireContext(), "송금 계좌를 복사했어요", Toast.LENGTH_SHORT).show()
     }
 
     private fun render(settlement: Settlement) {
@@ -142,6 +188,7 @@ class SettlementCompleteFragment : Fragment() {
         }
         binding.roundsContainer.removeAllViews()
         rounds.forEach { (round, tag) -> binding.roundsContainer.addView(roundBadge(round, tag)) }
+        fitCardToViewport()
     }
 
     /**
@@ -187,5 +234,11 @@ class SettlementCompleteFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private companion object {
+        /** 완료 그림의 원래 높이(레이아웃 값)와 줄일 수 있는 최소 높이(dp). */
+        const val ICON_FULL_DP = 173
+        const val ICON_MIN_DP = 96
     }
 }

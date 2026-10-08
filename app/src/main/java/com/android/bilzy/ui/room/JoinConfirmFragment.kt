@@ -60,20 +60,14 @@ class JoinConfirmFragment : Fragment() {
 
         binding.btnCancel.setOnClickListener { goHome() }
         binding.btnJoin.setOnClickListener {
-            setLoading(true)
-            viewLifecycleOwner.lifecycleScope.launch {
-                if (viewModel.needsNicknamePrompt()) {
-                    findNavController().navigate(
-                        R.id.action_joinConfirm_to_participantInput,
-                        androidx.core.os.bundleOf(
-                            "pendingSettlementId" to settlementId,
-                            "pendingToken" to token
-                        )
-                    )
-                } else {
-                    viewModel.join(settlementId!!, token)   // 사용자가 명시적으로 동의한 순간에만 join
-                }
-            }
+            // 참여자는 항상 이름 입력 화면을 거친다(프로토타입 NameInput). 실제 입장(join)은 그 화면에서 한다.
+            findNavController().navigate(
+                R.id.action_joinConfirm_to_participantInput,
+                androidx.core.os.bundleOf(
+                    "pendingSettlementId" to settlementId,
+                    "pendingToken" to token
+                )
+            )
         }
     }
 

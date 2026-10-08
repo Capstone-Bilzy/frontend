@@ -1,5 +1,6 @@
 package com.android.bilzy.ui.settlement
 
+import com.android.bilzy.ui.common.hideWhileKeyboardShown
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -39,6 +40,7 @@ class ManualInputFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        hideWhileKeyboardShown(binding.bottomButtonsRow)
 
         adapter = OcrItemAdapter(
             onDelete = { index -> viewModel.removeItem(index) },

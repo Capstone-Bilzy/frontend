@@ -89,6 +89,8 @@ class QrScanFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        // 이름 입력 화면에서 뒤로 돌아온 경우 다시 인식할 수 있게 한다(안 풀어 주면 스캐너가 멈춘 것처럼 보인다).
+        handled = false
         cameraExecutor = Executors.newSingleThreadExecutor()
 
         binding.btnBack.setOnClickListener {
@@ -134,7 +136,6 @@ class QrScanFragment : Fragment() {
     }
 
     private fun startCamera() {
-        binding.placeholderHint.visibility = View.GONE
         val future = ProcessCameraProvider.getInstance(requireContext())
         future.addListener({
             val provider = future.get()
@@ -196,17 +197,14 @@ class QrScanFragment : Fragment() {
         if (handled) return
         handled = true
         viewLifecycleOwner.lifecycleScope.launch {
-            if (viewModel.needsNicknamePrompt()) {
-                findNavController().navigate(
-                    R.id.action_qrScan_to_participantInput,
-                    androidx.core.os.bundleOf(
-                        "pendingSettlementId" to invite.settlementId,
-                        "pendingToken" to invite.token
-                    )
+            // 참여자는 항상 이름 입력 화면을 거친다(프로토타입 NameInput). 이미 쓰던 이름이 있으면 미리 채워진다.
+            findNavController().navigate(
+                R.id.action_qrScan_to_participantInput,
+                androidx.core.os.bundleOf(
+                    "pendingSettlementId" to invite.settlementId,
+                    "pendingToken" to invite.token
                 )
-            } else {
-                viewModel.join(invite.settlementId, invite.token)
-            }
+            )
         }
     }
 

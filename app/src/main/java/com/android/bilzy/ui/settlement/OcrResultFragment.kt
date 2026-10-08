@@ -1,5 +1,6 @@
 package com.android.bilzy.ui.settlement
 
+import com.android.bilzy.ui.common.hideWhileKeyboardShown
 import com.android.bilzy.ui.common.loading
 import com.android.bilzy.domain.model.ReceiptItemDraft
 import androidx.navigation.NavOptions
@@ -49,6 +50,7 @@ class OcrResultFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        hideWhileKeyboardShown(binding.bottomButtonsRow)
 
         adapter = OcrItemAdapter(
             onDelete = { index -> viewModel.removeItem(index) },
@@ -78,6 +80,10 @@ class OcrResultFragment : Fragment() {
                 )
             }
             requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) { leaveReview() }
+        }
+
+        if (reviewRound == 0 && savedInstanceState == null) {
+            viewModel.consumeRestoredStoreName()?.let { binding.etStoreName.setText(it) }
         }
 
         binding.tvRoundBadge.text = "${viewModel.currentRound}차"

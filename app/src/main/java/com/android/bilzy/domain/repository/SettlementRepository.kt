@@ -16,6 +16,7 @@ interface SettlementRepository {
 
     /** PeopleCount 화면에서 정한 정원(총 인원) 저장(방장만 가능). 이후 join이 이 값을 넘지 못하게 막는다. */
     suspend fun setMemberCapacity(id: String, memberCapacity: Int): Settlement
+    suspend fun renameExtraPhoto(id: String, photoId: String, name: String)
 
     suspend fun updateStatus(id: String, status: SettlementStatus): Settlement
 

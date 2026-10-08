@@ -36,6 +36,10 @@ data class Settlement(
 
 /** 라운드와 무관하게 순수 기록용으로 첨부된 영수증 사진(정산 계산에 영향 없음). */
 data class ExtraPhoto(
+    /** 구버전 서버 응답에는 없다 — 없으면 이름을 바꿀 수 없다. */
+    val id: String? = null,
+    /** 방장이 붙인 이름. 없으면 화면이 "영수증 사진"으로 표시. */
+    val name: String? = null,
     val imageUrl: String,
     val createdAt: String?
 )

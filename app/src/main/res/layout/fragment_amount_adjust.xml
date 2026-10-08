@@ -70,9 +70,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingStart="20dp"
-            android:paddingEnd="20dp"
-            android:paddingBottom="8dp">
+            android:paddingStart="23dp"
+            android:paddingEnd="23dp"
+            android:paddingBottom="22dp">
 
             <!-- 영수증 내역 -->
             <TextView
@@ -81,7 +81,7 @@
                 android:text="영수증 내역"
                 android:textColor="#FFFFFF"
                 android:textSize="16sp"
-                android:layout_marginBottom="10dp"
+                android:layout_marginBottom="12dp"
                 android:textFontWeight="500"
                 android:maxLines="1" />
 
@@ -92,40 +92,44 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:background="@drawable/bg_receipt_table"
-                android:padding="14dp"
+                android:paddingStart="12dp"
+                android:paddingEnd="11dp"
+                android:paddingTop="17dp"
+                android:paddingBottom="17dp"
                 android:layout_marginBottom="12dp">
 
 
             </LinearLayout>
 
-            <!-- 1/N amount card -->
+            <!-- 1/N amount card (피그마: 344x108, 안쪽 12/17/20/19, 칩과 금액 줄 사이 16) -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:background="@drawable/bg_amount_card_adjust"
-                android:padding="14dp"
-                android:layout_marginBottom="16dp">
+                android:paddingStart="12dp"
+                android:paddingTop="17dp"
+                android:paddingEnd="20dp"
+                android:paddingBottom="19dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="28dp">
 
                 <!-- "기본 1/N (6명)" chip -->
                 <LinearLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="26dp"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
                     android:background="@drawable/bg_chip_purple_flat"
-                    android:paddingStart="8dp"
-                    android:paddingEnd="8dp"
-                    android:paddingTop="4dp"
-                    android:paddingBottom="4dp"
-                    android:layout_marginBottom="8dp">
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp"
+                    android:layout_marginBottom="16dp">
 
                     <ImageView
-                        android:layout_width="14dp"
-                        android:layout_height="14dp"
-                        android:src="@drawable/ic_person"
-                        app:tint="#FFFFFF"
-                        android:layout_marginEnd="4dp" />
+                        android:layout_width="15dp"
+                        android:layout_height="12dp"
+                        android:src="@drawable/ic_people_small"
+                        android:layout_marginEnd="6dp" />
 
                     <TextView
                         android:id="@+id/tvSplitLabel"
@@ -135,101 +139,130 @@
                         android:textColor="#E8E5FF"
                         android:textSize="13sp"
                         android:textFontWeight="600"
-                        android:textStyle="bold" />
+                        android:includeFontPadding="false"
+                        android:maxLines="1" />
 
                 </LinearLayout>
 
-                <!-- Amount row -->
-                <RelativeLayout
+                <!-- Amount row: 숫자 30/600 + "원" 18/600 #A08CF0(아래 맞춤), 오른쪽에 차감액 -->
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="30dp"
+                    android:orientation="horizontal"
+                    android:gravity="bottom"
+                    android:paddingStart="10dp">
 
                     <TextView
                         android:id="@+id/tvAmount"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentStart="true"
-                        android:layout_centerVertical="true"
+                        android:layout_height="30dp"
+                        android:gravity="center_vertical"
                         android:text=""
                         android:textColor="#FFFFFF"
                         android:textSize="30sp"
-                        android:textStyle="bold"
-                        android:textFontWeight="600" />
+                        android:textFontWeight="600"
+                        android:includeFontPadding="false"
+                        android:maxLines="1" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="18dp"
+                        android:layout_marginStart="4dp"
+                        android:gravity="center_vertical"
+                        android:text="원"
+                        android:textColor="#A08CF0"
+                        android:textSize="18sp"
+                        android:textFontWeight="600"
+                        android:includeFontPadding="false" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="1dp"
+                        android:layout_weight="1" />
 
                     <TextView
                         android:id="@+id/tvDeduction"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true"
+                        android:layout_height="28dp"
+                        android:gravity="center"
                         android:text=""
                         android:textColor="#6ADB74"
                         android:textSize="14sp"
-                        android:background="@drawable/bg_chip_green_outline"
-                        android:paddingStart="8dp"
-                        android:paddingEnd="8dp"
-                        android:paddingTop="4dp"
-                        android:paddingBottom="4dp"
-                        android:textFontWeight="500" />
+                        android:background="@drawable/bg_deduction_pill"
+                        android:paddingStart="12dp"
+                        android:paddingEnd="12dp"
+                        android:textFontWeight="500"
+                        android:includeFontPadding="false"
+                        android:maxLines="1" />
 
-                </RelativeLayout>
+                </LinearLayout>
 
             </LinearLayout>
 
-            <!-- AI recommendation section -->
+            <!-- AI recommendation section (피그마: 제목 x=28) -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
                 android:text="AI가 영수증에서 찾은 항목"
                 android:textColor="#F8FAFF"
                 android:textSize="20sp"
-                android:textStyle="bold"
                 android:layout_marginBottom="4dp"
                 android:textFontWeight="600" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
                 android:text="내가 안 먹은 메뉴를 선택하면 그만큼 차감돼요"
                 android:textColor="#AAB2FF"
                 android:textSize="15sp"
-                android:layout_marginBottom="12dp"
+                android:layout_marginBottom="19dp"
                 android:textFontWeight="400" />
 
-            <!-- 항목 칩 행 (항목 수 제한 없음, 동적 생성) — 잘리지 않도록 가로 스크롤 대신 줄바꿈 -->
+            <!-- 항목 칩 행 (항목 수 제한 없음, 동적 생성) — 줄바꿈. 피그마: 칩 40 높이, 가로 16·세로 17 간격 -->
             <com.google.android.material.chip.ChipGroup
                 android:id="@+id/chipRow"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
+                android:layout_marginBottom="26dp"
                 app:singleLine="false"
-                app:chipSpacingHorizontal="8dp"
-                app:chipSpacingVertical="8dp" />
+                app:chipSpacingHorizontal="16dp"
+                app:chipSpacingVertical="17dp" />
 
-            <!-- Info box -->
+            <!-- Info box (피그마: r20, 안쪽 15/13/27/12, 아이콘 상자 29 + 간격 14) -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:background="@drawable/bg_history_card"
-                android:padding="12dp">
+                android:background="@drawable/bg_adjust_info_box"
+                android:paddingStart="15dp"
+                android:paddingTop="13dp"
+                android:paddingEnd="12dp"
+                android:paddingBottom="12dp">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="ⓘ"
-                    android:textColor="#8888BB"
-                    android:textSize="19sp"
-                    android:layout_marginEnd="8dp" />
+                <FrameLayout
+                    android:layout_width="29dp"
+                    android:layout_height="29dp"
+                    android:layout_marginEnd="14dp"
+                    android:background="@drawable/bg_adjust_info_icon">
+
+                    <ImageView
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_info_circle" />
+                </FrameLayout>
 
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:layout_gravity="center_vertical"
                     android:text="선택한 항목은 내 금액에서 1인분 가격이 빠져요"
                     android:textColor="#D9DCFF"
                     android:textSize="15sp"
+                    android:letterSpacing="-0.04"
                     android:textFontWeight="300"
                     android:lineHeight="22sp" />
 

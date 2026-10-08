@@ -1,5 +1,6 @@
 package com.android.bilzy.ui.settlement
 
+import com.android.bilzy.ui.common.hideWhileKeyboardShown
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -39,6 +40,7 @@ class PeopleCountFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        hideWhileKeyboardShown(binding.btnNext)
 
         updateCount()
 

@@ -33,6 +33,10 @@ data class AddMemberRequest(
 @Serializable
 data class SetMemberRoundsRequest(val rounds: List<Int> = emptyList())
 
+/** PATCH /settlements/{id}/extra-photos/{photoId} 요청 바디. 첨부한 영수증 사진 이름. */
+@Serializable
+data class RenameExtraPhotoRequest(val name: String)
+
 /** PATCH /settlements/{id}/capacity 요청 바디. PeopleCount 화면에서 정한 정원. */
 @Serializable
 data class SetMemberCapacityRequest(@SerialName("member_capacity") val memberCapacity: Int)
@@ -94,6 +98,8 @@ data class SettlementDto(
 /** 라운드와 무관하게 순수 기록용으로 첨부된 영수증 사진(정산 계산에 영향 없음). */
 @Serializable
 data class ExtraPhotoDto(
+    val id: String? = null,
+    val name: String? = null,
     @SerialName("image_url") val imageUrl: String = "",
     @SerialName("created_at") val createdAt: String? = null
 )
@@ -198,6 +204,8 @@ fun ReceiptDto.toDomain() = Receipt(
 )
 
 fun ExtraPhotoDto.toDomain() = ExtraPhoto(
+    id = id,
+    name = name?.takeIf { it.isNotBlank() },
     imageUrl = imageUrl,
     createdAt = createdAt
 )

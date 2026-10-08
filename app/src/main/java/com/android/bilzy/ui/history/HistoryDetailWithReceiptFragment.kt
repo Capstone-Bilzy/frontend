@@ -1,5 +1,8 @@
 package com.android.bilzy.ui.history
 
+import com.android.bilzy.ui.common.showTextInputDialog
+import com.android.bilzy.domain.model.ExtraPhoto
+import android.text.TextUtils
 import android.Manifest
 import android.app.Dialog
 import android.content.ContentValues
@@ -53,6 +56,8 @@ import java.text.NumberFormat
  * 요약·참여자·영수증 이미지를 렌더한다. 정산방이 영수증 이미지를 가진 경우에만 영수증 섹션을 보여준다.
  * 요약카드/참여자카드는 Figma 실측 기준으로 SettlementResultFragment/HistoryDetailFragment와 동일 구조.
  */
+private const val DEFAULT_PHOTO_NAME = "영수증 사진"
+
 @AndroidEntryPoint
 class HistoryDetailWithReceiptFragment : Fragment() {
 
@@ -158,7 +163,7 @@ class HistoryDetailWithReceiptFragment : Fragment() {
         }
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.myUserId.collect { viewModel.settlement.value?.let { s -> renderPayerLine(s) } }
+                viewModel.myUserId.collect { viewModel.settlement.value?.let { s -> render(s) } }
             }
         }
     }
@@ -174,7 +179,9 @@ class HistoryDetailWithReceiptFragment : Fragment() {
         val container = binding.personsContainer
         container.removeAllViews()
         roundParticipants = s.receipts.associate { it.round to s.roundParticipantCount(it.round) }
-        s.members.forEach { m ->
+        // 내 내역이 맨 위(나머지는 서버가 준 순서 그대로)
+        val myId = viewModel.myUserId.value
+        s.members.sortedByDescending { it.userId == myId }.forEach { m ->
             container.addView(personCard(m.nickname, m.amount, m.rounds, s.receipts))
         }
 
@@ -402,8 +409,10 @@ class HistoryDetailWithReceiptFragment : Fragment() {
         withImage.forEach { receipt ->
             binding.receiptsContainer.addView(receiptCard(receipt))
         }
+        // 이름 변경은 사진을 첨부할 수 있는 사람(방장)만
+        val canRename = s.createdBy == viewModel.myUserId.value
         extraPhotos.forEach { photo ->
-            binding.receiptsContainer.addView(extraPhotoCard(photo.imageUrl))
+            binding.receiptsContainer.addView(extraPhotoCard(photo, canRename))
         }
     }
 
@@ -466,7 +475,8 @@ class HistoryDetailWithReceiptFragment : Fragment() {
     }
 
     /** 라운드/금액 없이 순수 기록용으로 첨부된 사진 카드. */
-    private fun extraPhotoCard(url: String): View {
+    private fun extraPhotoCard(photo: ExtraPhoto, canRename: Boolean): View {
+        val url = photo.imageUrl
         val ctx = requireContext()
         val card = LinearLayout(ctx).apply {
             orientation = LinearLayout.HORIZONTAL
@@ -491,7 +501,9 @@ class HistoryDetailWithReceiptFragment : Fragment() {
             }
         }
         val label = TextView(ctx).apply {
-            text = "영수증 사진"
+            text = photo.name ?: DEFAULT_PHOTO_NAME
+            maxLines = 1
+            ellipsize = TextUtils.TruncateAt.END
             setTextColor(Color.WHITE)
             setTextSize(TypedValue.COMPLEX_UNIT_SP, 17f)
             setTypeface(typeface, Typeface.BOLD)
@@ -504,7 +516,7 @@ class HistoryDetailWithReceiptFragment : Fragment() {
             setPadding(dp(8), 0, dp(4), 0)
             isClickable = true
             isFocusable = true
-            setOnClickListener { showReceiptOptions(it, url) }
+            setOnClickListener { showReceiptOptions(it, url, photo.takeIf { canRename && it.id != null }) }
         }
         card.addView(thumb)
         card.addView(label)
@@ -529,18 +541,42 @@ class HistoryDetailWithReceiptFragment : Fragment() {
         dialog.window?.setBackgroundDrawableResource(android.R.color.black)
     }
 
-    private fun showReceiptOptions(anchor: View, url: String) {
+    /** renamable이 있으면(방장이 연 첨부 사진) "이름 변경"도 보여준다. */
+    private fun showReceiptOptions(anchor: View, url: String, renamable: ExtraPhoto? = null) {
         PopupMenu(ContextThemeWrapper(requireContext(), R.style.ThemeOverlay_Bilzy_PopupMenu), anchor).apply {
             menu.add(0, 0, 0, "크게 보기")
             menu.add(0, 1, 1, "이미지 저장")
+            if (renamable != null) menu.add(0, 2, 2, "이름 변경")
             setOnMenuItemClickListener { item ->
                 when (item.itemId) {
                     0 -> showFullScreenImage(url)
                     1 -> downloadAndSave(url)
+                    2 -> renamable?.let { askPhotoName(it) }
                 }
                 true
             }
             show()
+        }
+    }
+
+    private fun askPhotoName(photo: ExtraPhoto) {
+        val photoId = photo.id ?: return
+        showTextInputDialog(
+            requireContext(),
+            title = "이름 변경",
+            initial = photo.name.orEmpty(),
+            hint = DEFAULT_PHOTO_NAME,
+            maxLength = 30,
+            confirmText = "변경"
+        ) { name ->
+            if (name == photo.name) return@showTextInputDialog
+            viewLifecycleOwner.lifecycleScope.launch {
+                loading.show()
+                val ok = viewModel.renamePhoto(photoId, name)
+                if (_binding == null) return@launch
+                loading.hide()
+                if (!ok) Toast.makeText(requireContext(), "이름 변경에 실패했어요", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 

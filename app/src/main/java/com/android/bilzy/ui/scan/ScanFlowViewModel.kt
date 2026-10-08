@@ -238,6 +238,7 @@ class ScanFlowViewModel @Inject constructor(
             }
                 .onSuccess {
                     highestConfirmedRound = maxOf(highestConfirmedRound, currentRound)
+                    lastConfirmed = ConfirmedRound(currentRound, _items.value, storeName.trim())
                     _confirmState.value = ConfirmState.Success
                 }
                 .onFailure { _confirmState.value = ConfirmState.Error(it.message ?: "확정에 실패했습니다") }
@@ -259,6 +260,34 @@ class ScanFlowViewModel @Inject constructor(
      * 앞 차수를 다시 찍은 직후일 수 있으므로 currentRound+1이 아니라 지금까지 확정된 가장 큰 차수 다음으로 간다
      * (안 그러면 이미 있는 다음 차수를 덮어쓴다).
      */
+    private data class ConfirmedRound(val round: Int, val items: List<ReceiptItemDraft>, val storeName: String)
+
+    /** 방금 확정한 차수 — "추가 스캔하기"로 연 카메라에서 뒤로 가면 이 차수의 결과 화면으로 되돌린다. */
+    private var lastConfirmed: ConfirmedRound? = null
+
+    /** 되돌아온 결과 화면이 가게 이름 칸에 다시 채울 값(한 번 읽으면 비워진다). */
+    private var restoredStoreName: String? = null
+    fun consumeRestoredStoreName(): String? = restoredStoreName.also { restoredStoreName = null }
+
+    /** 이미 확정된 차수를 다시 찍는 중인지(영수증 목록 → 다시 찍기). */
+    val isRescanning: Boolean get() = currentRound <= highestConfirmedRound
+
+    /**
+     * 추가 스캔을 그만두고 방금 확정한 차수의 결과 화면으로 되돌린다. 되돌릴 차수가 없으면 false.
+     * 그 차수는 서버에 이미 확정돼 있고, 결과 화면에서 다시 확정하면 같은 차수만 덮어쓴다.
+     */
+    fun returnToConfirmedRound(): Boolean {
+        val last = lastConfirmed ?: return false
+        if (currentRound <= last.round) return false
+        currentRound = last.round
+        scannedReceipt = null
+        setItems(last.items)
+        restoredStoreName = last.storeName
+        _scanState.value = ScanState.Idle
+        _confirmState.value = ConfirmState.Idle
+        return true
+    }
+
     fun advanceToNextRound() {
         currentRound = maxOf(currentRound, highestConfirmedRound) + 1
         resetForNextScan()
@@ -269,6 +298,7 @@ class ScanFlowViewModel @Inject constructor(
      * 항목을 편집 목록에 채우고 가게 이름을 돌려준다. 화면은 이 값과 비교해 바뀐 게 있을 때만 다시 확정한다.
      */
     fun startReview(round: Int): String {
+        lastConfirmed = null
         val receipt = _settlement.value?.receipts?.firstOrNull { it.round == round }
         currentRound = round
         scannedReceipt = null
@@ -280,6 +310,7 @@ class ScanFlowViewModel @Inject constructor(
 
     /** 영수증 목록에서 고른 차수를 다시 스캔한다. 확정하면 그 차수만 새 내역으로 교체된다. */
     fun startRescan(round: Int) {
+        lastConfirmed = null
         currentRound = round
         resetForNextScan()
         _scanState.value = ScanState.Idle
@@ -307,7 +338,8 @@ class ScanFlowViewModel @Inject constructor(
         val id = settlementId ?: return
         viewModelScope.launch {
             runCatching { settlementRepository.getSettlement(id) }
-                .onSuccess { _settlement.value = it }
+                // 응답이 오기 전에 다른 정산방으로 바뀌었으면(홈으로 나가 새로 시작 등) 버린다.
+                .onSuccess { if (it.id == settlementId) _settlement.value = it }
         }
     }
 
@@ -321,10 +353,12 @@ class ScanFlowViewModel @Inject constructor(
             settlementRepository.deleteRound(id, round)
             settlementRepository.getSettlement(id)
         }.map { refreshed ->
+            if (refreshed.id != settlementId) return@map refreshed.receipts.size
             _settlement.value = refreshed
             receiptListSaved = false
             highestConfirmedRound = refreshed.receipts.maxOfOrNull { it.round } ?: 0
             currentRound = highestConfirmedRound.coerceAtLeast(1)
+            lastConfirmed = null
             if (refreshed.receipts.isEmpty()) resetForNextScan()
             refreshed.receipts.size
         }.getOrNull()
@@ -342,6 +376,8 @@ class ScanFlowViewModel @Inject constructor(
         scannedReceipt = null
         currentRound = 1
         highestConfirmedRound = 0
+        lastConfirmed = null
+        restoredStoreName = null
         pendingImage = null
         capturedImage = null
         _scanState.value = ScanState.Idle
