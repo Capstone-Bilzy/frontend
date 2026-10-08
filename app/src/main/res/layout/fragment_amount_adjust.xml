@@ -238,7 +238,7 @@
                 android:background="@drawable/bg_adjust_info_box"
                 android:paddingStart="15dp"
                 android:paddingTop="13dp"
-                android:paddingEnd="12dp"
+                android:paddingEnd="20dp"
                 android:paddingBottom="12dp">
 
                 <FrameLayout
@@ -254,17 +254,24 @@
                         android:src="@drawable/ic_info_circle" />
                 </FrameLayout>
 
+                <!-- 한 줄 고정: 피그마 자간(-1px = -0.067em), 그래도 넘치면 글자를 줄인다 -->
                 <TextView
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="22dp"
                     android:layout_weight="1"
                     android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical"
                     android:text="선택한 항목은 내 금액에서 1인분 가격이 빠져요"
                     android:textColor="#D9DCFF"
                     android:textSize="15sp"
-                    android:letterSpacing="-0.04"
+                    android:letterSpacing="-0.067"
                     android:textFontWeight="300"
-                    android:lineHeight="22sp" />
+                    android:includeFontPadding="false"
+                    android:maxLines="1"
+                    android:autoSizeTextType="uniform"
+                    android:autoSizeMinTextSize="11sp"
+                    android:autoSizeMaxTextSize="15sp"
+                    android:autoSizeStepGranularity="0.5sp" />
 
             </LinearLayout>
 

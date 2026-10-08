@@ -264,7 +264,7 @@ class AmountAdjustFragment : Fragment() {
 
     private fun divider(): View {
         return View(requireContext()).apply {
-            setBackgroundColor(Color.parseColor("#33FFFFFF"))
+            setBackgroundColor(Color.parseColor("#504C91"))
             layoutParams = LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, dp(1)
             ).apply { bottomMargin = dp(10) }
