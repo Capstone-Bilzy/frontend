@@ -5,6 +5,7 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.os.Bundle
+import android.os.PersistableBundle
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
@@ -146,7 +147,12 @@ class SettlementCompleteFragment : Fragment() {
     private fun copyAccount() {
         val text = accountText ?: return
         val clipboard = requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-        clipboard.setPrimaryClip(ClipData.newPlainText("송금 계좌", text))
+        val clip = ClipData.newPlainText("송금 계좌", text)
+        // 계좌번호가 클립보드 미리보기(Android 13+)에 그대로 보이지 않게 민감한 내용으로 표시한다
+        clip.description.extras = PersistableBundle().apply {
+            putBoolean("android.content.extra.IS_SENSITIVE", true)
+        }
+        clipboard.setPrimaryClip(clip)
         Toast.makeText(requireContext(), "송금 계좌를 복사했어요", Toast.LENGTH_SHORT).show()
     }
 
