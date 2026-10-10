@@ -26,8 +26,11 @@ import com.android.bilzy.R
 import com.android.bilzy.databinding.FragmentAmountAdjustBinding
 import com.android.bilzy.domain.model.Receipt
 import com.android.bilzy.domain.model.ReceiptItem
+import com.android.bilzy.domain.model.RoundSplit
 import com.android.bilzy.domain.model.Settlement
+import com.android.bilzy.domain.model.SettlementMember
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.text.NumberFormat
@@ -57,6 +60,15 @@ class AmountAdjustFragment : Fragment() {
     private var currentItems: List<ReceiptItem> = emptyList()
     private var baseShare = 0L
 
+    /** 내 사용자 id(멤버 목록에서 나를 찾는 데 쓴다). 못 구하면 닉네임으로 찾는다. */
+    private var myUserId: String? = null
+
+    /** 칩 선택을 서버 저장값으로 채워 둔 차수 — 차수가 바뀔 때 한 번만 채우고, 그 뒤로는 화면의 선택이 기준이다. */
+    private var chipsLoadedForRound: Int? = null
+
+    /** 칩을 누를 때마다 바로 저장하는 작업(연달아 누르면 마지막 것만 보낸다). */
+    private var liveSaveJob: Job? = null
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
@@ -73,6 +85,10 @@ class AmountAdjustFragment : Fragment() {
         // 뒤로가기로 라운드를 건너뛰어 이탈하면 그 라운드에서 조용히 0원 처리되는 문제가 있었다(완주 강제).
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) { handleBack() }
 
+        viewLifecycleOwner.lifecycleScope.launch {
+            myUserId = roomViewModel.myUserId()
+            if (_binding != null) recompute()
+        }
         observeRoom()
         keepRoomFresh()
     }
@@ -93,7 +109,6 @@ class AmountAdjustFragment : Fragment() {
     private fun handleBack() {
         if (roomViewModel.adjIdx > 0) {
             roomViewModel.adjIdx -= 1
-            selectedChips.clear()
             renderRound()
         } else {
             findNavController().navigateUp()
@@ -107,6 +122,7 @@ class AmountAdjustFragment : Fragment() {
 
         binding.btnSettle.isEnabled = false
         loading.show()
+        liveSaveJob?.cancel() // 아래에서 같은 내용을 확실히 저장한다
         viewLifecycleOwner.lifecycleScope.launch {
             val ok = roomViewModel.submitRoundAdjustment(receipt.round, excludedNames)
             loading.hide()
@@ -121,7 +137,6 @@ class AmountAdjustFragment : Fragment() {
                 findNavController().navigate(R.id.action_amountAdjust_to_calculating)
             } else {
                 roomViewModel.adjIdx += 1
-                selectedChips.clear()
                 renderRound()
             }
         }
@@ -171,6 +186,14 @@ class AmountAdjustFragment : Fragment() {
         baseShare = RoomViewModel.evenSplit(total, roundCount).firstOrNull() ?: 0L
         binding.tvSplitLabel.text = "기본 1/N (${roundCount}명)"
 
+        // 이 차수에 처음 들어왔으면(또는 앞 차수로 되돌아왔으면) 서버에 저장돼 있는 내 선택으로 칩을 채운다.
+        if (chipsLoadedForRound != receipt.round) {
+            chipsLoadedForRound = receipt.round
+            selectedChips.clear()
+            val saved = myMember()?.rounds?.firstOrNull { it.round == receipt.round }?.excludedItemNames.orEmpty()
+            items.forEachIndexed { index, item -> if (item.name in saved) selectedChips.add(index) }
+        }
+
         renderChips(items)
         recompute()
 
@@ -184,18 +207,51 @@ class AmountAdjustFragment : Fragment() {
     }
 
     /**
-     * 선택한(안 먹은) 항목의 1인분 가격을 내 몫에서 차감한다. 주류도 고르면 똑같이 뺀다
-     * (서버 정산 계산과 동일 — 예전엔 미리보기만 주류를 빼지 않아 최종 금액과 달랐다).
-     * 차감 = Σ (항목 합계 / 인원수). 예) 냉면 45,000/6 + 공기밥 6,000/6 = 8,500원
+     * 이 차수에서 내가 낼 금액을 서버 규칙 계산과 같은 방법으로 미리 보여준다(RoundSplit).
+     * 내 선택은 화면의 칩을, 다른 사람의 선택은 3초마다 다시 불러오는 서버 값을 쓴다 — 누가 메뉴를 제외하면
+     * 몇 초 안에 내 금액에도 반영된다. 오른쪽 알약은 기본 1/N과의 차이(다른 사람이 제외해 내 몫이 늘면 +).
      */
     private fun recompute() {
-        val deduction = selectedChips.sumOf { idx ->
-            val item = currentItems.getOrNull(idx) ?: return@sumOf 0L
-            item.total / roundCount
-        }
-        val myAmount = (baseShare - deduction).coerceAtLeast(0L)
+        val receipt = pickedReceipts.getOrNull(roomViewModel.adjIdx) ?: return
+        val me = myMember()
+        val myExcluded = selectedChips.mapNotNull { currentItems.getOrNull(it)?.name }.toSet()
+        val participants = currentSettlement?.members.orEmpty()
+            .filter { m -> m.id == me?.id || m.rounds.any { it.round == receipt.round } }
+            .map { m ->
+                val excluded = if (m.id == me?.id) myExcluded
+                else m.rounds.firstOrNull { it.round == receipt.round }?.excludedItemNames.orEmpty().toSet()
+                RoundSplit.Participant(m.id, excluded)
+            }
+        val split = RoundSplit.split(currentItems, participants)
+        // 기준 금액은 아무도 메뉴를 빼지 않았을 때의 내 몫(1원 나머지를 누가 받는지까지 같은 규칙으로 계산).
+        val base = me?.let { RoundSplit.split(currentItems, participants.map { p -> p.copy(excludedItemNames = emptySet()) })[it.id] }
+            ?: baseShare
+        val myAmount = me?.let { split[it.id] }
+            // 멤버 목록에서 나를 아직 못 찾았으면(첫 응답 전) 예전처럼 내 선택만 빼서 보여준다.
+            ?: (baseShare - myExcluded.sumOf { name ->
+                (currentItems.firstOrNull { it.name == name }?.total ?: 0L) / roundCount
+            }).coerceAtLeast(0L)
+        val diff = myAmount - base
         binding.tvAmount.text = nf.format(myAmount)
-        binding.tvDeduction.text = "-${nf.format(deduction)}원"
+        binding.tvDeduction.text = if (diff > 0) "+${nf.format(diff)}원" else "-${nf.format(-diff)}원"
+    }
+
+    /** 멤버 목록에서 나. id를 아직 모르면 표시 이름으로 찾는다. */
+    private fun myMember(): SettlementMember? {
+        val members = currentSettlement?.members.orEmpty()
+        return members.firstOrNull { myUserId != null && it.userId == myUserId }
+            ?: members.firstOrNull { it.nickname == roomViewModel.myNickname.value }
+    }
+
+    /** 칩 선택을 바로 서버에 저장한다 — 다른 사람 화면의 미리보기에 반영되게. 실패해도 조용히 넘어간다(버튼을 누를 때 다시 저장). */
+    private fun saveSelectionSoon() {
+        val receipt = pickedReceipts.getOrNull(roomViewModel.adjIdx) ?: return
+        val names = selectedChips.mapNotNull { currentItems.getOrNull(it)?.name }
+        liveSaveJob?.cancel()
+        liveSaveJob = viewLifecycleOwner.lifecycleScope.launch {
+            delay(LIVE_SAVE_DELAY_MS)
+            roomViewModel.submitRoundAdjustment(receipt.round, names)
+        }
     }
 
     /** 영수증 항목 테이블을 실제 OCR 항목으로 다시 그린다. */
@@ -296,6 +352,7 @@ class AmountAdjustFragment : Fragment() {
                 else selectedChips.add(index)
                 styleChip(chip, selectedChips.contains(index))
                 recompute()
+                saveSelectionSoon()
             }
             row.addView(chip)
         }
@@ -320,5 +377,6 @@ class AmountAdjustFragment : Fragment() {
 
     private companion object {
         const val REFRESH_INTERVAL_MS = 3000L
+        const val LIVE_SAVE_DELAY_MS = 400L
     }
 }
