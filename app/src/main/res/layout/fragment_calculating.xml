@@ -4,36 +4,40 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg_dark">
+    android:background="@drawable/bg_calculating">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingTop="52dp"
+        android:paddingTop="61dp"
         android:paddingBottom="36dp"
-        android:paddingStart="20dp"
-        android:paddingEnd="20dp">
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:paddingStart="23dp"
+        android:paddingEnd="23dp">
 
         <!-- Logo -->
         <ImageView
             android:layout_width="wrap_content"
-            android:layout_height="24dp"
+            android:layout_height="27dp"
+            android:layout_marginStart="5dp"
             android:src="@drawable/logo_bilzy"
             android:adjustViewBounds="true"
             android:scaleType="fitStart"
             android:contentDescription="@null"
-            android:layout_marginBottom="20dp"
         />
 
-        <!-- 3D Wait illustration -->
+        <!-- 3D Wait illustration + 동전 (피그마 y120~420 영역을 한 장으로 합성, 화면 폭 전체) -->
         <ImageView
-            android:layout_width="371dp"
-            android:layout_height="match_parent"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="-23dp"
+            android:layout_marginEnd="-23dp"
+            android:layout_marginTop="32dp"
+            android:adjustViewBounds="true"
             android:scaleType="fitCenter"
-            android:src="@drawable/ic_wait_3d" />
+            android:src="@drawable/ic_wait_scene" />
 
         <!-- "대기 중이에요" -->
         <TextView
@@ -44,8 +48,7 @@
             android:text="대기 중이에요"
             android:textColor="#F8FAFF"
             android:textSize="24sp"
-            android:textStyle="bold"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="-15dp"
             android:textFontWeight="600" />
 
         <TextView
@@ -113,13 +116,17 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:background="@drawable/bg_history_card"
-            android:padding="14dp"
+            android:background="@drawable/bg_adjust_info_box"
+            android:paddingStart="16dp"
+            android:paddingEnd="15dp"
+            android:paddingTop="17dp"
+            android:paddingBottom="17dp"
             android:layout_marginBottom="16dp"
             android:visibility="gone" />
 
-        <!-- Info box -->
+        <!-- Info box: 기다리는 사람이 없을 때(계산이 도는 동안)만 보인다. 피그마 대기 화면에는 위 안내 상자만 있다 -->
         <LinearLayout
+            android:id="@+id/infoBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"

@@ -130,7 +130,6 @@ class ParticipantInputFragment : Fragment() {
         val b = _binding ?: return
         val hasName = !b.etName.text?.toString().isNullOrBlank()
         b.btnNext.isEnabled = hasName && !submitting
-        b.btnNext.alpha = if (hasName) 1f else 0.5f
         b.btnClearName.visibility = if (hasName) View.VISIBLE else View.INVISIBLE
     }
 

@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
+import com.android.bilzy.ui.common.loading
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
@@ -69,6 +70,26 @@ class MyPageFragment : Fragment() {
             ) {
                 // 토큰 클리어가 끝나면 observeLogout()에서 온보딩으로 이동한다.
                 viewModel.logout()
+            }
+        }
+
+        binding.menuWithdraw.setOnClickListener {
+            showConfirmDialog(
+                requireContext(),
+                title = "회원 탈퇴",
+                message = "탈퇴하면 계정과 내가 만든 정산 내역,\n영수증 사진이 모두 삭제되고 되돌릴 수 없어요",
+                confirmText = "탈퇴하기"
+            ) {
+                loading.show()
+                viewModel.withdraw()
+            }
+        }
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.withdrawFailed.collect {
+                    loading.hide()
+                    Toast.makeText(requireContext(), "탈퇴에 실패했어요. 잠시 후 다시 시도해주세요", Toast.LENGTH_SHORT).show()
+                }
             }
         }
 

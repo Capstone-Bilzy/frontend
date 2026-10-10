@@ -42,7 +42,7 @@
 
     <EditText
         android:id="@+id/etPrice"
-        android:layout_width="74dp"
+        android:layout_width="86dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="6dp"
         android:gravity="end"

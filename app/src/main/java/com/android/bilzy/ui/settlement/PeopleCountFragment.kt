@@ -80,12 +80,16 @@ class PeopleCountFragment : Fragment() {
             binding.btnNext.isEnabled = false
             loading.show()
             viewLifecycleOwner.lifecycleScope.launch {
-                val saved = roomViewModel.saveMemberCapacity(count)
+                // 정원이 서버에 저장돼야 "설정한 인원이 다 들어와야 시작"이 지켜진다(저장 안 된 채 넘어가면
+                // 정원 없는 방이 돼 인원 제한도, 참여자 쪽 대기도 없어진다). 서버가 느릴 수 있어 한 번 더 시도하고,
+                // 그래도 안 되면 넘어가지 않는다.
+                val saved = roomViewModel.saveMemberCapacity(count) || roomViewModel.saveMemberCapacity(count)
                 loading.hide()
                 if (_binding == null) return@launch
                 binding.btnNext.isEnabled = true
                 if (!saved) {
-                    Toast.makeText(requireContext(), "정원 설정 저장에 실패했어요. 정원 제한 없이 진행돼요", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "정원 설정 저장에 실패했어요. 다시 시도해주세요", Toast.LENGTH_SHORT).show()
+                    return@launch
                 }
                 findNavController().navigate(R.id.action_peopleCount_to_qrInvite)
             }

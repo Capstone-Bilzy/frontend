@@ -39,5 +39,13 @@ class AuthRepositoryImpl @Inject constructor(
         userRepository.clearCache()
     }
 
+    override suspend fun withdraw() {
+        // 서버에서 지워진 게 확인된 뒤에만 기기의 로그인 정보를 비운다(실패했는데 로그아웃되면 탈퇴된 줄 안다).
+        api.deleteMe()
+        runCatching { kakaoLoginManager.logout() }
+        tokenStore.clear()
+        userRepository.clearCache()
+    }
+
     override suspend fun isLoggedIn(): Boolean = tokenStore.isLoggedIn()
 }

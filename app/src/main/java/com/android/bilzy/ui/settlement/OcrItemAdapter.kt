@@ -1,6 +1,7 @@
 package com.android.bilzy.ui.settlement
 
 import android.text.Editable
+import android.text.InputFilter
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -54,8 +55,7 @@ class OcrItemAdapter(
         if (binding.etName.text.toString() != item.name) binding.etName.setText(item.name)
         val qtyText = item.quantity.toString()
         if (binding.etQty.text.toString() != qtyText) binding.etQty.setText(qtyText)
-        val priceText = lineAmountText(item)
-        if (binding.etPrice.text.toString() != priceText) binding.etPrice.setText(priceText)
+        showAmount(holder, item)
 
         // 워처는 holder.bindingAdapterPosition으로 매 호출 시점의 현재 항목을 다시 읽는다.
         // submit()이 필드 편집만으로는 notifyDataSetChanged를 생략(포커스 유지)하므로,
@@ -77,20 +77,20 @@ class OcrItemAdapter(
                 }
             }
             // 수량이 바뀌면 금액 칸(단가×수량)도 따라 바뀐다. 리스트를 다시 그리지 않으므로 직접 갱신.
-            if (updated != null) {
-                val amountText = lineAmountText(updated)
-                if (binding.etPrice.text.toString() != amountText) {
-                    holder.priceWatcher?.let { binding.etPrice.removeTextChangedListener(it) }
-                    binding.etPrice.setText(amountText)
-                    holder.priceWatcher?.let { binding.etPrice.addTextChangedListener(it) }
-                }
-            }
+            if (updated != null) showAmount(holder, updated)
         }.also { binding.etQty.addTextChangedListener(it) }
 
         holder.priceWatcher = simpleWatcher { text ->
-            val amount = (text.toLongOrNull() ?: 0L).coerceAtLeast(0L)
+            // 쉼표가 섞여 있을 수 있어(포커스가 없을 때의 표시) 숫자만 읽는다.
+            val amount = (text.filter(Char::isDigit).toLongOrNull() ?: 0L).coerceAtLeast(0L)
             emitChange(holder) { withAmount(it, amount) }
         }.also { binding.etPrice.addTextChangedListener(it) }
+
+        // 금액 칸: 입력 중에는 숫자만(커서가 튀지 않게), 칸을 벗어나면 피그마처럼 쉼표를 넣어 보여준다.
+        binding.etPrice.setOnFocusChangeListener { _, _ ->
+            val pos = holder.bindingAdapterPosition
+            if (pos != RecyclerView.NO_POSITION && pos in items.indices) showAmount(holder, items[pos])
+        }
 
         binding.btnDelete.setOnClickListener {
             val pos = holder.bindingAdapterPosition
@@ -98,8 +98,25 @@ class OcrItemAdapter(
         }
     }
 
-    private fun lineAmountText(item: ReceiptItemDraft): String =
-        if (item.subtotal == 0L) "" else item.subtotal.toString()
+    /** 금액 칸에 그 줄의 금액을 쓴다(워처를 잠시 떼어 값이 되돌아 들어오지 않게). 포커스가 없으면 쉼표 표시. */
+    private fun showAmount(holder: ViewHolder, item: ReceiptItemDraft) {
+        val field = holder.binding.etPrice
+        val focused = field.hasFocus()
+        val text = when {
+            item.subtotal == 0L -> ""
+            focused -> item.subtotal.toString()
+            else -> amountFormat.format(item.subtotal)
+        }
+        if (field.text.toString() == text) return
+        holder.priceWatcher?.let { field.removeTextChangedListener(it) }
+        // 쉼표가 들어가면 9자리 숫자가 11글자가 된다.
+        field.filters = arrayOf(InputFilter.LengthFilter(if (focused) MAX_AMOUNT_DIGITS else MAX_AMOUNT_DIGITS + 2))
+        field.setText(text)
+        if (focused) field.setSelection(field.text.length)
+        holder.priceWatcher?.let { field.addTextChangedListener(it) }
+    }
+
+    private val amountFormat = java.text.NumberFormat.getNumberInstance(java.util.Locale.KOREA)
 
     /** 그 줄의 금액을 [amount]로 맞춘다. 수량으로 나누어떨어지면 단가만, 아니면 금액도 함께 들고 있는다. */
     private fun withAmount(item: ReceiptItemDraft, amount: Long): ReceiptItemDraft {
@@ -129,4 +146,8 @@ class OcrItemAdapter(
     }
 
     override fun getItemCount() = items.size
+
+    private companion object {
+        const val MAX_AMOUNT_DIGITS = 9
+    }
 }

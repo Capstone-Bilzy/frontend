@@ -37,7 +37,6 @@ fun showTextInputDialog(
     fun refresh() {
         val ok = binding.etInput.text.toString().isNotBlank()
         binding.btnInputOk.isEnabled = ok
-        binding.btnInputOk.alpha = if (ok) 1f else 0.5f
     }
     fun submit() {
         val value = binding.etInput.text.toString().trim()

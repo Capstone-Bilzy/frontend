@@ -103,7 +103,6 @@ class RoundPickFragment : Fragment() {
                 roomViewModel.pickedRounds.collect { picked ->
                     renderCards()
                     binding.btnNext.isEnabled = picked.isNotEmpty()
-                    binding.btnNext.alpha = if (picked.isNotEmpty()) 1f else 0.5f
                 }
             }
         }

@@ -56,6 +56,10 @@ interface BilzyApi {
     @GET("users/me")
     suspend fun getMe(): UserDto
 
+    /** 회원 탈퇴 — 계정과 내가 만든 정산방·영수증 사진을 서버에서 바로 지운다. */
+    @HTTP(method = "DELETE", path = "users/me", hasBody = false)
+    suspend fun deleteMe()
+
     @GET("users/me/history")
     suspend fun getHistory(): List<HistoryDto>
 

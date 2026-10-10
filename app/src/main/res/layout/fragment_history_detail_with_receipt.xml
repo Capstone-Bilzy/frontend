@@ -78,7 +78,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="20dp">
+            android:paddingStart="23dp"
+            android:paddingEnd="23dp"
+            android:paddingTop="16dp"
+            android:paddingBottom="20dp">
 
             <!-- Summary card: Figma "정산내역_회사 점심 약속" 실측 기준(정산결과 요약 화면과 동일 구조) -->
             <LinearLayout
@@ -158,10 +161,10 @@
                 android:layout_height="wrap_content"
                 android:text="참여자 정산 내역"
                 android:textColor="#FFFFFF"
-                android:textSize="17sp"
-                android:textStyle="bold"
+                android:textSize="16sp"
                 android:layout_marginBottom="12dp"
-                android:maxLines="1" />
+                android:maxLines="1"
+                android:textFontWeight="500" />
 
             <LinearLayout
                 android:id="@+id/personsContainer"
@@ -184,9 +187,9 @@
                     android:layout_centerVertical="true"
                     android:text="첨부된 영수증"
                     android:textColor="#FFFFFF"
-                    android:textSize="17sp"
-                    android:textStyle="bold"
-                    android:maxLines="1" />
+                    android:textSize="16sp"
+                    android:maxLines="1"
+                android:textFontWeight="500" />
 
                 <TextView
                     android:id="@+id/tvReceiptCount"

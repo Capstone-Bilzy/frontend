@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- 프로토타입 .bz-btn-outline: background:rgba(108,99,255,.14); border:1.5px solid rgba(150,140,255,.5) -->
+<!-- 기본 하단 버튼(피그마 UI 4차): #825EFA 20% 글래스, r16. 피그마 글래스 효과의 옅은 가장자리 빛은 얇은 테두리로 근사. 파일 이름은 예전 "outline" 그대로 -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
-    <solid android:color="#246C63FF" />
-    <stroke android:color="#80968CFF" android:width="1.5dp" />
+    <solid android:color="#33825EFA" />
+    <stroke android:color="#33B8A8FF" android:width="1dp" />
     <corners android:radius="16dp" />
 </shape>

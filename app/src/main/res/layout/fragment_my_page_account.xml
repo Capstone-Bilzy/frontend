@@ -257,7 +257,10 @@
                     android:id="@+id/spinnerBank"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="1" />
+                    android:layout_weight="1"
+                    android:spinnerMode="dropdown"
+                    android:popupBackground="@drawable/bg_dropdown_popup"
+                    android:backgroundTint="#AAB2FF" />
             </LinearLayout>
 
             <!-- 계좌 번호 -->
@@ -354,10 +357,10 @@
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="40dp"
         android:text="저장하기"
-        android:textColor="#FFFFFF"
+        android:textColor="@color/button_text"
         android:textSize="16sp"
         android:gravity="center"
-        android:background="@drawable/bg_button_glass"
+        android:background="@drawable/bg_button_outline"
         android:clickable="true"
         android:focusable="true"
         app:layout_constraintBottom_toBottomOf="parent"

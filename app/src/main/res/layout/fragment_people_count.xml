@@ -179,7 +179,7 @@
         android:layout_marginEnd="25dp"
         android:layout_marginBottom="36dp"
         android:text="정산방 만들기"
-        android:textColor="#FFFFFF"
+        android:textColor="@color/button_text"
         android:textSize="16sp"
         android:gravity="center"
         android:background="@drawable/bg_button_outline"

@@ -1,5 +1,7 @@
 package com.android.bilzy.ui.mypage
 
+import com.android.bilzy.R
+import com.android.bilzy.util.setFontWeight
 import com.android.bilzy.ui.common.hideWhileKeyboardShown
 import android.graphics.Color
 import android.os.Bundle
@@ -76,12 +78,16 @@ class MyPageAccountFragment : Fragment() {
 
             override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
                 val v = super.getDropDownView(position, convertView, parent)
-                // 드롭다운 팝업 배경은 시스템 기본(흰색)이라 흰 글씨를 쓰면 안 보인다 — 어두운 글씨로.
-                (v as? TextView)?.setTextColor(Color.parseColor("#191919"))
+                // 지금 고른 은행은 연보라 + 굵게
+                val selected = position == binding.spinnerBank.selectedItemPosition
+                (v as? TextView)?.apply {
+                    setTextColor(Color.parseColor(if (selected) "#AAB2FF" else "#F1F5F9"))
+                    setFontWeight(if (selected) 600 else 400)
+                }
                 return v
             }
         }
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        adapter.setDropDownViewResource(R.layout.item_dropdown)
         binding.spinnerBank.adapter = adapter
         binding.spinnerBank.setSelection(0)
     }

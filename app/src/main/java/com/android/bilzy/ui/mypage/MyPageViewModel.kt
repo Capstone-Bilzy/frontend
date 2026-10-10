@@ -43,6 +43,24 @@ class MyPageViewModel @Inject constructor(
         }
     }
 
+    /** 탈퇴 실패 1회성 이벤트(화면이 토스트로 알림). */
+    private val _withdrawFailed = Channel<Unit>(Channel.BUFFERED)
+    val withdrawFailed = _withdrawFailed.receiveAsFlow()
+
+    /** 회원 탈퇴. 성공하면 로그아웃과 같은 경로(loggedOut)로 온보딩에 보낸다. */
+    fun withdraw() {
+        if (loggingOut) return
+        loggingOut = true
+        viewModelScope.launch {
+            runCatching { authRepository.withdraw() }
+                .onSuccess { _loggedOut.send(Unit) }
+                .onFailure {
+                    loggingOut = false
+                    _withdrawFailed.send(Unit)
+                }
+        }
+    }
+
     fun load() {
         // 캐시가 있으면 먼저 즉시 표시(재진입 깜빡임 제거) 후 네트워크로 갱신.
         userRepository.cachedProfile()?.let {

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 계산중 화면 배경: 피그마 Ellipse(407x407 @ y114, #705EFA 50% → 배경색) 빛 -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item><color android:color="@color/bg_dark" /></item>
+    <item android:top="114dp" android:gravity="top|center_horizontal" android:width="407dp" android:height="407dp">
+        <shape android:shape="oval">
+            <gradient android:type="radial" android:gradientRadius="203dp"
+                android:startColor="#80705EFA" android:endColor="#00020A2F" />
+        </shape>
+    </item>
+</layer-list>

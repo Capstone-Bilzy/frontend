@@ -160,30 +160,30 @@ class CalculatingFragment : Fragment() {
         val container = binding.pendingContainer
         container.removeAllViews()
         val pendingNames = members.filterNot { it.ready }.map { it.nickname }
+        binding.infoBox.visibility = if (pendingNames.isEmpty()) View.VISIBLE else View.GONE
         if (pendingNames.isEmpty()) {
             container.visibility = View.GONE
             return
         }
         container.visibility = View.VISIBLE
-        container.addView(
-            pendingText("${pendingNames.joinToString(", ")}님이 아직 특이사항을 입력하지 않았어요", color = "#BEBEF7")
-        )
-        container.addView(
-            pendingText("모두 완료되면 자동으로 정산이 시작돼요", color = "#8888BB").apply {
-                (layoutParams as LinearLayout.LayoutParams).topMargin = dp(4)
-            }
-        )
-    }
-
-    private fun pendingText(text: String, color: String): TextView {
-        return TextView(requireContext()).apply {
+        // 피그마: 가운데 정렬 15sp #D9DCFF, 이름만 굵게, 두 줄
+        val names = pendingNames.joinToString(", ") + "님"
+        val text = android.text.SpannableString("${names}이 아직 특이사항을 입력하지 않았어요\n모두 완료되면 자동으로 정산이 시작돼요").apply {
+            setSpan(
+                android.text.style.StyleSpan(android.graphics.Typeface.BOLD), 0, names.length,
+                android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+        }
+        container.addView(TextView(requireContext()).apply {
             this.text = text
-            setTextColor(Color.parseColor(color))
-            setTextSize(TypedValue.COMPLEX_UNIT_SP, 13f)
+            gravity = android.view.Gravity.CENTER
+            setTextColor(Color.parseColor("#D9DCFF"))
+            setTextSize(TypedValue.COMPLEX_UNIT_SP, 15f)
+            setLineSpacing(dp(4).toFloat(), 1f)
             layoutParams = LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT
             )
-        }
+        })
     }
 
     private fun dp(value: Int): Int =

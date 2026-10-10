@@ -108,7 +108,8 @@ class SettlementResultFragment : Fragment() {
         container.removeAllViews()
         roundParticipants = settlement.receipts.associate { it.round to settlement.roundParticipantCount(it.round) }
         val receipts = settlement.receipts
-        members.forEachIndexed { i, m ->
+        // 내 내역이 맨 위(피그마 "정산 결과 요약"), 나머지는 서버가 준 순서 그대로. 금액은 원래 순번 기준.
+        members.withIndex().sortedByDescending { it.value.userId == myUserId }.forEach { (i, m) ->
             val amount = if (hasStored) m.amount else shares.getOrElse(i) { 0L }
             val reason = m.reason?.takeIf { hasStored && it.isNotBlank() }
             val roundAmounts = if (hasStored) m.rounds else emptyList()
@@ -246,7 +247,7 @@ class SettlementResultFragment : Fragment() {
         val ctx = requireContext()
         val card = LinearLayout(ctx).apply {
             orientation = LinearLayout.VERTICAL
-            setBackgroundResource(R.drawable.bg_person_card)
+            setBackgroundResource(R.drawable.bg_participant_card)
             setPadding(dp(17), dp(22), dp(16), dp(22))
             layoutParams = LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT
