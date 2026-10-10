@@ -100,6 +100,7 @@ data class SettlementDto(
 data class ExtraPhotoDto(
     val id: String? = null,
     val name: String? = null,
+    @SerialName("uploaded_by") val uploadedBy: String? = null,
     @SerialName("image_url") val imageUrl: String = "",
     @SerialName("created_at") val createdAt: String? = null
 )
@@ -206,6 +207,7 @@ fun ReceiptDto.toDomain() = Receipt(
 fun ExtraPhotoDto.toDomain() = ExtraPhoto(
     id = id,
     name = name?.takeIf { it.isNotBlank() },
+    uploadedBy = uploadedBy,
     imageUrl = imageUrl,
     createdAt = createdAt
 )

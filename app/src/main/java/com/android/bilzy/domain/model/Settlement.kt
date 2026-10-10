@@ -38,8 +38,10 @@ data class Settlement(
 data class ExtraPhoto(
     /** 구버전 서버 응답에는 없다 — 없으면 이름을 바꿀 수 없다. */
     val id: String? = null,
-    /** 방장이 붙인 이름. 없으면 화면이 "영수증 사진"으로 표시. */
+    /** 붙인 이름. 없으면 화면이 "영수증 사진"으로 표시. */
     val name: String? = null,
+    /** 사진을 올린 사람(구버전 서버 응답에는 없다). */
+    val uploadedBy: String? = null,
     val imageUrl: String,
     val createdAt: String?
 )

@@ -409,9 +409,10 @@ class HistoryDetailWithReceiptFragment : Fragment() {
         withImage.forEach { receipt ->
             binding.receiptsContainer.addView(receiptCard(receipt))
         }
-        // 이름 변경은 사진을 첨부할 수 있는 사람(방장)만
-        val canRename = s.createdBy == viewModel.myUserId.value
+        // 이름 변경은 방장이거나 그 사진을 올린 사람만
+        val myId = viewModel.myUserId.value
         extraPhotos.forEach { photo ->
+            val canRename = myId != null && (s.createdBy == myId || photo.uploadedBy == myId)
             binding.receiptsContainer.addView(extraPhotoCard(photo, canRename))
         }
     }
