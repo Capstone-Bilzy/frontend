@@ -248,7 +248,7 @@
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
-    <!-- Bottom buttons: 완료하기(ghost glass) / 추가 스캔하기(purple glass) -->
+    <!-- Bottom buttons: 추가 스캔하기(ghost glass, 왼쪽) / 완료하기(purple glass, 오른쪽) — 2026-10-24 사용자 지시로 글자·동작만 자리 바꿈 -->
     <LinearLayout
         android:id="@+id/bottomButtonsRow"
         android:layout_width="0dp"
@@ -262,13 +262,13 @@
         app:layout_constraintEnd_toEndOf="parent">
 
         <TextView
-            android:id="@+id/btnComplete"
+            android:id="@+id/btnMore"
             android:layout_width="0dp"
             android:layout_height="56dp"
             android:layout_weight="1"
             android:layout_marginEnd="4dp"
             android:elevation="5dp"
-            android:text="완료하기"
+            android:text="추가 스캔하기"
             android:textColor="@color/button_text"
             android:textSize="16sp"
             android:gravity="center"
@@ -284,13 +284,13 @@
             android:paddingEnd="6dp" />
 
         <TextView
-            android:id="@+id/btnMore"
+            android:id="@+id/btnComplete"
             android:layout_width="0dp"
             android:layout_height="56dp"
             android:layout_weight="1"
             android:layout_marginStart="4dp"
             android:elevation="5dp"
-            android:text="추가 스캔하기"
+            android:text="완료하기"
             android:textColor="@color/button_text"
             android:textSize="16sp"
             android:gravity="center"
