@@ -3,32 +3,22 @@ package com.android.bilzy.ui.history
 import com.android.bilzy.ui.common.showTextInputDialog
 import com.android.bilzy.domain.model.ExtraPhoto
 import android.text.TextUtils
-import android.Manifest
 import android.app.Dialog
-import android.content.ContentValues
-import android.content.pm.PackageManager
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.Typeface
-import android.os.Build
 import android.os.Bundle
-import android.os.Environment
-import android.provider.MediaStore
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.LayoutInflater
-import android.view.ContextThemeWrapper
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
-import android.widget.PopupMenu
+import android.widget.PopupWindow
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import android.widget.RelativeLayout
-import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -38,6 +28,8 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import coil.load
 import com.android.bilzy.ui.common.loading
+import com.android.bilzy.ui.common.showConfirmDialog
+import com.android.bilzy.databinding.PopupReceiptMenuBinding
 import com.android.bilzy.R
 import com.android.bilzy.databinding.FragmentHistoryDetailWithReceiptBinding
 import com.android.bilzy.domain.model.MemberRoundAmount
@@ -46,9 +38,7 @@ import com.android.bilzy.domain.model.Settlement
 import com.android.bilzy.ui.room.payerLine
 import com.android.bilzy.util.ImageCompressor
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.text.NumberFormat
 
 /**
@@ -66,8 +56,6 @@ class HistoryDetailWithReceiptFragment : Fragment() {
 
     private val viewModel: HistoryDetailViewModel by viewModels()
     private val nf = NumberFormat.getInstance()
-
-    private var pendingDownloadUrl: String? = null
 
     /** 완료된 정산방에 순수 기록용으로 영수증 사진만 추가(OCR·금액 계산 없음). */
     private val pickReceiptPhoto =
@@ -98,13 +86,6 @@ class HistoryDetailWithReceiptFragment : Fragment() {
             }
         }
     }
-
-    private val requestStoragePermission =
-        registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
-            if (granted) pendingDownloadUrl?.let { saveToGallery(it) }
-            else Toast.makeText(requireContext(), "저장 권한이 필요해요", Toast.LENGTH_SHORT).show()
-            pendingDownloadUrl = null
-        }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -406,18 +387,20 @@ class HistoryDetailWithReceiptFragment : Fragment() {
         if (!hasReceipt) return
 
         binding.tvReceiptCount.text = "${withImage.size + extraPhotos.size}장"
-        withImage.forEach { receipt ->
-            binding.receiptsContainer.addView(receiptCard(receipt))
-        }
-        // 이름 변경은 방장이거나 그 사진을 올린 사람만
         val myId = viewModel.myUserId.value
+        // 차수 영수증 사진 삭제는 방장만(서버 DELETE /receipt가 방장 전용). 금액·품목은 그대로 남는다.
+        val isOwner = myId != null && s.createdBy == myId
+        withImage.forEach { receipt ->
+            binding.receiptsContainer.addView(receiptCard(receipt, isOwner))
+        }
+        // 첨부 사진의 이름 변경·삭제는 방장이거나 그 사진을 올린 사람만
         extraPhotos.forEach { photo ->
-            val canRename = myId != null && (s.createdBy == myId || photo.uploadedBy == myId)
-            binding.receiptsContainer.addView(extraPhotoCard(photo, canRename))
+            val canEdit = myId != null && (s.createdBy == myId || photo.uploadedBy == myId)
+            binding.receiptsContainer.addView(extraPhotoCard(photo, canEdit))
         }
     }
 
-    private fun receiptCard(receipt: Receipt): View {
+    private fun receiptCard(receipt: Receipt, canDelete: Boolean): View {
         val url = receipt.receiptImageUrl!!
         val ctx = requireContext()
         val card = LinearLayout(ctx).apply {
@@ -467,7 +450,11 @@ class HistoryDetailWithReceiptFragment : Fragment() {
             setPadding(dp(8), 0, dp(4), 0)
             isClickable = true
             isFocusable = true
-            setOnClickListener { showReceiptOptions(it, url) }
+            setOnClickListener {
+                showReceiptOptions(it, url, onDelete = if (canDelete) {
+                    { confirmDelete { viewModel.deleteRoundReceiptImage(receipt.round) } }
+                } else null)
+            }
         }
         card.addView(thumb)
         card.addView(texts)
@@ -476,7 +463,7 @@ class HistoryDetailWithReceiptFragment : Fragment() {
     }
 
     /** 라운드/금액 없이 순수 기록용으로 첨부된 사진 카드. */
-    private fun extraPhotoCard(photo: ExtraPhoto, canRename: Boolean): View {
+    private fun extraPhotoCard(photo: ExtraPhoto, canEdit: Boolean): View {
         val url = photo.imageUrl
         val ctx = requireContext()
         val card = LinearLayout(ctx).apply {
@@ -517,7 +504,14 @@ class HistoryDetailWithReceiptFragment : Fragment() {
             setPadding(dp(8), 0, dp(4), 0)
             isClickable = true
             isFocusable = true
-            setOnClickListener { showReceiptOptions(it, url, photo.takeIf { canRename && it.id != null }) }
+            setOnClickListener {
+                val photoId = photo.id.takeIf { canEdit }
+                showReceiptOptions(
+                    it, url,
+                    onRename = photoId?.let { { askPhotoName(photo) } },
+                    onDelete = photoId?.let { id -> { confirmDelete { viewModel.deleteExtraPhoto(id) } } }
+                )
+            }
         }
         card.addView(thumb)
         card.addView(label)
@@ -542,21 +536,44 @@ class HistoryDetailWithReceiptFragment : Fragment() {
         dialog.window?.setBackgroundDrawableResource(android.R.color.black)
     }
 
-    /** renamable이 있으면(방장이 연 첨부 사진) "이름 변경"도 보여준다. */
-    private fun showReceiptOptions(anchor: View, url: String, renamable: ExtraPhoto? = null) {
-        PopupMenu(ContextThemeWrapper(requireContext(), R.style.ThemeOverlay_Bilzy_PopupMenu), anchor).apply {
-            menu.add(0, 0, 0, "크게 보기")
-            menu.add(0, 1, 1, "이미지 저장")
-            if (renamable != null) menu.add(0, 2, 2, "이름 변경")
-            setOnMenuItemClickListener { item ->
-                when (item.itemId) {
-                    0 -> showFullScreenImage(url)
-                    1 -> downloadAndSave(url)
-                    2 -> renamable?.let { askPhotoName(it) }
-                }
-                true
+    /** 피그마 "영수증 메뉴"(확대 / 이름 변경 / 삭제). 권한이 없는 항목은 빼고 보여준다. */
+    private fun showReceiptOptions(
+        anchor: View,
+        url: String,
+        onRename: (() -> Unit)? = null,
+        onDelete: (() -> Unit)? = null
+    ) {
+        val menu = PopupReceiptMenuBinding.inflate(layoutInflater)
+        // 부모 없이 inflate하면 레이아웃의 168dp가 무시되므로 폭을 직접 준다
+        val menuWidth = dp(168)
+        val popup = PopupWindow(menu.root, menuWidth, ViewGroup.LayoutParams.WRAP_CONTENT, true).apply {
+            elevation = dp(12).toFloat()  // 피그마 그림자 0 12 28 #000 50%
+            setBackgroundDrawable(null)
+        }
+        menu.menuRename.isVisible = onRename != null
+        menu.menuDivider.isVisible = onDelete != null
+        menu.menuDelete.isVisible = onDelete != null
+        menu.menuZoom.setOnClickListener { popup.dismiss(); showFullScreenImage(url) }
+        menu.menuRename.setOnClickListener { popup.dismiss(); onRename?.invoke() }
+        menu.menuDelete.setOnClickListener { popup.dismiss(); onDelete?.invoke() }
+        // ⋯ 버튼 오른쪽 끝에 맞춰 아래로 펼친다(화면 아래가 모자라면 PopupWindow가 위로 올린다)
+        popup.showAsDropDown(anchor, anchor.width - menuWidth, 0)
+    }
+
+    private fun confirmDelete(delete: suspend () -> Boolean) {
+        showConfirmDialog(
+            requireContext(),
+            title = "삭제",
+            message = "이 영수증 사진을 삭제할까요?",
+            confirmText = "삭제"
+        ) {
+            viewLifecycleOwner.lifecycleScope.launch {
+                loading.show()
+                val ok = delete()
+                if (_binding == null) return@launch
+                loading.hide()
+                if (!ok) Toast.makeText(requireContext(), "삭제에 실패했어요", Toast.LENGTH_SHORT).show()
             }
-            show()
         }
     }
 
@@ -577,67 +594,6 @@ class HistoryDetailWithReceiptFragment : Fragment() {
                 if (_binding == null) return@launch
                 loading.hide()
                 if (!ok) Toast.makeText(requireContext(), "이름 변경에 실패했어요", Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
-
-    private fun downloadAndSave(url: String) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q &&
-            ContextCompat.checkSelfPermission(
-                requireContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            pendingDownloadUrl = url
-            requestStoragePermission.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-            return
-        }
-        saveToGallery(url)
-    }
-
-    private fun saveToGallery(url: String) {
-        viewLifecycleOwner.lifecycleScope.launch {
-            try {
-                val bytes = withContext(Dispatchers.IO) { java.net.URL(url).readBytes() }
-                val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
-                    ?: run {
-                        Toast.makeText(requireContext(), "이미지 저장에 실패했어요", Toast.LENGTH_SHORT).show()
-                        return@launch
-                    }
-
-                val values = ContentValues().apply {
-                    put(MediaStore.Images.Media.DISPLAY_NAME, "receipt_${System.currentTimeMillis()}.jpg")
-                    put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                        put(MediaStore.Images.Media.RELATIVE_PATH,
-                            Environment.DIRECTORY_PICTURES + "/Bilzy")
-                        put(MediaStore.Images.Media.IS_PENDING, 1)
-                    }
-                }
-                val resolver = requireContext().contentResolver
-                val uri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
-                    ?: run {
-                        Toast.makeText(requireContext(), "저장에 실패했어요", Toast.LENGTH_SHORT).show()
-                        return@launch
-                    }
-
-                withContext(Dispatchers.IO) {
-                    resolver.openOutputStream(uri)?.use {
-                        bitmap.compress(Bitmap.CompressFormat.JPEG, 95, it)
-                    }
-                }
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    values.clear()
-                    values.put(MediaStore.Images.Media.IS_PENDING, 0)
-                    resolver.update(uri, values, null, null)
-                }
-
-                if (isAdded && _binding != null) {
-                    Toast.makeText(requireContext(), "갤러리에 저장됐어요", Toast.LENGTH_SHORT).show()
-                }
-            } catch (e: Exception) {
-                if (isAdded && _binding != null) {
-                    Toast.makeText(requireContext(), "저장에 실패했어요", Toast.LENGTH_SHORT).show()
-                }
             }
         }
     }

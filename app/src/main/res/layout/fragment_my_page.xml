@@ -51,17 +51,43 @@
                 android:paddingBottom="23dp"
                 android:layout_marginBottom="30dp">
 
-                <!-- Profile icon -->
-                <ImageView
-                    android:id="@+id/ivProfileAvatar"
-                    android:layout_width="93dp"
+                <!-- Profile icon + 사진 변경 버튼 (피그마 1930:1889: 32 원형, 사진 기준 왼쪽 64·위 54 — 오른쪽으로 3 삐져나옴) -->
+                <FrameLayout
+                    android:layout_width="96dp"
                     android:layout_height="93dp"
-                    android:src="@drawable/character_smile"
-                    android:scaleType="fitCenter"
-                    android:background="@drawable/bg_profile_circle"
-                    android:foreground="@drawable/fg_profile_ring"
-                    android:padding="13dp"
-                    android:layout_marginEnd="23dp" />
+                    android:layout_marginEnd="20dp"
+                    android:clipChildren="false">
+
+                    <ImageView
+                        android:id="@+id/ivProfileAvatar"
+                        android:layout_width="93dp"
+                        android:layout_height="93dp"
+                        android:src="@drawable/character_smile"
+                        android:scaleType="fitCenter"
+                        android:background="@drawable/bg_profile_circle"
+                        android:foreground="@drawable/fg_profile_ring"
+                        android:padding="13dp"
+                        android:contentDescription="@null" />
+
+                    <FrameLayout
+                        android:id="@+id/btnEditPhoto"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_marginStart="64dp"
+                        android:layout_marginTop="54dp"
+                        android:background="@drawable/bg_profile_camera_button"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:contentDescription="프로필 사진 변경">
+
+                        <ImageView
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_profile_camera"
+                            android:contentDescription="@null" />
+                    </FrameLayout>
+                </FrameLayout>
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -69,18 +95,47 @@
                     android:layout_weight="1"
                     android:orientation="vertical">
 
-                    <TextView
-                        android:id="@+id/tvUserName"
-                        android:layout_width="wrap_content"
+                    <!-- 이름 + 연필 (피그마 1930:1896: 간격 12) — 이름이 길면 말줄임, 연필은 항상 이름 바로 옆 -->
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text=""
-                        android:textColor="#FFFFFF"
-                        android:textSize="26sp"
-                        android:textStyle="bold"
-                        android:layout_marginBottom="4dp"
-                        android:textFontWeight="600"
-                        android:maxLines="1"
-                        android:ellipsize="end" />
+                        android:layout_marginBottom="3dp">
+
+                        <TextView
+                            android:id="@+id/tvUserName"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text=""
+                            android:textColor="#FFFFFF"
+                            android:textSize="26sp"
+                            android:lineHeight="36sp"
+                            android:textFontWeight="600"
+                            android:maxLines="1"
+                            android:ellipsize="end"
+                            app:layout_constrainedWidth="true"
+                            app:layout_constraintHorizontal_chainStyle="packed"
+                            app:layout_constraintHorizontal_bias="0"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toStartOf="@id/btnEditName"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent" />
+
+                        <!-- 아이콘은 12.2dp, 누르기 쉽게 주변 11dp를 터치 영역으로 -->
+                        <ImageView
+                            android:id="@+id/btnEditName"
+                            android:layout_width="34.2dp"
+                            android:layout_height="34.2dp"
+                            android:layout_marginStart="1dp"
+                            android:padding="11dp"
+                            android:src="@drawable/ic_edit_pencil"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:contentDescription="이름 변경"
+                            app:layout_constraintStart_toEndOf="@id/tvUserName"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
 
                     <TextView
                         android:id="@+id/tvLoginType"

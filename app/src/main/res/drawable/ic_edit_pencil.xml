@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 피그마 마이페이지 이름 옆 연필(1924:1433) -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="12.2341dp" android:height="12.2341dp"
+    android:viewportWidth="12.2341" android:viewportHeight="12.2341">
+    <path android:strokeColor="#C9C4FF" android:strokeWidth="1.41667" android:strokeLineJoin="round"
+        android:pathData="M0.708345,11.5258L1.27501,8.69246L8.85418,1.1133C9.11899,0.853726 9.47503,0.708333 9.84584,0.708333C10.2167,0.708333 10.5727,0.853726 10.8375,1.1133L11.1208,1.39663C11.3804,1.66145 11.5258,2.01748 11.5258,2.3883C11.5258,2.75911 11.3804,3.11515 11.1208,3.37996L3.54168,10.9591L0.708345,11.5258Z" />
+</vector>

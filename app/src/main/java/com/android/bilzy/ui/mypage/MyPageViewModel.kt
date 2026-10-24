@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.android.bilzy.data.local.TokenStore
 import com.android.bilzy.domain.repository.AuthRepository
 import com.android.bilzy.domain.repository.UserRepository
+import com.android.bilzy.util.ImageCompressor
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -58,6 +59,48 @@ class MyPageViewModel @Inject constructor(
                     loggingOut = false
                     _withdrawFailed.send(Unit)
                 }
+        }
+    }
+
+    /** 이름·사진 변경 실패 1회성 이벤트(화면이 토스트로 알림). 성공은 profile 갱신으로 반영된다. */
+    private val _editFailed = Channel<String>(Channel.BUFFERED)
+    val editFailed = _editFailed.receiveAsFlow()
+
+    /** 진행 중 표시(로딩). 끝나면 false. */
+    private val _saving = MutableStateFlow(false)
+    val saving = _saving.asStateFlow()
+
+    fun updateNickname(nickname: String) {
+        val name = nickname.trim()
+        if (name.isEmpty() || _saving.value) return
+        _saving.value = true
+        viewModelScope.launch {
+            runCatching { userRepository.updateNickname(name) }
+                .onSuccess {
+                    tokenStore.saveNickname(it.nickname)
+                    _profile.value = (_profile.value ?: ProfileUi(it.nickname, loginTypeText(it.provider)))
+                        .copy(nickname = it.nickname.ifBlank { "사용자" })
+                }
+                .onFailure { _editFailed.send("이름 변경에 실패했어요") }
+            _saving.value = false
+        }
+    }
+
+    fun updateProfileImage(bytes: ByteArray, mime: String) {
+        if (_saving.value) return
+        _saving.value = true
+        viewModelScope.launch {
+            runCatching {
+                // 영수증 업로드와 같은 압축(긴 변 축소·JPEG)
+                val compressed = ImageCompressor.compress(bytes, mime)
+                userRepository.updateProfileImage(compressed.bytes, compressed.mime)
+            }
+                .onSuccess {
+                    _profile.value = (_profile.value ?: ProfileUi(it.nickname, loginTypeText(it.provider)))
+                        .copy(profileImageUrl = it.profileImageUrl)
+                }
+                .onFailure { _editFailed.send("사진 변경에 실패했어요") }
+            _saving.value = false
         }
     }
 

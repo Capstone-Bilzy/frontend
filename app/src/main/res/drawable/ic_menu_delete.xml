@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 피그마 영수증 메뉴 "삭제" 아이콘(1930:1882) -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="18dp" android:height="18dp"
+    android:viewportWidth="18" android:viewportHeight="18">
+    <path android:strokeColor="#FF8A94" android:strokeWidth="1.5"
+        android:strokeLineCap="round" android:strokeLineJoin="round"
+        android:pathData="M3,4.875H4.875M4.875,4.875H7.125M4.875,4.875L5.625,15H12.375L13.125,4.875M7.125,4.875H10.875M7.125,4.875V3H10.875V4.875M10.875,4.875H13.125M13.125,4.875H15M7.5,7.875V12M10.5,7.875V12" />
+</vector>

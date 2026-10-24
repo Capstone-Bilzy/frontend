@@ -19,6 +19,35 @@
         <item name="android:popupBackground">@drawable/bg_terms_dialog</item>
     </style>
 
+    <!-- 정산내역 상세 영수증 ⋯ 메뉴 항목 (popup_receipt_menu.xml) -->
+    <style name="ReceiptMenuItem">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">44dp</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:paddingStart">12dp</item>
+        <item name="android:paddingEnd">12dp</item>
+        <item name="android:background">@drawable/bg_receipt_menu_item</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+    </style>
+
+    <style name="ReceiptMenuIcon">
+        <item name="android:layout_width">18dp</item>
+        <item name="android:layout_height">18dp</item>
+        <item name="android:layout_marginEnd">12dp</item>
+        <item name="android:contentDescription">@null</item>
+    </style>
+
+    <style name="ReceiptMenuText">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textFontWeight">400</item>
+        <item name="android:maxLines">1</item>
+    </style>
+
     <!-- 런치(스플래시) 테마: 네이비 배경 + 중앙 로고. onCreate에서 Theme.Bilzy로 전환. -->
     <style name="Theme.Bilzy.Splash" parent="Theme.Bilzy">
         <item name="android:windowBackground">@drawable/splash_background</item>

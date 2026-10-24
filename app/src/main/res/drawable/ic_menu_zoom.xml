@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 피그마 영수증 메뉴 "확대" 아이콘(1930:1870) -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="18dp" android:height="18dp"
+    android:viewportWidth="18" android:viewportHeight="18">
+    <path android:strokeColor="#D6D4FF" android:strokeWidth="1.5"
+        android:pathData="M12.75,7.875C12.75,10.5674 10.5674,12.75 7.875,12.75C5.18261,12.75 3,10.5674 3,7.875C3,5.18261 5.18261,3 7.875,3C10.5674,3 12.75,5.18261 12.75,7.875Z" />
+    <path android:strokeColor="#D6D4FF" android:strokeWidth="1.5" android:strokeLineCap="round"
+        android:pathData="M11.625,11.625L15.75,15.75M7.875,5.625V7.875M7.875,7.875V10.125M7.875,7.875H5.625M7.875,7.875H10.125" />
+</vector>

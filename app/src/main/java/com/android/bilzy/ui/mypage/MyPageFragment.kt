@@ -22,6 +22,8 @@ import coil.transform.CircleCropTransformation
 import com.android.bilzy.R
 import com.android.bilzy.databinding.FragmentMyPageBinding
 import com.android.bilzy.ui.common.showConfirmDialog
+import com.android.bilzy.ui.common.showTextInputDialog
+import androidx.activity.result.contract.ActivityResultContracts
 import com.android.bilzy.ui.room.RoomViewModel
 import com.android.bilzy.ui.scan.ScanFlowViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -38,6 +40,19 @@ class MyPageFragment : Fragment() {
     // 로그아웃 시 다른 계정의 정산 상태가 남지 않도록 함께 초기화한다.
     private val scanFlowViewModel: ScanFlowViewModel by hiltNavGraphViewModels(R.id.nav_graph)
     private val roomViewModel: RoomViewModel by hiltNavGraphViewModels(R.id.nav_graph)
+
+    /** 프로필 사진으로 쓸 이미지 선택 → ViewModel이 압축 후 서버로 보낸다(화면을 벗어나도 끊기지 않게). */
+    private val pickProfilePhoto =
+        registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+            uri ?: return@registerForActivityResult
+            val resolver = requireContext().contentResolver
+            val bytes = resolver.openInputStream(uri)?.use { it.readBytes() }
+            if (bytes == null || bytes.isEmpty()) {
+                Toast.makeText(requireContext(), "이미지를 불러오지 못했어요", Toast.LENGTH_SHORT).show()
+                return@registerForActivityResult
+            }
+            viewModel.updateProfileImage(bytes, resolver.getType(uri) ?: "image/jpeg")
+        }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -59,6 +74,27 @@ class MyPageFragment : Fragment() {
         }
 
         binding.menuEmail.setOnClickListener { openEmailInquiry() }
+
+        binding.btnEditPhoto.setOnClickListener { pickProfilePhoto.launch("image/*") }
+        binding.btnEditName.setOnClickListener {
+            val current = viewModel.profile.value?.nickname.orEmpty()
+            showTextInputDialog(
+                requireContext(),
+                title = "이름 변경",
+                initial = current,
+                hint = "이름",
+                maxLength = 20,  // 서버 닉네임 길이 제한
+                confirmText = "변경"
+            ) { name -> if (name != current) viewModel.updateNickname(name) }
+        }
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch { viewModel.saving.collect { loading.set(it) } }
+                viewModel.editFailed.collect {
+                    Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
 
         binding.menuLogout.setOnClickListener {
             // 잘못 눌러 바로 로그아웃되지 않도록 한 번 확인한다.

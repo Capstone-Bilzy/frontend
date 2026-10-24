@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 피그마 영수증 메뉴 "이름 변경" 아이콘(1930:1875) -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="18dp" android:height="18dp"
+    android:viewportWidth="18" android:viewportHeight="18">
+    <path android:strokeColor="#D6D4FF" android:strokeWidth="1.5" android:strokeLineJoin="round"
+        android:pathData="M3,15L3.6,12L11.625,3.975C11.9054,3.70016 12.2824,3.54621 12.675,3.54621C13.0676,3.54621 13.4446,3.70016 13.725,3.975L14.025,4.275C14.2998,4.55539 14.4538,4.93237 14.4538,5.325C14.4538,5.71763 14.2998,6.09461 14.025,6.375L6,14.4L3,15Z" />
+    <path android:strokeColor="#D6D4FF" android:strokeWidth="1.5"
+        android:pathData="M10.125,5.475L12.525,7.875" />
+</vector>

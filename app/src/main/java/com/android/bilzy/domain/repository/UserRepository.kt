@@ -7,6 +7,12 @@ interface UserRepository {
     /** 내 프로필 조회 (GET /users/me). 성공 결과는 인메모리 캐시에 보관된다. */
     suspend fun getMyProfile(): UserProfile
 
+    /** 이름 변경 (PATCH /users/me). 성공하면 캐시도 갱신된다. */
+    suspend fun updateNickname(nickname: String): UserProfile
+
+    /** 프로필 사진 변경 (PUT /users/me/profile-image). 성공하면 캐시도 갱신된다. */
+    suspend fun updateProfileImage(imageBytes: ByteArray, mimeType: String): UserProfile
+
     /** 내 정산 내역(완료된 정산들, 최신순). (GET /users/me/history) 성공 결과는 캐시된다. */
     suspend fun getMyHistory(): List<SettlementHistory>
 

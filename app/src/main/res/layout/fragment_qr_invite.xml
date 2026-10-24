@@ -188,7 +188,7 @@
             android:focusable="true"
             android:maxLines="1" />
 
-        <!-- 이미지 저장 / 공유 버튼 행 -->
+        <!-- 카카오톡 공유 / QR 공유 버튼 행 (피그마 1948:737: 154x48 두 개, 간격 8) -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -197,7 +197,7 @@
             android:layout_marginTop="18dp">
 
             <LinearLayout
-                android:id="@+id/btnSaveImage"
+                android:id="@+id/btnKakaoShare"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
@@ -206,19 +206,19 @@
                 android:background="@drawable/bg_btn_sky"
                 android:clickable="true"
                 android:focusable="true"
-                android:layout_marginEnd="6dp">
+                android:layout_marginEnd="4dp">
 
                 <ImageView
-                    android:layout_width="16dp"
-                    android:layout_height="16dp"
-                    android:src="@drawable/ic_download"
-                    app:tint="#FFFFFF"
-                    android:layout_marginEnd="6dp" />
+                    android:layout_width="18.5dp"
+                    android:layout_height="17.5dp"
+                    android:src="@drawable/ic_kakao_bubble"
+                    android:contentDescription="@null"
+                    android:layout_marginEnd="7dp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="이미지 저장하기"
+                    android:text="카카오톡 공유하기"
                     android:textColor="#FFFFFF"
                     android:textSize="14sp"
                     android:textFontWeight="400"
@@ -236,14 +236,14 @@
                 android:background="@drawable/bg_btn_violet"
                 android:clickable="true"
                 android:focusable="true"
-                android:layout_marginStart="6dp">
+                android:layout_marginStart="4dp">
 
                 <ImageView
                     android:layout_width="16dp"
-                    android:layout_height="16dp"
-                    android:src="@drawable/ic_share_circle"
-                    app:tint="#FFFFFF"
-                    android:layout_marginEnd="6dp" />
+                    android:layout_height="19dp"
+                    android:src="@drawable/ic_share_qr"
+                    android:contentDescription="@null"
+                    android:layout_marginEnd="7dp" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -255,29 +255,6 @@
                     android:maxLines="1" />
 
             </LinearLayout>
-
-        </LinearLayout>
-
-        <!-- 카카오톡으로 초대 -->
-        <LinearLayout
-            android:id="@+id/btnKakaoShare"
-            android:layout_width="match_parent"
-            android:layout_height="44dp"
-            android:orientation="horizontal"
-            android:gravity="center"
-            android:background="@drawable/bg_button_kakao"
-            android:clickable="true"
-            android:focusable="true"
-            android:layout_marginTop="10dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="💬  카카오톡으로 초대하기"
-                android:textColor="#191919"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:maxLines="1" />
 
         </LinearLayout>
 

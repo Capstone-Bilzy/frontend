@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 피그마 마이페이지 "프로필 사진 변경 버튼"의 카메라 아이콘(1930:1890) -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="16dp" android:height="16dp"
+    android:viewportWidth="16" android:viewportHeight="16">
+    <path android:strokeColor="#FFFFFF" android:strokeWidth="1.33333" android:strokeLineJoin="round"
+        android:pathData="M2.66667,5.33333H5L6,3.66667H10L11,5.33333H13.3333V12.6667H2.66667V5.33333Z" />
+    <path android:strokeColor="#FFFFFF" android:strokeWidth="1.33333"
+        android:pathData="M10.1333,8.66667C10.1333,9.84487 9.17821,10.8 8,10.8C6.82179,10.8 5.86667,9.84487 5.86667,8.66667C5.86667,7.48846 6.82179,6.53333 8,6.53333C9.17821,6.53333 10.1333,7.48846 10.1333,8.66667Z" />
+</vector>

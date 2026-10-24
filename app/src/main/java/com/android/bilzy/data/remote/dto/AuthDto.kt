@@ -40,6 +40,9 @@ data class AuthResponse(
     val user: UserDto? = null
 )
 
+@Serializable
+data class UpdateProfileRequest(val nickname: String)
+
 /** 백엔드 user 객체. 키는 `id` (uid 아님), 이메일은 내려주지 않음. */
 @Serializable
 data class UserDto(

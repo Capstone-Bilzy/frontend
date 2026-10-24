@@ -1,6 +1,10 @@
 package com.android.bilzy.data.repository
 
 import com.android.bilzy.data.remote.BilzyApi
+import com.android.bilzy.data.remote.dto.UpdateProfileRequest
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import com.android.bilzy.data.remote.dto.toDomain
 import com.android.bilzy.data.remote.dto.toProfile
 import com.android.bilzy.domain.model.SettlementHistory
@@ -20,6 +24,19 @@ class UserRepositoryImpl @Inject constructor(
 
     override suspend fun getMyProfile(): UserProfile =
         api.getMe().toProfile().also { profileCache = it }
+
+    override suspend fun updateNickname(nickname: String): UserProfile =
+        api.updateMe(UpdateProfileRequest(nickname)).toProfile().also { profileCache = it }
+
+    override suspend fun updateProfileImage(imageBytes: ByteArray, mimeType: String): UserProfile {
+        val ext = if (mimeType.contains("png")) "png" else "jpg"
+        val part = MultipartBody.Part.createFormData(
+            name = "file",
+            filename = "profile.$ext",
+            body = imageBytes.toRequestBody(mimeType.toMediaType())
+        )
+        return api.updateProfileImage(part).toProfile().also { profileCache = it }
+    }
 
     override suspend fun getMyHistory(): List<SettlementHistory> =
         api.getHistory().mapNotNull { it.toDomain() }

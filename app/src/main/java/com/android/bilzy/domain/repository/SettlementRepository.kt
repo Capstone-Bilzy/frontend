@@ -18,6 +18,9 @@ interface SettlementRepository {
     suspend fun setMemberCapacity(id: String, memberCapacity: Int): Settlement
     suspend fun renameExtraPhoto(id: String, photoId: String, name: String)
 
+    /** 첨부한 영수증 사진 삭제 (DELETE /settlements/{id}/extra-photos/{photoId}). */
+    suspend fun deleteExtraPhoto(id: String, photoId: String)
+
     suspend fun updateStatus(id: String, status: SettlementStatus): Settlement
 
     suspend fun deleteSettlement(id: String)

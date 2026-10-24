@@ -31,6 +31,10 @@ class SettlementRepositoryImpl @Inject constructor(
     override suspend fun updateTitle(id: String, title: String): Settlement =
         api.updateSettlement(id, UpdateSettlementRequest(title)).toDomain()
 
+    override suspend fun deleteExtraPhoto(id: String, photoId: String) {
+        api.deleteExtraPhoto(id, photoId)
+    }
+
     override suspend fun renameExtraPhoto(id: String, photoId: String, name: String) {
         api.renameExtraPhoto(id, photoId, RenameExtraPhotoRequest(name))
     }

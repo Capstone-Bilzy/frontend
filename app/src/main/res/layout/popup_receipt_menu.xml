@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 정산내역 상세 영수증 ⋯ 메뉴 (피그마 "영수증 메뉴" 1930:1868: 폭 168, 안쪽 6, 항목 높이 44) -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="168dp"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="6dp"
+    android:background="@drawable/bg_receipt_menu">
+
+    <LinearLayout
+        android:id="@+id/menuZoom"
+        style="@style/ReceiptMenuItem">
+
+        <ImageView
+            style="@style/ReceiptMenuIcon"
+            android:src="@drawable/ic_menu_zoom" />
+
+        <TextView
+            style="@style/ReceiptMenuText"
+            android:text="확대" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/menuRename"
+        style="@style/ReceiptMenuItem">
+
+        <ImageView
+            style="@style/ReceiptMenuIcon"
+            android:src="@drawable/ic_menu_rename" />
+
+        <TextView
+            style="@style/ReceiptMenuText"
+            android:text="이름 변경" />
+    </LinearLayout>
+
+    <!-- divider wrap: 좌우 6, 위아래 4, 선 #44448A -->
+    <View
+        android:id="@+id/menuDivider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginStart="6dp"
+        android:layout_marginEnd="6dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"
+        android:background="#44448A" />
+
+    <LinearLayout
+        android:id="@+id/menuDelete"
+        style="@style/ReceiptMenuItem">
+
+        <ImageView
+            style="@style/ReceiptMenuIcon"
+            android:src="@drawable/ic_menu_delete" />
+
+        <TextView
+            style="@style/ReceiptMenuText"
+            android:text="삭제"
+            android:textColor="#FF8A94" />
+    </LinearLayout>
+
+</LinearLayout>

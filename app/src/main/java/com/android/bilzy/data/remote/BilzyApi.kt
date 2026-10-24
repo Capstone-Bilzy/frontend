@@ -35,6 +35,7 @@ import retrofit2.http.Multipart
 import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Part
+import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -55,6 +56,15 @@ interface BilzyApi {
     // ── 유저 ─────────────────────────────────────────────
     @GET("users/me")
     suspend fun getMe(): UserDto
+
+    /** 이름 변경(마이페이지 연필). 바꾼 이름은 다음 소셜 로그인 때도 유지된다. */
+    @PATCH("users/me")
+    suspend fun updateMe(@Body body: com.android.bilzy.data.remote.dto.UpdateProfileRequest): UserDto
+
+    /** 프로필 사진 변경(마이페이지 연필). 서버가 정화·저장 후 바뀐 프로필을 돌려준다. */
+    @Multipart
+    @PUT("users/me/profile-image")
+    suspend fun updateProfileImage(@Part file: MultipartBody.Part): UserDto
 
     /** 회원 탈퇴 — 계정과 내가 만든 정산방·영수증 사진을 서버에서 바로 지운다. */
     @HTTP(method = "DELETE", path = "users/me", hasBody = false)
@@ -101,7 +111,14 @@ interface BilzyApi {
     @DELETE("settlements/{id}")
     suspend fun deleteSettlement(@Path("id") id: String)
 
-    /** 첨부한 영수증 사진 이름 변경(방장만 가능). */
+    /** 첨부한 영수증 사진 삭제(방장 또는 올린 사람). */
+    @DELETE("settlements/{id}/extra-photos/{photoId}")
+    suspend fun deleteExtraPhoto(
+        @Path("id") id: String,
+        @Path("photoId") photoId: String
+    )
+
+    /** 첨부한 영수증 사진 이름 변경(방장 또는 올린 사람). */
     @PATCH("settlements/{id}/extra-photos/{photoId}")
     suspend fun renameExtraPhoto(
         @Path("id") id: String,

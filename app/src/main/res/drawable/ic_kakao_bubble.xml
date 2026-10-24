@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 피그마 초대 화면 "카카오톡 공유하기" 말풍선 아이콘(1948:740) -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="18.5dp" android:height="17.5dp"
+    android:viewportWidth="18.5" android:viewportHeight="17.4999">
+    <path android:strokeColor="#FFFFFF" android:strokeWidth="1.5"
+        android:pathData="M9.25,0.75C4.55545,0.75 0.75,3.92352 0.75,7.82357C0.75,10.3974 2.40495,12.6427 4.90395,13.884C4.75435,14.4837 4.3659,16.0499 4.28855,16.3885C4.19335,16.802 4.4305,16.7965 4.58605,16.6861C4.7076,16.5994 6.51895,15.2777 7.3035,14.7055C7.9274,14.8305 8.57255,14.8971 9.25,14.8971C13.9446,14.8971 17.75,11.7236 17.75,7.82357C17.75,3.92352 13.9446,0.75 9.25,0.75Z" />
+</vector>

@@ -63,6 +63,25 @@ class HistoryDetailViewModel @Inject constructor(
             .isSuccess
     }
 
+    /** 첨부 사진 삭제. 성공하면 상세를 다시 불러온다. */
+    suspend fun deleteExtraPhoto(photoId: String): Boolean = deleteThenReload {
+        settlementRepository.deleteExtraPhoto(it, photoId)
+    }
+
+    /** 차수 영수증 사진 삭제(방장만, 금액·품목은 그대로). 성공하면 상세를 다시 불러온다. */
+    suspend fun deleteRoundReceiptImage(round: Int): Boolean = deleteThenReload {
+        settlementRepository.deleteReceiptImage(it, round)
+    }
+
+    private suspend fun deleteThenReload(block: suspend (String) -> Unit): Boolean {
+        val id = loadedId ?: return false
+        return runCatching { block(id) }
+            .onSuccess {
+                runCatching { settlementRepository.getSettlement(id) }.onSuccess { _settlement.value = it }
+            }
+            .isSuccess
+    }
+
     /** 완료된 정산방에도 쓸 수 있는 순수 사진 첨부(OCR·금액 계산 없음). 성공하면 상세를 다시 불러온다. */
     suspend fun attachPhoto(imageBytes: ByteArray, mimeType: String): Boolean {
         val id = loadedId ?: return false
