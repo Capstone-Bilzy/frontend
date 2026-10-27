@@ -3,16 +3,17 @@ package com.android.bilzy.ui.room
 import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Color
+import android.graphics.Outline
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.View
+import android.view.ViewOutlineProvider
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import coil.load
-import coil.transform.CircleCropTransformation
 import com.android.bilzy.R
 import com.android.bilzy.util.setFontWeight
 
@@ -66,12 +67,18 @@ fun buildAvatarTile(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT
             ).apply { setMargins(inset, inset, inset, inset) }
             scaleType = ImageView.ScaleType.CENTER_CROP
+            // 비트맵을 CircleCrop으로 자르면 작은 원에서 그림이 한쪽으로 밀리고 가장자리가 깨져 보였음 —
+            // 뷰 자체를 원으로 잘라 그린다.
+            outlineProvider = object : ViewOutlineProvider() {
+                override fun getOutline(view: View, outline: Outline) =
+                    outline.setOval(0, 0, view.width, view.height)
+            }
+            clipToOutline = true
         }
         circle.addView(avatarImage)
         // 이니셜을 아래 레이어로 남겨두고, 이미지 로드 실패 시 이 뷰만 숨겨 자연스럽게 폴백한다.
         avatarImage.load(profileImageUrl) {
             crossfade(true)
-            transformations(CircleCropTransformation())
             listener(onError = { _, _ -> avatarImage.visibility = View.GONE })
         }
     }
