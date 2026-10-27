@@ -258,6 +258,8 @@ class AmountAdjustFragment : Fragment() {
     private fun renderReceiptTable(items: List<ReceiptItem>, total: Long) {
         val table = binding.receiptTable
         table.removeAllViews()
+        table.addView(headerRow())
+        table.addView(divider(bottomMargin = 16))
         items.forEach { item ->
             table.addView(itemRow(item.name, item.quantity.toString(), "${nf.format(item.total)}원"))
         }
@@ -278,6 +280,25 @@ class AmountAdjustFragment : Fragment() {
             gravity = Gravity.CENTER
         })
         row.addView(cell(price, 16f, 500, Color.WHITE).apply {
+            layoutParams = LinearLayout.LayoutParams(dp(95), dp(24))
+            gravity = Gravity.END or Gravity.CENTER_VERTICAL
+        })
+        return row
+    }
+
+    // 피그마: 표 맨 위 "상품명 / 수량 / 금액" 머리글 16sp 500 #C0C0FF, 아래 12 띄우고 구분선, 구분선 아래 16 띄우고 품목 줄.
+    // 열 폭은 품목 줄(itemRow)과 같게 둬서 머리글이 각 열 위에 오게 한다.
+    private fun headerRow(): View {
+        val color = Color.parseColor("#C0C0FF")
+        val row = tableRow(bottomMargin = 12)
+        row.addView(cell("상품명", 16f, 500, color).apply {
+            layoutParams = LinearLayout.LayoutParams(0, dp(24), 1f)
+        })
+        row.addView(cell("수량", 16f, 500, color).apply {
+            layoutParams = LinearLayout.LayoutParams(dp(30), dp(24))
+            gravity = Gravity.CENTER
+        })
+        row.addView(cell("금액", 16f, 500, color).apply {
             layoutParams = LinearLayout.LayoutParams(dp(95), dp(24))
             gravity = Gravity.END or Gravity.CENTER_VERTICAL
         })
@@ -318,12 +339,12 @@ class AmountAdjustFragment : Fragment() {
         }
     }
 
-    private fun divider(): View {
+    private fun divider(bottomMargin: Int = 10): View {
         return View(requireContext()).apply {
             setBackgroundColor(Color.parseColor("#504C91"))
             layoutParams = LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, dp(1)
-            ).apply { bottomMargin = dp(10) }
+            ).apply { this.bottomMargin = dp(bottomMargin) }
         }
     }
 

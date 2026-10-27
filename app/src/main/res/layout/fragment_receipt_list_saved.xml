@@ -4,7 +4,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg_dark">
+    android:background="#02062D">
+    <!-- 배경은 저장 모션 영상이 실제로 그려지는 색(#020A2F 영상이 디코딩되면 #02062D)에 맞춤 — 영상 테두리가 띠처럼 보이지 않게 -->
 
     <!-- Logo -->
     <ImageView
@@ -33,12 +34,11 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <ImageView
-            android:id="@+id/illustrationArea"
-            android:layout_width="260dp"
-            android:layout_height="260dp"
-            android:scaleType="fitCenter"
-            android:src="@drawable/ic_bill_3d" />
+        <!-- 영수증 저장 모션(res/raw/receipt_saved.mp4, 배경 #020A2F 정사각 영상) -->
+        <TextureView
+            android:id="@+id/motionView"
+            android:layout_width="390dp"
+            android:layout_height="390dp" />
 
         <TextView
             android:id="@+id/tvTitle"
@@ -49,7 +49,7 @@
             android:textSize="24sp"
             android:textStyle="bold"
             android:gravity="center"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="-48dp"
             android:textFontWeight="600" />
 
         <TextView
