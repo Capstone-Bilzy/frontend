@@ -18,7 +18,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import coil.load
-import coil.transform.CircleCropTransformation
+import com.android.bilzy.util.stableCacheKey
 import com.android.bilzy.R
 import com.android.bilzy.databinding.FragmentMyPageBinding
 import com.android.bilzy.ui.common.showConfirmDialog
@@ -166,10 +166,11 @@ class MyPageFragment : Fragment() {
         // 원형 배경 외곽선으로 잘라 둔다. 테두리 링은 foreground(fg_profile_ring)로 사진 위에 그려진다.
         binding.ivProfileAvatar.clipToOutline = true
         binding.ivProfileAvatar.setPadding(0, 0, 0, 0)
+        // 비트맵을 CircleCrop으로 자르면 그림이 한쪽으로 밀려 보였다 — 원형은 위의 clipToOutline이 맡는다.
+        // 캐시 키를 고정해, 화면에 다시 들어오거나 새 서명 URL을 받아도 같은 사진이면 기본 캐릭터를 거치지 않고 바로 그린다.
         binding.ivProfileAvatar.load(url) {
+            stableCacheKey(url)
             crossfade(true)
-            transformations(CircleCropTransformation())
-            placeholder(R.drawable.character_smile)
             listener(onError = { _, _ -> resetAvatarToPlaceholder() })
         }
     }

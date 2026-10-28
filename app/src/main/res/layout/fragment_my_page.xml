@@ -62,7 +62,6 @@
                         android:id="@+id/ivProfileAvatar"
                         android:layout_width="93dp"
                         android:layout_height="93dp"
-                        android:src="@drawable/character_smile"
                         android:scaleType="fitCenter"
                         android:background="@drawable/bg_profile_circle"
                         android:foreground="@drawable/fg_profile_ring"

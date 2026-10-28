@@ -22,7 +22,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import coil.load
-import coil.transform.CircleCropTransformation
 import com.android.bilzy.R
 import com.android.bilzy.databinding.FragmentMemberWaitingBinding
 import com.android.bilzy.domain.model.Settlement

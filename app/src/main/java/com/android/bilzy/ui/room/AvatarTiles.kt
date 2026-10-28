@@ -14,6 +14,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import coil.load
+import com.android.bilzy.util.stableCacheKey
 import com.android.bilzy.R
 import com.android.bilzy.util.setFontWeight
 
@@ -78,6 +79,7 @@ fun buildAvatarTile(
         circle.addView(avatarImage)
         // 이니셜을 아래 레이어로 남겨두고, 이미지 로드 실패 시 이 뷰만 숨겨 자연스럽게 폴백한다.
         avatarImage.load(profileImageUrl) {
+            stableCacheKey(profileImageUrl)  // 3초 폴링마다 서명 URL이 바뀌어도 다시 받지 않게
             crossfade(true)
             listener(onError = { _, _ -> avatarImage.visibility = View.GONE })
         }

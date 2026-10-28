@@ -19,8 +19,10 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import android.graphics.Outline
+import android.view.ViewOutlineProvider
 import coil.load
-import coil.transform.CircleCropTransformation
+import com.android.bilzy.util.stableCacheKey
 import com.android.bilzy.ui.common.loading
 import com.android.bilzy.R
 import com.android.bilzy.databinding.FragmentSettlementResultBinding
@@ -146,12 +148,18 @@ class SettlementResultFragment : Fragment() {
                         ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT
                     )
                     scaleType = ImageView.ScaleType.CENTER_CROP
+                    // CircleCrop으로 비트맵을 자르면 그림이 한쪽으로 밀려 보였다 — 뷰 자체를 원으로 잘라 그린다.
+                    outlineProvider = object : ViewOutlineProvider() {
+                        override fun getOutline(view: View, outline: Outline) =
+                            outline.setOval(0, 0, view.width, view.height)
+                    }
+                    clipToOutline = true
                 }
                 circle.addView(avatarImage)
                 // 이니셜을 아래 레이어로 남겨두고, 이미지 로드 실패 시 이 뷰만 숨겨 자연스럽게 폴백한다.
                 avatarImage.load(url) {
+                    stableCacheKey(url)  // 상세를 다시 불러 서명 URL이 바뀌어도 같은 사진이면 다시 받지 않게
                     crossfade(true)
-                    transformations(CircleCropTransformation())
                     listener(onError = { _, _ -> avatarImage.visibility = View.GONE })
                 }
             }
