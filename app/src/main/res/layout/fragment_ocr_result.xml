@@ -182,6 +182,56 @@
                 android:paddingTop="10dp"
                 android:paddingBottom="16dp">
 
+                <!-- 피그마 OCR 인식결과(1924:763) 표 머리글. 열 폭은 item_ocr.xml의 품목/수량/금액 칸과 같게 맞춘다. -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="12dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:paddingStart="4dp"
+                        android:text="상품명"
+                        android:textColor="#C0C0FF"
+                        android:textSize="16sp"
+                        android:textFontWeight="500"
+                        android:maxLines="1" />
+
+                    <TextView
+                        android:layout_width="34dp"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="수량"
+                        android:textColor="#C0C0FF"
+                        android:textSize="16sp"
+                        android:textFontWeight="500"
+                        android:maxLines="1" />
+
+                    <TextView
+                        android:layout_width="110dp"
+                        android:layout_height="wrap_content"
+                        android:gravity="end"
+                        android:text="금액"
+                        android:textColor="#C0C0FF"
+                        android:textSize="16sp"
+                        android:textFontWeight="500"
+                        android:maxLines="1" />
+
+                    <Space
+                        android:layout_width="36dp"
+                        android:layout_height="0dp" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginBottom="11dp"
+                    android:background="#504C91" />
+
                 <!-- Items RecyclerView (인라인 편집 셀) -->
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rvItems"

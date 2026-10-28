@@ -113,7 +113,7 @@ class MyPageFragment : Fragment() {
             showConfirmDialog(
                 requireContext(),
                 title = "회원 탈퇴",
-                message = "탈퇴하면 계정과 내가 만든 정산 내역,\n영수증 사진이 모두 삭제되고 되돌릴 수 없어요",
+                message = "탈퇴하면 이름·프로필 사진·계좌 정보가 삭제되고\n정산 기록에는 '탈퇴한 사용자'로 남아요\n되돌릴 수 없어요",
                 confirmText = "탈퇴하기"
             ) {
                 loading.show()
