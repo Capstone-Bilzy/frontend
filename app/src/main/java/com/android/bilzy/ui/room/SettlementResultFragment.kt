@@ -3,6 +3,7 @@ package com.android.bilzy.ui.room
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
+import android.widget.Toast
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -87,7 +88,14 @@ class SettlementResultFragment : Fragment() {
         }
     }
 
+    /** "모두 안 먹은 메뉴" 안내는 이 화면에서 한 번만(상세를 다시 불러올 때마다 뜨지 않게). */
+    private var allExcludedNoticeShown = false
+
     private fun render(settlement: Settlement) {
+        if (!allExcludedNoticeShown && settlement.hasItemExcludedByEveryone()) {
+            allExcludedNoticeShown = true
+            Toast.makeText(requireContext(), ALL_EXCLUDED_NOTICE, Toast.LENGTH_LONG).show()
+        }
         val members = settlement.members
         val n = members.size.coerceAtLeast(1)
         val total = if (settlement.totalAmount > 0) settlement.totalAmount

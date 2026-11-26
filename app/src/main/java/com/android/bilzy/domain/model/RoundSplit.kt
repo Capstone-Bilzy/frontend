@@ -14,6 +14,12 @@ object RoundSplit {
     /** [excludedItemNames]는 그 사람이 안 먹었다고 고른 품목 이름들. */
     data class Participant(val key: String, val excludedItemNames: Set<String>)
 
+    /** 참여자 전원이 "안 먹었다"고 고른 품목 이름들(규칙 1에 따라 전원이 나눠 낸다). 참여자가 없으면 빈 목록. */
+    fun excludedByEveryone(items: List<ReceiptItem>, participants: List<Participant>): List<String> {
+        if (participants.isEmpty()) return emptyList()
+        return items.map { it.name }.distinct().filter { name -> participants.all { name in it.excludedItemNames } }
+    }
+
     /** 참여자 key → 그 차수에서 낼 금액. 참여자가 없으면 빈 맵. */
     fun split(items: List<ReceiptItem>, participants: List<Participant>): Map<String, Long> {
         if (participants.isEmpty()) return emptyMap()

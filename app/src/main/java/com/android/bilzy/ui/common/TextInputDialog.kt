@@ -25,7 +25,7 @@ fun showTextInputDialog(
     confirmText: String,
     onConfirm: (String) -> Unit
 ) {
-    val dialog = Dialog(context)
+    val dialog = OpenPopups.track(Dialog(context))
     val binding = DialogTextInputBinding.inflate(LayoutInflater.from(context))
     binding.tvInputTitle.text = title
     binding.btnInputOk.text = confirmText

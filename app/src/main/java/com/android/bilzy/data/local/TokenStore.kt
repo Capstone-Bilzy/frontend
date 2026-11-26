@@ -5,7 +5,9 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -24,6 +26,13 @@ class TokenStore @Inject constructor(
     private val accessKey = stringPreferencesKey("access_token")
     private val refreshKey = stringPreferencesKey("refresh_token")
     private val nicknameKey = stringPreferencesKey("nickname")
+
+    /**
+     * 앱이 떠 있는 동안 로그인이 풀렸다는 알림(토큰 갱신 거절 등).
+     * CONFLATED 채널이라 화면이 백그라운드일 때 생긴 알림도 다음에 화면이 보일 때 한 번 전달된다.
+     */
+    private val _sessionExpired = Channel<Unit>(Channel.CONFLATED)
+    val sessionExpired: Flow<Unit> = _sessionExpired.receiveAsFlow()
 
     val accessToken: Flow<String?> = context.authDataStore.data.map { it[accessKey] }
 
@@ -50,5 +59,11 @@ class TokenStore @Inject constructor(
 
     suspend fun clear() {
         context.authDataStore.edit { it.clear() }
+    }
+
+    /** 저장 토큰을 지우고 로그인이 풀렸다고 알린다. 직접 로그아웃·탈퇴는 [clear]를 쓴다(알림 없음). */
+    suspend fun expireSession() {
+        clear()
+        _sessionExpired.trySend(Unit)
     }
 }

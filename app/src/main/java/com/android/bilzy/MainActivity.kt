@@ -13,14 +13,19 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.NavHostFragment
 import android.widget.Toast
 import com.android.bilzy.data.local.TokenStore
 import com.android.bilzy.databinding.ActivityMainBinding
+import com.android.bilzy.domain.repository.UserRepository
+import com.android.bilzy.ui.common.OpenPopups
 import com.android.bilzy.util.JoinLink
+import com.android.bilzy.util.clearImageCaches
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -32,6 +37,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var navController: NavController
 
     @Inject lateinit var tokenStore: TokenStore
+    @Inject lateinit var userRepository: UserRepository
 
     /**
      * 화면을 디자인 기준 폭(피그마 390dp)에 맞춰 통째로 비례 축소/확대한다.
@@ -67,6 +73,7 @@ class MainActivity : AppCompatActivity() {
         val navHostFragment = supportFragmentManager
             .findFragmentById(R.id.navHostFragment) as NavHostFragment
         navController = navHostFragment.navController
+        observeSessionExpired()
 
         if (savedInstanceState == null) {
             // 초대 딥링크로 진입했으면 그쪽 흐름으로, 아니면 일반 진입 게이트.
@@ -147,6 +154,36 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * 앱을 쓰는 도중 로그인이 풀리면(서버가 토큰 갱신을 거절) 로그인 화면으로 보낸다.
+     * 예전엔 토큰만 지워지고 홈에 그대로 남아, 이후 요청이 전부 401로 실패했다(스캔하면 인식 실패처럼 보임).
+     */
+    private fun observeSessionExpired() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                tokenStore.sessionExpired.collect {
+                    // 캐시는 어느 화면에 있든 먼저 비운다(로그인 화면에서 다른 계정으로 로그인할 때 이전 계정 정보가 보이지 않게).
+                    userRepository.clearCache()
+                    clearImageCaches(this@MainActivity)
+                    if (navController.currentDestination?.id in AUTH_DESTINATIONS) return@collect
+                    OpenPopups.dismissAll()
+                    Toast.makeText(
+                        this@MainActivity,
+                        "로그인이 만료됐어요. 다시 로그인해주세요",
+                        Toast.LENGTH_LONG
+                    ).show()
+                    // 그래프째로 비워 nav_graph 스코프 ViewModel(정산방·스캔 상태)도 함께 초기화하고,
+                    // 뒤로가기하면 온보딩이 나오도록 온보딩 → 로그인 순서로 쌓는다.
+                    navController.navigate(
+                        R.id.onboardingFragment, null,
+                        NavOptions.Builder().setPopUpTo(navController.graph.id, inclusive = true).build()
+                    )
+                    navController.navigate(R.id.loginFragment)
+                }
+            }
+        }
+    }
+
     private fun navigateToHome() {
         if (navController.currentDestination?.id == R.id.homeFragment) return
         val options = NavOptions.Builder()
@@ -165,5 +202,12 @@ class MainActivity : AppCompatActivity() {
 
         /** 화면에 최소한 확보할 세로 길이(dp). 피그마 프레임은 844지만 시스템 바를 빼고도 내용이 들어가는 하한. */
         const val DESIGN_MIN_HEIGHT_DP = 800f
+
+        /** 로그인 전 화면들. 여기 있을 때 로그인 만료 알림이 와도 이동하지 않는다. */
+        val AUTH_DESTINATIONS = setOf(
+            R.id.onboardingFragment, R.id.loginFragment, R.id.loginConsentFragment,
+            R.id.signupFragment, R.id.signupConsentFragment, R.id.signupKakaoTermsFragment,
+            R.id.loginLoadingFragment,
+        )
     }
 }

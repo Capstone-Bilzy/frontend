@@ -1,5 +1,6 @@
 package com.android.bilzy.ui.history
 
+import com.android.bilzy.ui.common.OpenPopups
 import com.android.bilzy.ui.common.showTextInputDialog
 import com.android.bilzy.domain.model.ExtraPhoto
 import android.text.TextUtils
@@ -520,7 +521,7 @@ class HistoryDetailWithReceiptFragment : Fragment() {
     }
 
     private fun showFullScreenImage(url: String) {
-        val dialog = Dialog(requireContext())
+        val dialog = OpenPopups.track(Dialog(requireContext()))
         val iv = ImageView(requireContext()).apply {
             scaleType = ImageView.ScaleType.FIT_CENTER
             setBackgroundColor(Color.BLACK)
@@ -549,7 +550,7 @@ class HistoryDetailWithReceiptFragment : Fragment() {
         val popup = PopupWindow(menu.root, menuWidth, ViewGroup.LayoutParams.WRAP_CONTENT, true).apply {
             elevation = dp(12).toFloat()  // 피그마 그림자 0 12 28 #000 50%
             setBackgroundDrawable(null)
-        }
+        }.also { OpenPopups.track(it) }
         menu.menuRename.isVisible = onRename != null
         menu.menuDivider.isVisible = onDelete != null
         menu.menuDelete.isVisible = onDelete != null

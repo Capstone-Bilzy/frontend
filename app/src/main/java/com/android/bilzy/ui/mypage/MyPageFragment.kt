@@ -1,5 +1,6 @@
 package com.android.bilzy.ui.mypage
 
+import com.android.bilzy.util.clearImageCaches
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
@@ -188,6 +189,7 @@ class MyPageFragment : Fragment() {
                 viewModel.loggedOut.collect {
                     scanFlowViewModel.reset()
                     roomViewModel.reset()
+                    clearImageCaches(requireContext())
                     findNavController().navigate(R.id.action_myPage_to_onboarding)
                 }
             }

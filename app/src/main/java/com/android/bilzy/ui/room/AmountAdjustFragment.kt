@@ -211,17 +211,24 @@ class AmountAdjustFragment : Fragment() {
      * 내 선택은 화면의 칩을, 다른 사람의 선택은 3초마다 다시 불러오는 서버 값을 쓴다 — 누가 메뉴를 제외하면
      * 몇 초 안에 내 금액에도 반영된다. 오른쪽 알약은 기본 1/N과의 차이(다른 사람이 제외해 내 몫이 늘면 +).
      */
-    private fun recompute() {
-        val receipt = pickedReceipts.getOrNull(roomViewModel.adjIdx) ?: return
+    /** 이 차수 참여자들의 제외 선택. 내 선택은 화면의 칩, 다른 사람은 마지막으로 불러온 서버 값. */
+    private fun roundParticipants(receipt: Receipt): List<RoundSplit.Participant> {
         val me = myMember()
         val myExcluded = selectedChips.mapNotNull { currentItems.getOrNull(it)?.name }.toSet()
-        val participants = currentSettlement?.members.orEmpty()
+        return currentSettlement?.members.orEmpty()
             .filter { m -> m.id == me?.id || m.rounds.any { it.round == receipt.round } }
             .map { m ->
                 val excluded = if (m.id == me?.id) myExcluded
                 else m.rounds.firstOrNull { it.round == receipt.round }?.excludedItemNames.orEmpty().toSet()
                 RoundSplit.Participant(m.id, excluded)
             }
+    }
+
+    private fun recompute() {
+        val receipt = pickedReceipts.getOrNull(roomViewModel.adjIdx) ?: return
+        val me = myMember()
+        val myExcluded = selectedChips.mapNotNull { currentItems.getOrNull(it)?.name }.toSet()
+        val participants = roundParticipants(receipt)
         val split = RoundSplit.split(currentItems, participants)
         // 기준 금액은 아무도 메뉴를 빼지 않았을 때의 내 몫(1원 나머지를 누가 받는지까지 같은 규칙으로 계산).
         val base = me?.let { RoundSplit.split(currentItems, participants.map { p -> p.copy(excludedItemNames = emptySet()) })[it.id] }
@@ -374,6 +381,15 @@ class AmountAdjustFragment : Fragment() {
                 styleChip(chip, selectedChips.contains(index))
                 recompute()
                 saveSelectionSoon()
+                // 방금 고른 메뉴를 이 차수 참여자 전원이 안 먹은 상태가 되면 알려준다(막지는 않음 — 전원이 나눠 냄).
+                if (selectedChips.contains(index)) {
+                    val receipt = pickedReceipts.getOrNull(roomViewModel.adjIdx)
+                    if (receipt != null &&
+                        item.name in RoundSplit.excludedByEveryone(currentItems, roundParticipants(receipt))
+                    ) {
+                        Toast.makeText(requireContext(), ALL_EXCLUDED_NOTICE, Toast.LENGTH_SHORT).show()
+                    }
+                }
             }
             row.addView(chip)
         }

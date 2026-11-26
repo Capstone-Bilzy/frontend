@@ -20,7 +20,7 @@ fun showConfirmDialog(
     cancelText: String = "취소",
     onConfirm: () -> Unit
 ) {
-    val dialog = Dialog(context)
+    val dialog = OpenPopups.track(Dialog(context))
     val binding = DialogConfirmBinding.inflate(LayoutInflater.from(context))
     binding.tvConfirmTitle.text = title
     binding.tvConfirmMessage.text = message

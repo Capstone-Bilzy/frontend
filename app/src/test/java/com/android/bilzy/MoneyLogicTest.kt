@@ -114,4 +114,12 @@ class MoneyLogicTest {
     fun split_withNoParticipants_isEmpty() {
         assertEquals(emptyMap<String, Long>(), RoundSplit.split(listOf(item("피자", 20_000)), emptyList()))
     }
+
+    @Test
+    fun excludedByEveryone_onlyWhenAllParticipantsExcluded() {
+        val items = listOf(item("맥주", 5_000), item("피자", 20_000))
+        assertEquals(listOf("맥주"), RoundSplit.excludedByEveryone(items, listOf(person("가", "맥주"), person("나", "맥주", "피자"))))
+        assertEquals(emptyList<String>(), RoundSplit.excludedByEveryone(items, listOf(person("가", "맥주"), person("나"))))
+        assertEquals(emptyList<String>(), RoundSplit.excludedByEveryone(items, emptyList()))
+    }
 }

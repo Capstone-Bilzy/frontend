@@ -16,7 +16,7 @@ import javax.inject.Singleton
  * 새 액세스 토큰을 발급받고 원래 요청을 한 번 재시도한다.
  * 리프레시 토큰이 없거나 서버가 거절(401/403)하면 저장 토큰을 삭제하고 null을 반환한다.
  * 네트워크 오류 등 일시적 실패는 토큰을 지우지 않고 null만 반환한다(로그인 유지).
- * → 현재 요청은 401 그대로, 다음 앱 실행 시 진입 게이트가 로그인으로 보낸다.
+ * → 현재 요청은 401 그대로, MainActivity가 [TokenStore.sessionExpired]를 받아 로그인 화면으로 보낸다.
  */
 @Singleton
 class TokenAuthenticator @Inject constructor(
@@ -42,7 +42,7 @@ class TokenAuthenticator @Inject constructor(
 
             val refresh = runBlocking { tokenStore.refreshToken() }
             if (refresh.isNullOrEmpty()) {
-                runBlocking { tokenStore.clear() }
+                runBlocking { tokenStore.expireSession() }
                 return null
             }
 
@@ -50,7 +50,7 @@ class TokenAuthenticator @Inject constructor(
                 runBlocking { refreshApi.refresh(RefreshRequest(refresh)).accessToken }
             } catch (e: HttpException) {
                 // 서버가 리프레시 토큰을 거절한 경우(만료·무효·로그아웃됨)에만 세션을 끝낸다.
-                if (e.code() == 401 || e.code() == 403) runBlocking { tokenStore.clear() }
+                if (e.code() == 401 || e.code() == 403) expireIfStill(refresh)
                 return null
             } catch (e: Exception) {
                 // 네트워크 끊김·타임아웃·서버 오류(5xx) 같은 일시적 실패는 로그아웃 사유가 아니다. 토큰을 그대로 두면
@@ -59,7 +59,7 @@ class TokenAuthenticator @Inject constructor(
                 return null
             }
             if (newAccess.isEmpty()) {
-                runBlocking { tokenStore.clear() }
+                expireIfStill(refresh)
                 return null
             }
 
@@ -68,6 +68,14 @@ class TokenAuthenticator @Inject constructor(
                 .header("Authorization", "Bearer $newAccess")
                 .build()
         }
+    }
+
+    /**
+     * 거절된 리프레시 토큰이 아직 저장돼 있을 때만 세션을 끝낸다.
+     * 갱신 요청이 오래 걸리는 사이 사용자가 다시 로그인했다면, 늦게 도착한 거절이 새 로그인 정보를 지우면 안 된다.
+     */
+    private fun expireIfStill(refresh: String) = runBlocking {
+        if (tokenStore.refreshToken() == refresh) tokenStore.expireSession()
     }
 
     private fun responseCount(response: Response): Int {
